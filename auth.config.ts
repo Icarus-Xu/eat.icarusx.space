@@ -1,5 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
- 
+
+const protectedPaths = ['/recommend', '/collect', '/dashboard'];
+
 export const authConfig = {
   pages: {
     signIn: '/login',
@@ -7,15 +9,17 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL('/dashboard', nextUrl));
+      const isProtected = protectedPaths.some((p) =>
+        nextUrl.pathname.startsWith(p),
+      );
+      if (isProtected) {
+        return isLoggedIn;
+      }
+      if (isLoggedIn && nextUrl.pathname === '/') {
+        return Response.redirect(new URL('/recommend', nextUrl));
       }
       return true;
     },
   },
-  providers: [], // Add providers with an empty array for now
+  providers: [],
 } satisfies NextAuthConfig;
