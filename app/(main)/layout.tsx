@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import Link from 'next/link';
-import { PowerIcon } from '@heroicons/react/24/outline';
 import SideNav from '@/app/ui/dashboard/sidenav';
+import SignOutButton from '@/app/ui/sign-out-button';
 import NavLinks from '@/app/ui/dashboard/nav-links';
 import AppLogo from '@/app/ui/app-logo';
 import { LocationProvider } from '@/app/ui/location-context';
@@ -21,11 +21,10 @@ export default async function MainLayout({ children }: { children: React.ReactNo
             <AppLogo small />
           </Link>
           <span className="text-sm font-bold text-gray-700">{userName}</span>
-          <form action={async () => { 'use server'; await signOut({ redirectTo: '/login' }); }}>
-            <button className="icon-btn">
-              <PowerIcon className="w-5" />
-            </button>
-          </form>
+          <SignOutButton action={async () => {
+            'use server';
+            await signOut({ redirectTo: '/login' });
+          }} />
         </header>
 
         {/* Desktop: sidebar */}

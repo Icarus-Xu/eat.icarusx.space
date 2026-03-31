@@ -2,8 +2,8 @@
 import Link from 'next/link';
 import NavLinks from '@/app/ui/dashboard/nav-links';
 import AppLogo from '@/app/ui/app-logo';
-import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut, auth } from '@/auth';
+import SignOutButton from '@/app/ui/sign-out-button';
 
 export default async function SideNav() {
   const session = await auth();
@@ -22,16 +22,10 @@ export default async function SideNav() {
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <div className="flex h-[48px] w-full items-center justify-between rounded-md bg-gray-50 p-3 md:p-2 md:px-3">
           <span className="hidden truncate text-sm font-bold text-gray-700 md:block">{userName}</span>
-          <form
-            action={async () => {
-              'use server';
-              await signOut({ redirectTo: '/login' });
-            }}
-          >
-            <button className="icon-btn">
-              <PowerIcon className="w-5" />
-            </button>
-          </form>
+          <SignOutButton action={async () => {
+            'use server';
+            await signOut({ redirectTo: '/login' });
+          }} />
         </div>
       </div>
     </div>
