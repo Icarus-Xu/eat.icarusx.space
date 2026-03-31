@@ -6,6 +6,15 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 export async function GET() {
   try {
     await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+      )
+    `;
+
+    await sql`
       CREATE TABLE IF NOT EXISTS restaurants (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
