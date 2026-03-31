@@ -147,7 +147,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
           </button>
         </div>
         {parseError && (
-          <p className="mt-1.5 flex items-center gap-1 text-sm text-red-500">
+          <p className="error-inline mt-1.5">
             <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
             {parseError}
           </p>
@@ -172,7 +172,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                   key={String(v)}
                   type="button"
                   onClick={() => setVisited(v)}
-                  className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+                  className={`btn-toggle ${
                     visited === v
                       ? 'border-blue-600 bg-blue-50 text-blue-600'
                       : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
@@ -232,7 +232,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
           {/* Save error */}
           {saveError && (
-            <p className="flex items-center gap-1 text-sm text-red-500">
+            <p className="error-inline">
               <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
               {saveError}
             </p>

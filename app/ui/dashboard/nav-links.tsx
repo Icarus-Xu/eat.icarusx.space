@@ -18,9 +18,37 @@ const links = [
   { name: 'Add', href: '/add', icon: PlusCircleIcon },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' | 'bottom' }) {
   const pathname = usePathname();
   const { location } = useLocation();
+
+  if (variant === 'bottom') {
+    const allLinks = [
+      ...links,
+      { name: location?.address.split(/[省市区县]/)[0] ?? 'Map', href: '/map', icon: MapPinIcon },
+    ];
+    return (
+      <>
+        {allLinks.map((link) => {
+          const LinkIcon = link.icon;
+          const active = pathname === link.href;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={clsx(
+                'flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs font-medium transition-colors',
+                active ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900',
+              )}
+            >
+              <LinkIcon className="h-6 w-6" />
+              <span className="truncate">{link.name}</span>
+            </Link>
+          );
+        })}
+      </>
+    );
+  }
 
   return (
     <>

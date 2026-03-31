@@ -38,6 +38,18 @@
   .section-heading {
     @apply mb-4 text-base font-semibold text-gray-700;
   }
+
+  .icon-btn {
+    @apply rounded-md p-1 text-gray-500 hover:bg-sky-100 hover:text-blue-600;
+  }
+
+  .btn-toggle {
+    @apply flex-1 rounded-lg border py-2 text-sm font-medium transition-colors;
+  }
+
+  .error-inline {
+    @apply flex items-center gap-1 text-sm text-red-500;
+  }
 }
 
 input[type='number'] {

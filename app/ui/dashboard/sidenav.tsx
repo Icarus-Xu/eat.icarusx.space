@@ -28,7 +28,7 @@ export default async function SideNav() {
               await signOut({ redirectTo: '/login' });
             }}
           >
-            <button className="rounded-md p-1 text-gray-500 hover:bg-sky-100 hover:text-blue-600">
+            <button className="icon-btn">
               <PowerIcon className="w-5" />
             </button>
           </form>
