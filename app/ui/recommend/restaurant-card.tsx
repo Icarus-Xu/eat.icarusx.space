@@ -1,4 +1,4 @@
-// Copyright (C) 2026 Viture Inc. All rights reserved.
+// Copyright (C) 2026 Icarus. All rights reserved.
 import type { RestaurantCard } from '@/app/api/recommend/route';
 
 function formatDistance(m: number): string {

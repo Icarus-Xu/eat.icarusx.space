@@ -1,0 +1,57 @@
+// Copyright (C) 2026 Icarus. All rights reserved.
+'use client';
+
+import { useEffect, useRef } from 'react';
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    AMap: any;
+    _AMapSecurityConfig: { securityJsCode: string };
+  }
+}
+
+interface Props {
+  lat: number;
+  lng: number;
+}
+
+export default function MapView({ lat, lng }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapRef = useRef<any>(null);
+  const loadedRef = useRef(false);
+
+  useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+
+    window._AMapSecurityConfig = {
+      securityJsCode: process.env.NEXT_PUBLIC_AMAP_JS_SECRET!,
+    };
+
+    const script = document.createElement('script');
+    script.src = `https://webapi.amap.com/maps?v=2.0&key=${process.env.NEXT_PUBLIC_AMAP_JS_KEY}`;
+    script.onload = () => {
+      if (!containerRef.current) return;
+      mapRef.current = new window.AMap.Map(containerRef.current, {
+        center: [lng, lat],
+        zoom: 15,
+      });
+      new window.AMap.Marker({ position: [lng, lat], map: mapRef.current });
+    };
+    document.head.appendChild(script);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update map center and marker when coords change
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const center = [lng, lat];
+    mapRef.current.setCenter(center);
+    mapRef.current.clearMap();
+    new window.AMap.Marker({ position: center, map: mapRef.current });
+  }, [lat, lng]);
+
+  return <div ref={containerRef} className="h-full w-full" />;
+}

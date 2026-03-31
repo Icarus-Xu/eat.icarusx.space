@@ -1,4 +1,4 @@
-// Copyright (C) 2026 Viture Inc. All rights reserved.
+// Copyright (C) 2026 Icarus. All rights reserved.
 import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });

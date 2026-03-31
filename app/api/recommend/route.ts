@@ -1,10 +1,10 @@
-// Copyright (C) 2026 Viture Inc. All rights reserved.
+// Copyright (C) 2026 Icarus. All rights reserved.
 import { auth } from '@/auth';
 import postgres from 'postgres';
 import { haversineDistance } from '@/app/lib/amap';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-const RADIUS_M = 3000;
+const DEFAULT_RADIUS_M = 3000;
 
 export interface RestaurantCard {
   id: string;
@@ -39,6 +39,7 @@ export async function GET(request: Request) {
   if (isNaN(lat) || isNaN(lng)) {
     return Response.json({ error: 'Missing lat/lng' }, { status: 400 });
   }
+  const radiusM = parseFloat(searchParams.get('radius') ?? String(DEFAULT_RADIUS_M));
 
   // Fetch all restaurants with their best visit record (highest rating, most recent)
   const rows = await sql<
@@ -93,7 +94,7 @@ export async function GET(request: Request) {
         lastVisitedAt: row.last_visited_at ?? null,
       } as RestaurantCard;
     })
-    .filter((r) => r.distanceM <= RADIUS_M);
+    .filter((r) => r.distanceM <= radiusM);
 
   const visited = nearby.filter((r) => r.visited);
   const unvisited = nearby.filter((r) => !r.visited);

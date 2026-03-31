@@ -1,28 +1,27 @@
+// Copyright (C) 2026 Icarus. All rights reserved.
 'use client';
 
 import {
-  UserGroupIcon,
   HomeIcon,
-  DocumentDuplicateIcon,
+  SparklesIcon,
+  PlusCircleIcon,
+  MapPinIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
+import { useLocation } from '@/app/ui/location-context';
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
 const links = [
-  { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  {
-    name: 'Invoices',
-    href: '/dashboard/invoices',
-    icon: DocumentDuplicateIcon,
-  },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
+  { name: 'Home', href: '/home', icon: HomeIcon },
+  { name: 'Recommend', href: '/recommend', icon: SparklesIcon },
+  { name: 'Add', href: '/add', icon: PlusCircleIcon },
 ];
 
 export default function NavLinks() {
   const pathname = usePathname();
+  const { location } = useLocation();
+
   return (
     <>
       {links.map((link) => {
@@ -33,9 +32,7 @@ export default function NavLinks() {
             href={link.href}
             className={clsx(
               'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
-              {
-                'bg-sky-100 text-blue-600': pathname === link.href,
-              },
+              { 'bg-sky-100 text-blue-600': pathname === link.href },
             )}
           >
             <LinkIcon className="w-6" />
@@ -43,6 +40,18 @@ export default function NavLinks() {
           </Link>
         );
       })}
+      <Link
+        href="/map"
+        className={clsx(
+          'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+          { 'bg-sky-100 text-blue-600': pathname === '/map' },
+        )}
+      >
+        <MapPinIcon className="w-6 shrink-0" />
+        <p className="hidden truncate md:block">
+          {location ? location.address : 'Getting location...'}
+        </p>
+      </Link>
     </>
   );
 }

@@ -1,0 +1,256 @@
+// Copyright (C) 2026 Icarus. All rights reserved.
+'use client';
+
+import { useState, useTransition } from 'react';
+import type { AmapPoi } from '@/app/lib/amap';
+import StarInput from './star-input';
+import { ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+
+type Step = 'input' | 'preview' | 'done';
+
+function todayString() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
+  const [step, setStep] = useState<Step>('input');
+  const [url, setUrl] = useState('');
+  const [poi, setPoi] = useState<AmapPoi | null>(null);
+  const [parseError, setParseError] = useState('');
+
+  const [visited, setVisited] = useState<boolean | null>(null);
+  const [visitDate, setVisitDate] = useState(todayString());
+  const [rating, setRating] = useState<number | null>(null);
+  const [notes, setNotes] = useState('');
+
+  const [saveError, setSaveError] = useState('');
+  const [isDuplicate, setIsDuplicate] = useState(false);
+
+  const [isParsing, startParsing] = useTransition();
+  const [isSaving, startSaving] = useTransition();
+
+  function reset() {
+    setStep('input');
+    setUrl('');
+    setPoi(null);
+    setParseError('');
+    setVisited(null);
+    setVisitDate(todayString());
+    setRating(null);
+    setNotes('');
+    setSaveError('');
+    setIsDuplicate(false);
+  }
+
+  function handleParse() {
+    if (!url.trim()) return;
+    setParseError('');
+    startParsing(async () => {
+      try {
+        const res = await fetch(`/api/parse-restaurant?url=${encodeURIComponent(url.trim())}`);
+        const data = await res.json();
+        if (!res.ok) {
+          setParseError(data.error ?? 'Failed to parse link.');
+          return;
+        }
+        setPoi(data.poi);
+        setStep('preview');
+      } catch {
+        setParseError('Network error. Please try again.');
+      }
+    });
+  }
+
+  function handleSave() {
+    if (!poi || visited === null) return;
+    setSaveError('');
+    setIsDuplicate(false);
+    startSaving(async () => {
+      try {
+        const res = await fetch('/api/save-restaurant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            poiId: poi.id,
+            name: poi.name,
+            address: poi.address,
+            lat: poi.lat,
+            lng: poi.lng,
+            sourceUrl: url.trim(),
+            visited,
+            rating: visited ? rating : undefined,
+            notes: visited && notes.trim() ? notes.trim() : undefined,
+            visitedAt: visited ? visitDate : undefined,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (data.duplicate) {
+            setIsDuplicate(true);
+          } else {
+            setSaveError(data.error ?? 'Failed to save.');
+          }
+          return;
+        }
+        onSaved?.();
+        setStep('done');
+      } catch {
+        setSaveError('Network error. Please try again.');
+      }
+    });
+  }
+
+  if (step === 'done') {
+    return (
+      <div className="flex flex-col items-center gap-4 py-12 text-center">
+        <CheckCircleIcon className="h-12 w-12 text-green-500" />
+        <p className="text-gray-700 font-medium">Saved successfully!</p>
+        <button
+          onClick={reset}
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
+        >
+          Add another
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Step 1: URL input */}
+      <div>
+        <label className="mb-1.5 block text-sm font-medium text-gray-700">
+          Paste an Amap share link
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              if (step === 'preview') {
+                setPoi(null);
+                setStep('input');
+                setVisited(null);
+              }
+            }}
+            placeholder="Paste Amap share link or full share text..."
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+          />
+          <button
+            onClick={handleParse}
+            disabled={isParsing || !url.trim()}
+            className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+          >
+            {isParsing && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
+            Parse
+          </button>
+        </div>
+        {parseError && (
+          <p className="mt-1.5 flex items-center gap-1 text-sm text-red-500">
+            <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
+            {parseError}
+          </p>
+        )}
+      </div>
+
+      {/* Step 2: Preview + form */}
+      {step === 'preview' && poi && (
+        <>
+          {/* Restaurant preview */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <p className="font-semibold text-gray-900">{poi.name}</p>
+            <p className="mt-0.5 text-sm text-gray-500">{poi.address}</p>
+          </div>
+
+          {/* Visited selector */}
+          <div>
+            <p className="mb-2 text-sm font-medium text-gray-700">Have you been there?</p>
+            <div className="flex gap-3">
+              {([true, false] as const).map((v) => (
+                <button
+                  key={String(v)}
+                  type="button"
+                  onClick={() => setVisited(v)}
+                  className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+                    visited === v
+                      ? 'border-blue-600 bg-blue-50 text-blue-600'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  {v ? 'Visited' : 'Not yet'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Visited details */}
+          {visited === true && (
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Date visited
+                </label>
+                <input
+                  type="date"
+                  value={visitDate}
+                  max={todayString()}
+                  onChange={(e) => setVisitDate(e.target.value)}
+                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Rating <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <StarInput value={rating} onChange={setRating} />
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Notes <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Recommended dishes, impressions..."
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Duplicate warning */}
+          {isDuplicate && (
+            <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-700">
+              <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
+              This restaurant is already in your collection.
+            </p>
+          )}
+
+          {/* Save error */}
+          {saveError && (
+            <p className="flex items-center gap-1 text-sm text-red-500">
+              <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
+              {saveError}
+            </p>
+          )}
+
+          {/* Save button */}
+          {visited !== null && (
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+            >
+              {isSaving && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
+              Save
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

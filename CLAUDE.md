@@ -2,6 +2,11 @@
 
 A personal web app for two users to record and pick restaurants together.
 
+## Copyright
+
+New source files must use: `Copyright (C) <current_year> Icarus. All rights reserved.`
+(Overrides the global Viture Inc. default for this personal project.)
+
 ## Tech Stack
 
 - Framework: Next.js 15 (App Router), React, TypeScript

@@ -1,6 +1,7 @@
+// Copyright (C) 2026 Icarus. All rights reserved.
 import type { NextAuthConfig } from 'next-auth';
 
-const protectedPaths = ['/recommend', '/collect', '/dashboard'];
+const protectedPaths = ['/home', '/recommend', '/add', '/map'];
 
 export const authConfig = {
   pages: {
@@ -15,8 +16,10 @@ export const authConfig = {
       if (isProtected) {
         return isLoggedIn;
       }
-      if (isLoggedIn && nextUrl.pathname === '/') {
-        return Response.redirect(new URL('/recommend', nextUrl));
+      if (nextUrl.pathname === '/') {
+        return Response.redirect(
+          new URL(isLoggedIn ? '/recommend' : '/login', nextUrl),
+        );
       }
       return true;
     },

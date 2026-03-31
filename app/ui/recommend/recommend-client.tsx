@@ -1,26 +1,30 @@
-// Copyright (C) 2026 Viture Inc. All rights reserved.
+// Copyright (C) 2026 Icarus. All rights reserved.
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
 import type { RestaurantCard } from '@/app/api/recommend/route';
 import RestaurantCardComponent from './restaurant-card';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { useLocation } from '@/app/ui/location-context';
 
-type Status = 'locating' | 'loading' | 'done' | 'error';
+type Status = 'idle' | 'loading' | 'done' | 'error';
+
+const DISTANCE_OPTIONS = [1, 2, 3, 5, 10];
+const DEFAULT_RADIUS_KM = 3;
 
 export default function RecommendClient() {
-  const [status, setStatus] = useState<Status>('locating');
+  const { location } = useLocation();
+  const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [cards, setCards] = useState<RestaurantCard[]>([]);
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [radiusKm, setRadiusKm] = useState(DEFAULT_RADIUS_KM);
 
-  const fetchRecommendations = useCallback(async (lat: number, lng: number) => {
+  const fetchRecommendations = useCallback(async (lat: number, lng: number, km: number) => {
     setStatus('loading');
     try {
-      const res = await fetch(`/api/recommend?lat=${lat}&lng=${lng}`);
+      const res = await fetch(`/api/recommend?lat=${lat}&lng=${lng}&radius=${km * 1000}`);
       if (!res.ok) throw new Error('Request failed');
-      const data: RestaurantCard[] = await res.json();
-      setCards(data);
+      setCards(await res.json());
       setStatus('done');
     } catch {
       setErrorMsg('Failed to load recommendations.');
@@ -29,58 +33,60 @@ export default function RecommendClient() {
   }, []);
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setErrorMsg('Geolocation is not supported by your browser.');
-      setStatus('error');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude: lat, longitude: lng } = pos.coords;
-        setCoords({ lat, lng });
-        fetchRecommendations(lat, lng);
-      },
-      () => {
-        setErrorMsg('Location permission denied. Please allow location access and refresh.');
-        setStatus('error');
-      },
-    );
-  }, [fetchRecommendations]);
+    if (!location) return;
+    fetchRecommendations(location.lat, location.lng, radiusKm);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
 
   const handleRefresh = () => {
-    if (coords) fetchRecommendations(coords.lat, coords.lng);
+    if (location) fetchRecommendations(location.lat, location.lng, radiusKm);
   };
 
-  if (status === 'locating') {
-    return <StatusMessage>Getting your location...</StatusMessage>;
-  }
+  const handleRadiusChange = (km: number) => {
+    setRadiusKm(km);
+    if (location) fetchRecommendations(location.lat, location.lng, km);
+  };
 
-  if (status === 'loading') {
-    return <StatusMessage>Finding nearby restaurants...</StatusMessage>;
-  }
-
-  if (status === 'error') {
-    return <StatusMessage isError>{errorMsg}</StatusMessage>;
+  if (!location) {
+    return <StatusMessage>Set your location on the Map page first.</StatusMessage>;
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
-          {cards.length === 0
-            ? 'No restaurants found within 3 km.'
-            : `${cards.length} restaurants nearby`}
-        </p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5">
+          {DISTANCE_OPTIONS.map((km) => (
+            <button
+              key={km}
+              onClick={() => handleRadiusChange(km)}
+              disabled={status === 'loading'}
+              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
+                radiusKm === km
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {km} km
+            </button>
+          ))}
+        </div>
         <button
           onClick={handleRefresh}
-          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform"
+          disabled={status === 'loading'}
+          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50"
         >
-          <ArrowPathIcon className="h-4 w-4" />
+          <ArrowPathIcon className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
           Refresh
         </button>
       </div>
 
-      {cards.length === 0 ? null : (
+      {status === 'idle' || status === 'loading' ? (
+        <StatusMessage>Finding nearby restaurants...</StatusMessage>
+      ) : status === 'error' ? (
+        <StatusMessage isError>{errorMsg}</StatusMessage>
+      ) : cards.length === 0 ? (
+        <StatusMessage>No restaurants found within {radiusKm} km.</StatusMessage>
+      ) : (
         <div className="flex flex-col gap-3">
           {cards.map((r) => (
             <RestaurantCardComponent key={r.id} r={r} />
@@ -91,16 +97,8 @@ export default function RecommendClient() {
   );
 }
 
-function StatusMessage({
-  children,
-  isError,
-}: {
-  children: React.ReactNode;
-  isError?: boolean;
-}) {
+function StatusMessage({ children, isError }: { children: React.ReactNode; isError?: boolean }) {
   return (
-    <div className={`text-sm ${isError ? 'text-red-500' : 'text-gray-500'}`}>
-      {children}
-    </div>
+    <div className={`text-sm ${isError ? 'text-red-500' : 'text-gray-500'}`}>{children}</div>
   );
 }
