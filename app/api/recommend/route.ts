@@ -42,18 +42,11 @@ export async function GET(request: Request) {
   const radiusM = parseFloat(searchParams.get('radius') ?? String(DEFAULT_RADIUS_M));
 
   // Fetch all restaurants with their best visit record (highest rating, most recent)
-  const rows = await sql<
-    {
-      id: string;
-      name: string;
-      address: string;
-      lat: string;
-      lng: string;
-      max_rating: string | null;
-      last_visited_at: string | null;
-      notes: string | null;
-    }[]
-  >`
+  type Row = {
+    id: string; name: string; address: string; lat: string; lng: string;
+    max_rating: string | null; last_visited_at: string | null; notes: string | null;
+  };
+  const rows = (await sql`
     SELECT
       r.id,
       r.name,
@@ -72,7 +65,7 @@ export async function GET(request: Request) {
     FROM restaurants r
     LEFT JOIN visits v ON v.restaurant_id = r.id
     GROUP BY r.id, r.name, r.address, r.lat, r.lng
-  `;
+  `) as Row[];
 
   // Annotate with distance and filter by radius
   const nearby = rows

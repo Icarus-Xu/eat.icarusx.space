@@ -28,18 +28,18 @@ export async function POST(request: Request) {
     const { poiId, name, address, lat, lng, sourceUrl, visited, rating, notes, visitedAt } = body;
 
     // Resolve current user id
-    const userRows = await sql<{ id: string }[]>`
+    const userRows = (await sql`
       SELECT id FROM users WHERE email = ${session.user.email} LIMIT 1
-    `;
+    `) as { id: string }[];
     if (!userRows.length) {
       return Response.json({ error: 'User not found' }, { status: 404 });
     }
     const userId = userRows[0].id;
 
     // Check if restaurant already exists
-    const existing = await sql<{ id: string }[]>`
+    const existing = (await sql`
       SELECT id FROM restaurants WHERE amap_poi_id = ${poiId} LIMIT 1
-    `;
+    `) as { id: string }[];
 
     if (!visited) {
       // Unvisited: reject duplicates
@@ -58,11 +58,11 @@ export async function POST(request: Request) {
     if (existing.length > 0) {
       restaurantId = existing[0].id;
     } else {
-      const inserted = await sql<{ id: string }[]>`
+      const inserted = (await sql`
         INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, added_by)
         VALUES (${name}, ${address}, ${lat}, ${lng}, ${poiId}, ${sourceUrl}, ${userId})
         RETURNING id
-      `;
+      `) as { id: string }[];
       restaurantId = inserted[0].id;
     }
 

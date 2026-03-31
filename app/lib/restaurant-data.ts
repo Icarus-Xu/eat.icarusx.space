@@ -16,18 +16,11 @@ export interface RestaurantRow {
 }
 
 export async function fetchAllRestaurants(): Promise<RestaurantRow[]> {
-  const rows = await sql<
-    {
-      id: string;
-      name: string;
-      address: string;
-      lat: string;
-      lng: string;
-      max_rating: string | null;
-      last_visited_at: string | null;
-      notes: string | null;
-    }[]
-  >`
+  type Row = {
+    id: string; name: string; address: string; lat: string; lng: string;
+    max_rating: string | null; last_visited_at: string | null; notes: string | null;
+  };
+  const rows = (await sql`
     SELECT
       r.id,
       r.name,
@@ -47,7 +40,7 @@ export async function fetchAllRestaurants(): Promise<RestaurantRow[]> {
     LEFT JOIN visits v ON v.restaurant_id = r.id
     GROUP BY r.id, r.name, r.address
     ORDER BY r.created_at DESC
-  `;
+  `) as Row[];
 
   return rows.map((row) => ({
     id: row.id,

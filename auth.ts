@@ -18,17 +18,17 @@ export const { auth, signIn, signOut } = NextAuth({
                 const email = `${userId}@local`;
 
                 // Find existing user
-                const existing = await sql<User[]>`
+                const existing = (await sql`
                     SELECT * FROM users WHERE email = ${email} LIMIT 1
-                `;
+                `) as User[];
                 if (existing.length > 0) return existing[0];
 
                 // Create new user on first login
-                const created = await sql<User[]>`
+                const created = (await sql`
                     INSERT INTO users (name, email, password)
                     VALUES (${userId}, ${email}, '')
                     RETURNING *
-                `;
+                `) as User[];
                 return created[0] ?? null;
             },
         }),
