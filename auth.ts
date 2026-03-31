@@ -7,7 +7,7 @@ type User = { id: string; name: string; email: string; password: string };
 
 const sql = neon();
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers: { GET, POST } } = NextAuth({
     ...authConfig,
     providers: [
         Credentials({
