@@ -4,6 +4,7 @@ import type { NextAuthConfig } from 'next-auth';
 const protectedPaths = ['/home', '/recommend', '/add', '/map'];
 
 export const authConfig = {
+  trustHost: true,
   pages: {
     signIn: '/login',
   },
