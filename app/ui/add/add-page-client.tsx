@@ -11,12 +11,12 @@ export default function AddPageClient() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="mb-6 text-xl font-semibold text-gray-800">Add a restaurant</h1>
+        <h1 className="page-heading">Add a restaurant</h1>
         <CollectForm onSaved={() => setRefreshKey((k) => k + 1)} />
       </div>
 
       <div>
-        <h2 className="mb-4 text-base font-semibold text-gray-700">All restaurants</h2>
+        <h2 className="section-heading">All restaurants</h2>
         <RestaurantList refreshKey={refreshKey} />
       </div>
     </div>

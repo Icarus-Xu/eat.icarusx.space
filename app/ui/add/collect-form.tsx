@@ -107,7 +107,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         <p className="text-gray-700 font-medium">Saved successfully!</p>
         <button
           onClick={reset}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500"
+          className="btn-primary"
         >
           Add another
         </button>
@@ -119,7 +119,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
     <div className="flex flex-col gap-6">
       {/* Step 1: URL input */}
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">
+        <label className="form-label">
           Paste an Amap share link
         </label>
         <div className="flex gap-2">
@@ -135,12 +135,12 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
               }
             }}
             placeholder="Paste Amap share link or full share text..."
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+            className="form-input flex-1"
           />
           <button
             onClick={handleParse}
             disabled={isParsing || !url.trim()}
-            className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+            className="btn-primary flex items-center gap-1.5"
           >
             {isParsing && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
             Parse
@@ -158,7 +158,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
       {step === 'preview' && poi && (
         <>
           {/* Restaurant preview */}
-          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <div className="card bg-gray-50">
             <p className="font-semibold text-gray-900">{poi.name}</p>
             <p className="mt-0.5 text-sm text-gray-500">{poi.address}</p>
           </div>
@@ -188,7 +188,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
           {visited === true && (
             <div className="flex flex-col gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label className="form-label">
                   Date visited
                 </label>
                 <input
@@ -196,19 +196,19 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                   value={visitDate}
                   max={todayString()}
                   onChange={(e) => setVisitDate(e.target.value)}
-                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                  className="form-input"
                 />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label className="form-label">
                   Rating <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
                 <StarInput value={rating} onChange={setRating} />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                <label className="form-label">
                   Notes <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
                 <textarea
@@ -216,7 +216,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
                   placeholder="Recommended dishes, impressions..."
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none resize-none"
+                  className="form-input w-full resize-none"
                 />
               </div>
             </div>
@@ -243,7 +243,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
+              className="btn-primary flex items-center justify-center gap-1.5 py-2.5"
             >
               {isSaving && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
               Save

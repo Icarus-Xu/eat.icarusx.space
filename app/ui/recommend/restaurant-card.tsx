@@ -29,7 +29,7 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
   const notePreview = r.notes ? r.notes.slice(0, 20) + (r.notes.length > 20 ? '...' : '') : null;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm flex flex-col gap-2">
+    <div className="card p-5 shadow-sm flex flex-col gap-2">
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-base font-semibold text-gray-900 leading-snug">{r.name}</h2>
         <span className="shrink-0 text-sm text-gray-400">{formatDistance(r.distanceM)}</span>

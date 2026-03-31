@@ -68,7 +68,7 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
           {restaurants.map((r) => (
             <div
               key={r.id}
-              className="rounded-xl border border-gray-200 bg-white p-4 flex flex-col gap-1.5"
+              className="card flex flex-col gap-1.5"
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="font-medium text-gray-900 text-sm leading-snug">{r.name}</span>
@@ -77,13 +77,9 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
                     <span className="text-xs text-gray-400">{formatDistance(r.distanceM)}</span>
                   )}
                   {r.visited ? (
-                    <span className="text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
-                      Visited
-                    </span>
+                    <span className="badge-visited">Visited</span>
                   ) : (
-                    <span className="text-xs font-medium text-blue-500 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5">
-                      Not yet
-                    </span>
+                    <span className="badge-unvisited">Not yet</span>
                   )}
                 </div>
               </div>
