@@ -1,5 +1,8 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
+import type { Metadata } from 'next';
 import AppLogo from '@/app/ui/app-logo';
+
+export const metadata: Metadata = { title: 'Login' };
 import LoginForm from '@/app/ui/login-form';
 import { Suspense } from 'react';
 

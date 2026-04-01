@@ -1,5 +1,17 @@
 import '@/app/ui/global.css';
 import { inter } from '@/app/ui/fonts';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | What to Eat',
+    default: 'What to Eat',
+  },
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
+};
 
 export default function RootLayout({
   children,
