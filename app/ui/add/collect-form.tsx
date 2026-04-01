@@ -104,7 +104,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <CheckCircleIcon className="h-12 w-12 text-green-500" />
-        <p className="text-gray-700 font-medium">Saved successfully!</p>
+        <p className="text-gray-700 font-medium dark:text-gray-200">Saved successfully!</p>
         <button
           onClick={reset}
           className="btn-primary"
@@ -158,14 +158,14 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
       {step === 'preview' && poi && (
         <>
           {/* Restaurant preview */}
-          <div className="card bg-gray-50">
-            <p className="font-semibold text-gray-900">{poi.name}</p>
-            <p className="mt-0.5 text-sm text-gray-500">{poi.address}</p>
+          <div className="card bg-gray-50 dark:bg-gray-700">
+            <p className="font-semibold text-gray-900 dark:text-gray-100">{poi.name}</p>
+            <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{poi.address}</p>
           </div>
 
           {/* Visited selector */}
           <div>
-            <p className="mb-2 text-sm font-medium text-gray-700">Have you been there?</p>
+            <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Have you been there?</p>
             <div className="flex gap-3">
               {([true, false] as const).map((v) => (
                 <button
@@ -174,8 +174,8 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                   onClick={() => setVisited(v)}
                   className={`btn-toggle ${
                     visited === v
-                      ? 'border-blue-600 bg-blue-50 text-blue-600'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      ? 'border-blue-600 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   {v ? 'Visited' : 'Not yet'}
@@ -202,14 +202,14 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
               <div>
                 <label className="form-label">
-                  Rating <span className="text-gray-400 font-normal">(optional)</span>
+                  Rating <span className="text-gray-400 font-normal dark:text-gray-500">(optional)</span>
                 </label>
                 <StarInput value={rating} onChange={setRating} />
               </div>
 
               <div>
                 <label className="form-label">
-                  Notes <span className="text-gray-400 font-normal">(optional)</span>
+                  Notes <span className="text-gray-400 font-normal dark:text-gray-500">(optional)</span>
                 </label>
                 <textarea
                   value={notes}
@@ -224,7 +224,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
           {/* Duplicate warning */}
           {isDuplicate && (
-            <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-700">
+            <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-700 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">
               <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
               This restaurant is already in your collection.
             </p>

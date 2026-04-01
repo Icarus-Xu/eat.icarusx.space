@@ -17,7 +17,7 @@ export default function StarInput({ value, onChange }: StarInputProps) {
           className="text-2xl leading-none transition-transform active:scale-90"
           aria-label={`${star} star${star > 1 ? 's' : ''}`}
         >
-          <span className={star <= (value ?? 0) ? 'text-yellow-400' : 'text-gray-300'}>
+          <span className={star <= (value ?? 0) ? 'text-yellow-400 dark:text-yellow-300' : 'text-gray-300 dark:text-gray-600'}>
             ★
           </span>
         </button>

@@ -57,12 +57,12 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
     );
   }, [location, restaurants.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (loading) return <p className="text-sm text-gray-400">Loading...</p>;
+  if (loading) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading...</p>;
 
   return (
     <div className="flex flex-col gap-4">
       {restaurants.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-6">No restaurants added yet.</p>
+        <p className="text-sm text-gray-400 text-center py-6 dark:text-gray-500">No restaurants added yet.</p>
       ) : (
         <div className="flex flex-col gap-2">
           {restaurants.map((r) => (
@@ -71,10 +71,10 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
               className="card flex flex-col gap-1.5"
             >
               <div className="flex items-start justify-between gap-2">
-                <span className="font-medium text-gray-900 text-sm leading-snug">{r.name}</span>
+                <span className="font-medium text-gray-900 text-sm leading-snug dark:text-gray-100">{r.name}</span>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {r.distanceM !== null && (
-                    <span className="text-xs text-gray-400">{formatDistance(r.distanceM)}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">{formatDistance(r.distanceM)}</span>
                   )}
                   {r.visited ? (
                     <span className="badge-visited">Visited</span>
@@ -88,18 +88,18 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
                 <div className="flex items-center gap-2">
                   <StarRating rating={r.maxRating} />
                   {r.lastVisitedAt && (
-                    <span className="text-xs text-gray-400">{formatDate(r.lastVisitedAt)}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(r.lastVisitedAt)}</span>
                   )}
                 </div>
               )}
 
               {r.notes && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {r.notes.slice(0, 20)}{r.notes.length > 20 ? '...' : ''}
                 </p>
               )}
 
-              <p className="text-xs text-gray-400 truncate">{r.address}</p>
+              <p className="text-xs text-gray-400 truncate dark:text-gray-500">{r.address}</p>
             </div>
           ))}
         </div>

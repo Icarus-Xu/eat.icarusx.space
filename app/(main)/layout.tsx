@@ -16,11 +16,11 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
 
         {/* Mobile: top header */}
-        <header className="flex flex-none items-center justify-between border-b bg-white px-4 py-2 md:hidden">
+        <header className="flex flex-none items-center justify-between border-b bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-900 md:hidden">
           <Link href="/home">
             <AppLogo small />
           </Link>
-          <span className="text-sm font-bold text-gray-700">{userName}</span>
+          <span className="text-sm font-bold text-gray-700 dark:text-gray-200">{userName}</span>
           <SignOutButton action={async () => {
             'use server';
             await signOut({ redirectTo: '/login' });
@@ -38,7 +38,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         </div>
 
         {/* Mobile: bottom tab bar */}
-        <nav className="fixed bottom-0 left-0 right-0 flex border-t bg-white md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 flex border-t bg-white dark:border-gray-700 dark:bg-gray-900 md:hidden">
           <NavLinks variant="bottom" />
         </nav>
 

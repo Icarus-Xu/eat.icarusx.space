@@ -31,15 +31,15 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
   return (
     <div className="card p-5 shadow-sm flex flex-col gap-2">
       <div className="flex items-start justify-between gap-2">
-        <h2 className="text-base font-semibold text-gray-900 leading-snug">{r.name}</h2>
-        <span className="shrink-0 text-sm text-gray-400">{formatDistance(r.distanceM)}</span>
+        <h2 className="text-base font-semibold text-gray-900 leading-snug dark:text-gray-100">{r.name}</h2>
+        <span className="shrink-0 text-sm text-gray-400 dark:text-gray-500">{formatDistance(r.distanceM)}</span>
       </div>
 
       {r.visited && (
         <div className="flex items-center gap-2">
           <StarRating rating={r.rating} />
           {r.lastVisitedAt && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               Last visited {formatDate(r.lastVisitedAt)}
             </span>
           )}
@@ -47,14 +47,14 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
       )}
 
       {!r.visited && (
-        <span className="text-xs text-blue-500 font-medium">Not visited yet</span>
+        <span className="text-xs text-blue-500 font-medium dark:text-blue-400">Not visited yet</span>
       )}
 
       {notePreview && (
-        <p className="text-sm text-gray-500">{notePreview}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{notePreview}</p>
       )}
 
-      <p className="text-xs text-gray-400 truncate">{r.address}</p>
+      <p className="text-xs text-gray-400 truncate dark:text-gray-500">{r.address}</p>
     </div>
   );
 }
