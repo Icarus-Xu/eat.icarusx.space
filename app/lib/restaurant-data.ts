@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
-import { neon } from '@netlify/neon';
+import postgres from 'postgres';
 
-const sql = neon();
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export interface RestaurantRow {
   id: string;

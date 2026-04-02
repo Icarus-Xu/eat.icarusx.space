@@ -2,10 +2,10 @@
 import NextAuth from 'next-auth';
 import { authConfig } from './auth.config';
 import Credentials from 'next-auth/providers/credentials';
-import { neon } from '@netlify/neon';
+import postgres from 'postgres';
 type User = { id: string; name: string; email: string; password: string };
 
-const sql = neon();
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export const { auth, signIn, signOut, handlers: { GET, POST } } = NextAuth({
     ...authConfig,

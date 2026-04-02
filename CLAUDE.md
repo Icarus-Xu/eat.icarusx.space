@@ -9,18 +9,18 @@ New source files must use: `Copyright (C) <current_year> Icarus. All rights rese
 
 ## Tech Stack
 
-- Framework: Next.js 15 (App Router), React, TypeScript
-- Database: PostgreSQL via Neon serverless, raw SQL using `@netlify/neon` library
+- Framework: Next.js 16 (App Router), React, TypeScript
+- Database: PostgreSQL via Neon serverless, raw SQL using `postgres` library
 - Auth: NextAuth.js v5 beta (5.0.0-beta.30), Credentials provider
 - Styling: Tailwind CSS, Heroicons
 - Validation: Zod
 - Package manager: pnpm
-- Deployment: Netlify (automatic deploy on push to main)
+- Deployment: Vercel (automatic deploy on push to main)
 
 ## Environment Variables
 
 ```
-NETLIFY_DATABASE_URL           Neon PostgreSQL connection string (via @netlify/neon)
+POSTGRES_URL                   Neon PostgreSQL connection string (via postgres library)
 AUTH_SECRET                    NextAuth secret
 AUTH_URL                       Full URL of the deployment (e.g. https://eat.icarusx.space)
 AMAP_WEB_SERVICE_KEY           Amap Web Service API key (server-side)
@@ -126,5 +126,4 @@ Supported URL formats for parsing:
 
 - Login: user enters an ID; system creates or retrieves user by `${id}@local` email
 - Auto-login: saved userId in localStorage, cleared on sign-out via SignOutButton
-- `trustHost: true` required in auth.config.ts for Netlify deployment
 - `AUTH_URL` must be set to the canonical deployment URL for NextAuth callbacks

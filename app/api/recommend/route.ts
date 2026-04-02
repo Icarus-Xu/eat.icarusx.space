@@ -1,9 +1,9 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import { auth } from '@/auth';
-import { neon } from '@netlify/neon';
+import postgres from 'postgres';
 import { haversineDistance } from '@/app/lib/amap';
 
-const sql = neon();
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 const DEFAULT_RADIUS_M = 3000;
 
 export interface RestaurantCard {

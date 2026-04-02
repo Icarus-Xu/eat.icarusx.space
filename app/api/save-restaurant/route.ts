@@ -1,8 +1,8 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import { auth } from '@/auth';
-import { neon } from '@netlify/neon';
+import postgres from 'postgres';
 
-const sql = neon();
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 interface CollectBody {
   poiId: string;
