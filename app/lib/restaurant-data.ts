@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import postgres from 'postgres';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 
 export interface RestaurantRow {
   id: string;

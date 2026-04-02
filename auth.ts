@@ -5,7 +5,7 @@ import Credentials from 'next-auth/providers/credentials';
 import postgres from 'postgres';
 type User = { id: string; name: string; email: string; password: string };
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 
 export const { auth, signIn, signOut, handlers: { GET, POST } } = NextAuth({
     ...authConfig,

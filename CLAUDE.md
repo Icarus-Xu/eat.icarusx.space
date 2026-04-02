@@ -20,7 +20,7 @@ New source files must use: `Copyright (C) <current_year> Icarus. All rights rese
 ## Environment Variables
 
 ```
-POSTGRES_URL                   Neon PostgreSQL connection string (via postgres library)
+DATABASE_URL                   Neon PostgreSQL connection string (via postgres library)
 AUTH_SECRET                    NextAuth secret
 AUTH_URL                       Full URL of the deployment (e.g. https://eat.icarusx.space)
 AMAP_WEB_SERVICE_KEY           Amap Web Service API key (server-side)

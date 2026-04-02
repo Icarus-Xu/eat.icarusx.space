@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import postgres from 'postgres';
 import { haversineDistance } from '@/app/lib/amap';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 const DEFAULT_RADIUS_M = 3000;
 
 export interface RestaurantCard {
