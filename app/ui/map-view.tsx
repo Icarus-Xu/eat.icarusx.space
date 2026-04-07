@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { wgs84ToGcj02 } from '@/app/lib/coords';
 
 declare global {
   interface Window {
@@ -34,11 +35,12 @@ export default function MapView({ lat, lng }: Props) {
     script.src = `https://webapi.amap.com/maps?v=2.0&key=${process.env.NEXT_PUBLIC_AMAP_JS_KEY}`;
     script.onload = () => {
       if (!containerRef.current) return;
+      const gcj = wgs84ToGcj02(lat, lng);
       mapRef.current = new window.AMap.Map(containerRef.current, {
-        center: [lng, lat],
+        center: [gcj.lng, gcj.lat],
         zoom: 15,
       });
-      new window.AMap.Marker({ position: [lng, lat], map: mapRef.current });
+      new window.AMap.Marker({ position: [gcj.lng, gcj.lat], map: mapRef.current });
     };
     document.head.appendChild(script);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,7 +49,8 @@ export default function MapView({ lat, lng }: Props) {
   // Update map center and marker when coords change
   useEffect(() => {
     if (!mapRef.current) return;
-    const center = [lng, lat];
+    const gcj = wgs84ToGcj02(lat, lng);
+    const center = [gcj.lng, gcj.lat];
     mapRef.current.setCenter(center);
     mapRef.current.clearMap();
     new window.AMap.Marker({ position: center, map: mapRef.current });

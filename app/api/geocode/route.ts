@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import { auth } from '@/auth';
 import { geocodeAddress } from '@/app/lib/amap';
+import { gcj02ToWgs84 } from '@/app/lib/coords';
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -13,5 +14,7 @@ export async function GET(request: Request) {
   const coords = await geocodeAddress(address);
   if (!coords) return Response.json({ error: 'Address not found.' }, { status: 422 });
 
-  return Response.json(coords);
+  // Amap returns GCJ-02 coordinates; normalize to WGS-84 for consistent storage
+  const wgs84 = gcj02ToWgs84(coords.lat, coords.lng);
+  return Response.json(wgs84);
 }

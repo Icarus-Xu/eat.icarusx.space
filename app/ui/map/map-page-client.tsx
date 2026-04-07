@@ -2,15 +2,19 @@
 'use client';
 
 import { useLocation } from '@/app/ui/location-context';
+import { useMapProvider } from '@/app/ui/map-provider-context';
 import LocationInput from '@/app/ui/location-input';
 import MapView from '@/app/ui/map-view';
+import BaiduMapView from '@/app/ui/baidu-map-view';
 
 export default function MapPageClient() {
   const { location, setLocation } = useLocation();
+  const { provider } = useMapProvider();
+  const effectiveProvider = provider ?? 'amap';
 
   const handleCoords = async ({ lat, lng }: { lat: number; lng: number }) => {
     try {
-      const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`);
+      const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}&provider=${effectiveProvider}`);
       const data = await res.json();
       setLocation({ lat, lng, address: data.address ?? `${lat.toFixed(4)}, ${lng.toFixed(4)}` });
     } catch {
@@ -27,7 +31,11 @@ export default function MapPageClient() {
       />
       <div className="relative flex-1 overflow-hidden rounded-xl border border-gray-200">
         {location ? (
-          <MapView lat={location.lat} lng={location.lng} />
+          effectiveProvider === 'baidu' ? (
+            <BaiduMapView key="baidu" lat={location.lat} lng={location.lng} />
+          ) : (
+            <MapView key="amap" lat={location.lat} lng={location.lng} />
+          )
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
             Waiting for location...
