@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RestaurantRow } from '@/app/lib/restaurant-data';
 import { haversineDistance } from '@/app/lib/amap';
 import { useLocation } from '@/app/ui/location-context';
@@ -77,26 +77,37 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
   const [restaurants, setRestaurants] = useState<RestaurantWithDistance[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Always holds the latest location without being a stale closure in the fetch callback
+  const locationRef = useRef(location);
+  locationRef.current = location;
+
   useEffect(() => {
     setLoading(true);
     fetch('/api/restaurants')
       .then((r) => r.json())
-      .then((data: RestaurantRow[]) =>
-        setRestaurants(data.map((r) => ({ ...r, distanceM: null }))),
-      )
+      .then((data: RestaurantRow[]) => {
+        const loc = locationRef.current;
+        setRestaurants(
+          data.map((r) => ({
+            ...r,
+            distanceM: loc ? haversineDistance(loc.lat, loc.lng, r.lat, r.lng) : null,
+          })),
+        );
+      })
       .catch(() => setRestaurants([]))
       .finally(() => setLoading(false));
-  }, [refreshKey]);
+  }, [refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Recalculate distances when location changes after restaurants are loaded
   useEffect(() => {
-    if (!location || restaurants.length === 0) return;
+    if (!location) return;
     setRestaurants((prev) =>
       prev.map((r) => ({
         ...r,
         distanceM: haversineDistance(location.lat, location.lng, r.lat, r.lng),
       })),
     );
-  }, [location, restaurants.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [location]);
 
   if (loading) return <p className="text-sm text-gray-400 dark:text-gray-500">{t.listLoading}</p>;
 
