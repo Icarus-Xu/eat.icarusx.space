@@ -3,14 +3,14 @@
 
 import { PowerIcon } from '@heroicons/react/24/outline';
 
-const STORAGE_KEY = 'user_id';
+const KEYS_TO_CLEAR = ['user_id', 'mapProvider'];
 
 export default function SignOutButton({ action }: { action: () => Promise<void> }) {
   return (
     <form action={action}>
       <button
         className="icon-btn"
-        onClick={() => localStorage.removeItem(STORAGE_KEY)}
+        onClick={() => KEYS_TO_CLEAR.forEach((k) => localStorage.removeItem(k))}
       >
         <PowerIcon className="w-5" />
       </button>

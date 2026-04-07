@@ -40,6 +40,12 @@ export async function GET() {
       )
     `;
 
+    await sql`
+      ALTER TABLE restaurants
+        ADD COLUMN IF NOT EXISTS baidu_poi_id VARCHAR(64),
+        ADD COLUMN IF NOT EXISTS baidu_source_url TEXT
+    `;
+
     return Response.json({ message: 'Migration completed.' });
   } catch (error) {
     return Response.json({ error: String(error) }, { status: 500 });

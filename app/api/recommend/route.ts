@@ -17,6 +17,8 @@ export interface RestaurantCard {
   rating: number | null;
   notes: string | null;
   lastVisitedAt: string | null;
+  amapPoiId: string;
+  baiduPoiId: string | null;
 }
 
 function pickRandom<T>(arr: T[], n: number): T[] {
@@ -44,6 +46,7 @@ export async function GET(request: Request) {
   // Fetch all restaurants with their best visit record (highest rating, most recent)
   type Row = {
     id: string; name: string; address: string; lat: string; lng: string;
+    amap_poi_id: string; baidu_poi_id: string | null;
     max_rating: string | null; last_visited_at: string | null; notes: string | null;
   };
   const rows = (await sql`
@@ -53,6 +56,8 @@ export async function GET(request: Request) {
       r.address,
       r.lat,
       r.lng,
+      r.amap_poi_id,
+      r.baidu_poi_id,
       MAX(v.rating)::text AS max_rating,
       MAX(v.visited_at)::text AS last_visited_at,
       (
@@ -64,7 +69,7 @@ export async function GET(request: Request) {
       ) AS notes
     FROM restaurants r
     LEFT JOIN visits v ON v.restaurant_id = r.id
-    GROUP BY r.id, r.name, r.address, r.lat, r.lng
+    GROUP BY r.id, r.name, r.address, r.lat, r.lng, r.amap_poi_id, r.baidu_poi_id
   `) as Row[];
 
   // Annotate with distance and filter by radius
@@ -85,6 +90,8 @@ export async function GET(request: Request) {
         rating,
         notes: row.notes ?? null,
         lastVisitedAt: row.last_visited_at ?? null,
+        amapPoiId: row.amap_poi_id,
+        baiduPoiId: row.baidu_poi_id ?? null,
       } as RestaurantCard;
     })
     .filter((r) => r.distanceM <= radiusM);

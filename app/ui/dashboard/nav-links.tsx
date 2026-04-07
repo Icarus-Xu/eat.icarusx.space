@@ -6,6 +6,7 @@ import {
   SparklesIcon,
   PlusCircleIcon,
   MapPinIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -16,6 +17,7 @@ const links = [
   { name: 'Home', href: '/home', icon: HomeIcon },
   { name: 'Recommend', href: '/recommend', icon: SparklesIcon },
   { name: 'Add', href: '/add', icon: PlusCircleIcon },
+  { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];
 
 export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' | 'bottom' }) {

@@ -1,5 +1,8 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
+'use client';
+
 import type { RestaurantCard } from '@/app/api/recommend/route';
+import { useMapProvider } from '@/app/ui/map-provider-context';
 
 function formatDistance(m: number): string {
   if (m < 1000) return `${Math.round(m)} m`;
@@ -26,12 +29,20 @@ function StarRating({ rating }: { rating: number | null }) {
 }
 
 export default function RestaurantCard({ r }: { r: RestaurantCard }) {
+  const { provider } = useMapProvider();
   const notePreview = r.notes ? r.notes.slice(0, 20) + (r.notes.length > 20 ? '...' : '') : null;
 
-  return (
-    <div className="card p-5 shadow-sm flex flex-col gap-2">
+  const effectiveProvider = provider ?? 'amap';
+  const poiId = effectiveProvider === 'baidu' ? r.baiduPoiId : r.amapPoiId;
+  const href = effectiveProvider === 'baidu'
+    ? `https://map.baidu.com/?uid=${r.baiduPoiId}`
+    : `https://ditu.amap.com/place/${r.amapPoiId}`;
+  const clickable = poiId !== null;
+
+  const content = (
+    <>
       <div className="flex items-start justify-between gap-2">
-        <h2 className="text-base font-semibold text-gray-900 leading-snug dark:text-gray-100">{r.name}</h2>
+        <h2 className="text-base font-semibold leading-snug text-gray-900 dark:text-gray-100">{r.name}</h2>
         <span className="shrink-0 text-sm text-gray-400 dark:text-gray-500">{formatDistance(r.distanceM)}</span>
       </div>
 
@@ -47,14 +58,33 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
       )}
 
       {!r.visited && (
-        <span className="text-xs text-blue-500 font-medium dark:text-blue-400">Not visited yet</span>
+        <span className="text-xs font-medium text-blue-500 dark:text-blue-400">Not visited yet</span>
       )}
 
       {notePreview && (
         <p className="text-sm text-gray-500 dark:text-gray-400">{notePreview}</p>
       )}
 
-      <p className="text-xs text-gray-400 truncate dark:text-gray-500">{r.address}</p>
+      <p className="truncate text-xs text-gray-400 dark:text-gray-500">{r.address}</p>
+    </>
+  );
+
+  if (clickable) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="card flex flex-col gap-2 p-5 shadow-sm hover:border-blue-400 dark:hover:border-blue-500"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <div className="card flex flex-col gap-2 p-5 shadow-sm opacity-60">
+      {content}
     </div>
   );
 }

@@ -10,6 +10,7 @@ export interface RestaurantRow {
   lat: number;
   lng: number;
   amapPoiId: string;
+  baiduPoiId: string | null;
   visited: boolean;
   maxRating: number | null;
   lastVisitedAt: string | null;
@@ -19,7 +20,7 @@ export interface RestaurantRow {
 export async function fetchAllRestaurants(): Promise<RestaurantRow[]> {
   type Row = {
     id: string; name: string; address: string; lat: string; lng: string;
-    amap_poi_id: string;
+    amap_poi_id: string; baidu_poi_id: string | null;
     max_rating: string | null; last_visited_at: string | null; notes: string | null;
   };
   const rows = (await sql`
@@ -30,6 +31,7 @@ export async function fetchAllRestaurants(): Promise<RestaurantRow[]> {
       r.lat::text,
       r.lng::text,
       r.amap_poi_id,
+      r.baidu_poi_id,
       MAX(v.rating)::text        AS max_rating,
       MAX(v.visited_at)::text    AS last_visited_at,
       (
@@ -52,6 +54,7 @@ export async function fetchAllRestaurants(): Promise<RestaurantRow[]> {
     lat: parseFloat(row.lat),
     lng: parseFloat(row.lng),
     amapPoiId: row.amap_poi_id,
+    baiduPoiId: row.baidu_poi_id ?? null,
     visited: row.last_visited_at !== null,
     maxRating: row.max_rating !== null ? parseFloat(row.max_rating) : null,
     lastVisitedAt: row.last_visited_at ?? null,

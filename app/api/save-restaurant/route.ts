@@ -5,7 +5,8 @@ import postgres from 'postgres';
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 
 interface CollectBody {
-  poiId: string;
+  amapPoiId: string;
+  baiduPoiId?: string | null;
   name: string;
   address: string;
   lat: number;
@@ -24,8 +25,10 @@ export async function POST(request: Request) {
     }
 
     const body: CollectBody = await request.json();
-    const { poiId, name, address, lat, lng, visited, rating, notes, visitedAt } = body;
-    const sourceUrl = `https://ditu.amap.com/place/${poiId}`;
+    const { amapPoiId, baiduPoiId, name, address, lat, lng, visited, rating, notes, visitedAt } = body;
+
+    const sourceUrl = `https://ditu.amap.com/place/${amapPoiId}`;
+    const baiduSourceUrl = baiduPoiId ? `https://map.baidu.com/?uid=${baiduPoiId}` : null;
 
     // Resolve current user id
     const userRows = (await sql`
@@ -38,17 +41,16 @@ export async function POST(request: Request) {
 
     // Check if restaurant already exists
     const existing = (await sql`
-      SELECT id FROM restaurants WHERE amap_poi_id = ${poiId} LIMIT 1
+      SELECT id FROM restaurants WHERE amap_poi_id = ${amapPoiId} LIMIT 1
     `) as { id: string }[];
 
     if (!visited) {
-      // Unvisited: reject duplicates
       if (existing.length > 0) {
         return Response.json({ duplicate: true, error: 'This restaurant is already in your collection.' }, { status: 409 });
       }
       await sql`
-        INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, added_by)
-        VALUES (${name}, ${address}, ${lat}, ${lng}, ${poiId}, ${sourceUrl}, ${userId})
+        INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
+        VALUES (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
       `;
       return Response.json({ success: true });
     }
@@ -59,8 +61,8 @@ export async function POST(request: Request) {
       restaurantId = existing[0].id;
     } else {
       const inserted = (await sql`
-        INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, added_by)
-        VALUES (${name}, ${address}, ${lat}, ${lng}, ${poiId}, ${sourceUrl}, ${userId})
+        INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
+        VALUES (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
         RETURNING id
       `) as { id: string }[];
       restaurantId = inserted[0].id;

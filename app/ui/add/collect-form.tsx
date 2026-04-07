@@ -132,7 +132,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            poiId: poi.id,
+            amapPoiId: poi.id,
             name: poi.name,
             address: poi.address,
             lat: poi.lat,
