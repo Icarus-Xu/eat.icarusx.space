@@ -8,6 +8,8 @@ import { LocationProvider } from '@/app/ui/location-context';
 import { MapProviderContextProvider } from '@/app/ui/map-provider-context';
 import MapProviderModal from '@/app/ui/map-provider-modal';
 import { LangProvider } from '@/app/ui/lang-context';
+import PageLogger from '@/app/ui/page-logger';
+import ErrorInterceptor from '@/app/ui/error-interceptor';
 import { auth, signOut } from '@/auth';
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +21,8 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     <LocationProvider>
       <MapProviderContextProvider>
         <MapProviderModal />
+        <PageLogger />
+        <ErrorInterceptor />
         <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
 
           {/* Mobile: top header */}

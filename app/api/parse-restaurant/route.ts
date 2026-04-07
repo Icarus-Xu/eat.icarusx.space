@@ -3,12 +3,14 @@ import { auth } from '@/auth';
 import { parseAmapUrl } from '@/app/lib/amap';
 import { parseBaiduShortLink } from '@/app/lib/baidu';
 import type { AmapPoi } from '@/app/lib/amap';
+import { logApiRequest } from '@/app/lib/log';
 
 function isBaiduUrl(url: string): boolean {
   return url.includes('map.baidu.com') || url.includes('j.map.baidu.com');
 }
 
 export async function GET(request: Request) {
+  return logApiRequest('/api/parse-restaurant', request, async () => {
   const session = await auth();
   if (!session) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -52,4 +54,5 @@ export async function GET(request: Request) {
     return Response.json({ error: 'Could not parse restaurant from this link. Please use an Amap or Baidu Maps share link.' }, { status: 422 });
   }
   return Response.json({ poi, provider: 'amap' });
+  }); // logApiRequest
 }

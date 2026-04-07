@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import type { NextAuthConfig } from 'next-auth';
 
-const protectedPaths = ['/home', '/recommend', '/add', '/map', '/settings'];
+const protectedPaths = ['/home', '/recommend', '/add', '/map', '/settings', '/log'];
 
 export const authConfig = {
   trustHost: true,

@@ -46,6 +46,26 @@ export async function GET() {
         ADD COLUMN IF NOT EXISTS baidu_source_url TEXT
     `;
 
+    await sql`
+      CREATE TABLE IF NOT EXISTS logs (
+        id BIGSERIAL PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        type TEXT NOT NULL,
+        user_id TEXT,
+        method TEXT,
+        path TEXT NOT NULL,
+        status_code INTEGER,
+        duration_ms INTEGER,
+        error_message TEXT,
+        user_agent TEXT,
+        ip TEXT
+      )
+    `;
+
+    await sql`
+      CREATE INDEX IF NOT EXISTS logs_created_at_idx ON logs (created_at DESC)
+    `;
+
     return Response.json({ message: 'Migration completed.' });
   } catch (error) {
     return Response.json({ error: String(error) }, { status: 500 });

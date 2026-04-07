@@ -2,8 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchPoiByName as searchAmap } from '@/app/lib/amap';
 import { searchPoiByName as searchBaidu } from '@/app/lib/baidu';
+import { logApiRequest } from '@/app/lib/log';
 
 export async function GET(req: NextRequest) {
+  return logApiRequest('/api/search-restaurant', req, async () => {
   const { searchParams } = req.nextUrl;
   const q = searchParams.get('q')?.trim();
   const lat = searchParams.get('lat');
@@ -23,4 +25,5 @@ export async function GET(req: NextRequest) {
   const location = lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : undefined;
   const pois = await searchAmap(q, location);
   return NextResponse.json({ pois });
+  }); // logApiRequest
 }

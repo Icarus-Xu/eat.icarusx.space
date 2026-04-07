@@ -40,7 +40,13 @@ users          (id, name, email, password)
 restaurants    (id, name, address, lat, lng, amap_poi_id, source_url,
                 baidu_poi_id, baidu_source_url, added_by, created_at)
 visits         (id, restaurant_id, user_id, rating 0-5, notes, visited_at, created_at)
+logs           (id BIGSERIAL, created_at TIMESTAMPTZ, type, user_id, method,
+                path, status_code, duration_ms, error_message, user_agent, ip)
 ```
+
+`logs.type` values: `api` (server-side API requests), `page` (client navigation),
+`client_error` (fetch failures or geolocation errors reported from browser).
+Logs older than 7 days are deleted on each `/log` page load.
 
 Two users share the same restaurant pool. Each user has their own visit records.
 A restaurant is considered "visited" if any user has a visit record for it.
@@ -57,18 +63,20 @@ Both `amap_poi_id` and `baidu_poi_id` are optional; at least one must be present
 /add                 Add restaurant page (search by name or paste share link)
 /map                 Map view page (Amap or Baidu JS SDK based on provider)
 /settings            Settings page (map provider + language selection)
+/log                 Access log viewer (no nav button; visit directly; auth required)
 /api/recommend            GET ?lat=&lng=&radius= -- returns up to 3 restaurant cards
-/api/restaurants          GET/POST/DELETE -- restaurants CRUD
+/api/restaurants          GET -- restaurants list
 /api/save-restaurant      POST -- upsert restaurant + optional visit record
-/api/parse-restaurant     POST -- parse Amap or Baidu share link to POI info
+/api/parse-restaurant     GET ?url= -- parse Amap or Baidu share link to POI info
 /api/search-restaurant    GET ?q=&lat=&lng=&provider= -- search by name (Amap or Baidu)
 /api/geocode              GET ?address= -- address to WGS-84 coordinates (normalised from GCJ-02)
 /api/reverse-geocode      GET ?lat=&lng=&provider= -- coordinates to address
 /api/cross-search         POST -- find same POI on the other map provider
+/api/client-log           POST -- receive client-side log events (no auth required)
 /migrate                  GET -- creates/alters tables (run once)
 ```
 
-All routes under /home, /recommend, /add, /map, /settings require authentication.
+All routes under /home, /recommend, /add, /map, /settings, /log require authentication.
 
 ## Recommendation Logic (`/api/recommend`)
 
@@ -93,6 +101,7 @@ app/(main)/recommend/page.tsx          Recommendation page (server)
 app/(main)/add/page.tsx                Add restaurant page
 app/(main)/map/page.tsx                Map view page
 app/(main)/settings/page.tsx           Settings: map provider, language, theme toggle
+app/(main)/log/page.tsx                Access log viewer (server); cleans up old logs on load
 
 app/ui/dashboard/sidenav.tsx           Desktop sidebar with nav + sign-out
 app/ui/dashboard/nav-links.tsx         Nav links (sidebar + bottom tab bar); uses useT()
@@ -119,6 +128,11 @@ app/ui/theme-context.tsx               Theme context (auto | light | dark); loca
                                        auto follows matchMedia when no saved preference;
                                        auto listens for system changes via matchMedia event
 app/ui/login-form.tsx                  Login form with localStorage auto-login
+app/ui/page-logger.tsx                 Client component: POST to /api/client-log on each route change
+app/ui/error-interceptor.tsx           Client component: patches window.fetch (non-2xx) and
+                                       navigator.geolocation.getCurrentPosition (errors) to report
+                                       to /api/client-log; mounted in (main)/layout.tsx
+app/ui/log/log-client.tsx              Log viewer: filter by type/path/status, paginated table
 
 app/api/recommend/route.ts             Recommendation API
 app/api/restaurants/route.ts           Restaurants CRUD API
@@ -128,6 +142,7 @@ app/api/search-restaurant/route.ts     Search by name; provider param selects Am
 app/api/geocode/route.ts               Geocode API; normalises Amap GCJ-02 output to WGS-84
 app/api/reverse-geocode/route.ts       Reverse geocode; provider param selects Amap or Baidu
 app/api/cross-search/route.ts          Cross-provider POI search (Amap <-> Baidu)
+app/api/client-log/route.ts            Receive client-side log events; no auth required
 
 app/lib/amap.ts                        Amap API: URL parsing, POI lookup, name search, Haversine
 app/lib/baidu.ts                       Baidu API: Suggestion search, POI detail, reverse geocode,
@@ -135,9 +150,11 @@ app/lib/baidu.ts                       Baidu API: Suggestion search, POI detail,
 app/lib/coords.ts                      Coordinate conversions: WGS-84 <-> GCJ-02 <-> BD-09
 app/lib/i18n.ts                        Translation strings for en and zh
 app/lib/restaurant-data.ts             Restaurant data helpers (RestaurantRow type, SQL queries)
+app/lib/log.ts                         Log helpers: insertLog, logApiRequest (HOF wrapping API routes),
+                                       queryLogs, countLogs, cleanupOldLogs; all API routes use this
 app/lib/action.ts                      Server actions (authenticate)
 app/migrate/route.ts                   DB migration endpoint
-auth.config.ts                         Auth middleware: protects /home /recommend /add /map /settings
+auth.config.ts                         Auth middleware: protects /home /recommend /add /map /settings /log
 auth.ts                                NextAuth config with Credentials provider
 ```
 

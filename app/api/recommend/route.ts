@@ -2,6 +2,7 @@
 import { auth } from '@/auth';
 import postgres from 'postgres';
 import { haversineDistance } from '@/app/lib/amap';
+import { logApiRequest } from '@/app/lib/log';
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 const DEFAULT_RADIUS_M = 3000;
@@ -32,6 +33,7 @@ function pickRandom<T>(arr: T[], n: number): T[] {
 }
 
 export async function GET(request: Request) {
+  return logApiRequest('/api/recommend', request, async () => {
   const session = await auth();
   if (!session) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -125,4 +127,5 @@ export async function GET(request: Request) {
   }
 
   return Response.json(result);
+  }); // logApiRequest
 }

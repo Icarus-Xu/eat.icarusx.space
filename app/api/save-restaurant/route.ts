@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import { auth } from '@/auth';
 import postgres from 'postgres';
+import { logApiRequest } from '@/app/lib/log';
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 
@@ -18,6 +19,7 @@ interface CollectBody {
 }
 
 export async function POST(request: Request) {
+  return logApiRequest('/api/save-restaurant', request, async () => {
   try {
     const session = await auth();
     if (!session?.user?.email) {
@@ -89,4 +91,5 @@ export async function POST(request: Request) {
     console.error('[/api/save-restaurant]', e);
     return Response.json({ error: 'Internal server error.' }, { status: 500 });
   }
+  }); // logApiRequest
 }
