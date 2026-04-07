@@ -6,6 +6,7 @@ import type { RestaurantCard } from '@/app/api/recommend/route';
 import RestaurantCardComponent from './restaurant-card';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useLocation } from '@/app/ui/location-context';
+import { useT } from '@/app/ui/lang-context';
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
@@ -14,6 +15,7 @@ const DEFAULT_RADIUS_KM = 3;
 
 export default function RecommendClient() {
   const { location } = useLocation();
+  const t = useT();
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [cards, setCards] = useState<RestaurantCard[]>([]);
@@ -27,10 +29,11 @@ export default function RecommendClient() {
       setCards(await res.json());
       setStatus('done');
     } catch {
-      setErrorMsg('Failed to load recommendations.');
+      setErrorMsg(t.recommendFailed);
       setStatus('error');
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t]);
 
   useEffect(() => {
     if (!location) return;
@@ -48,7 +51,7 @@ export default function RecommendClient() {
   };
 
   if (!location) {
-    return <StatusMessage>Set your location on the Map page first.</StatusMessage>;
+    return <StatusMessage>{t.recommendSetLocation}</StatusMessage>;
   }
 
   return (
@@ -76,16 +79,16 @@ export default function RecommendClient() {
           className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           <ArrowPathIcon className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
-          Refresh
+          {t.recommendRefresh}
         </button>
       </div>
 
       {status === 'idle' || status === 'loading' ? (
-        <StatusMessage>Finding nearby restaurants...</StatusMessage>
+        <StatusMessage>{t.recommendFinding}</StatusMessage>
       ) : status === 'error' ? (
         <StatusMessage isError>{errorMsg}</StatusMessage>
       ) : cards.length === 0 ? (
-        <StatusMessage>No restaurants found within {radiusKm} km.</StatusMessage>
+        <StatusMessage>{t.recommendNoResults(radiusKm)}</StatusMessage>
       ) : (
         <div className="flex flex-col gap-3">
           {cards.map((r) => (

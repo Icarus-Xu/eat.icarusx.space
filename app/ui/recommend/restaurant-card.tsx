@@ -3,15 +3,16 @@
 
 import type { RestaurantCard } from '@/app/api/recommend/route';
 import { useMapProvider } from '@/app/ui/map-provider-context';
+import { useT } from '@/app/ui/lang-context';
 
 function formatDistance(m: number): string {
   if (m < 1000) return `${Math.round(m)} m`;
   return `${(m / 1000).toFixed(1)} km`;
 }
 
-function formatDate(iso: string | null): string {
+function formatDate(iso: string | null, locale: string): string {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('zh-CN', {
+  return new Date(iso).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -30,6 +31,7 @@ function StarRating({ rating }: { rating: number | null }) {
 
 export default function RestaurantCard({ r }: { r: RestaurantCard }) {
   const { provider } = useMapProvider();
+  const t = useT();
   const notePreview = r.notes ? r.notes.slice(0, 20) + (r.notes.length > 20 ? '...' : '') : null;
 
   const effectiveProvider = provider ?? 'amap';
@@ -51,14 +53,14 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
           <StarRating rating={r.rating} />
           {r.lastVisitedAt && (
             <span className="text-xs text-gray-400 dark:text-gray-500">
-              Last visited {formatDate(r.lastVisitedAt)}
+              {t.cardLastVisited} {formatDate(r.lastVisitedAt, t.dateLocale)}
             </span>
           )}
         </div>
       )}
 
       {!r.visited && (
-        <span className="text-xs font-medium text-blue-500 dark:text-blue-400">Not visited yet</span>
+        <span className="text-xs font-medium text-blue-500 dark:text-blue-400">{t.cardNotVisitedYet}</span>
       )}
 
       {notePreview && (

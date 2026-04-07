@@ -7,6 +7,7 @@ import AppLogo from '@/app/ui/app-logo';
 import { LocationProvider } from '@/app/ui/location-context';
 import { MapProviderContextProvider } from '@/app/ui/map-provider-context';
 import MapProviderModal from '@/app/ui/map-provider-modal';
+import { LangProvider } from '@/app/ui/lang-context';
 import { auth, signOut } from '@/auth';
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   const userName = session?.user?.name ?? '';
 
   return (
+    <LangProvider>
     <LocationProvider>
       <MapProviderContextProvider>
         <MapProviderModal />
@@ -49,5 +51,6 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         </div>
       </MapProviderContextProvider>
     </LocationProvider>
+    </LangProvider>
   );
 }

@@ -3,7 +3,7 @@
 
 import { PowerIcon } from '@heroicons/react/24/outline';
 
-const KEYS_TO_CLEAR = ['user_id', 'mapProvider'];
+const KEYS_TO_CLEAR = ['user_id', 'mapProvider', 'lang'];
 
 export default function SignOutButton({ action }: { action: () => Promise<void> }) {
   return (

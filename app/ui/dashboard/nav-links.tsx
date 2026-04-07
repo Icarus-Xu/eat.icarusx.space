@@ -12,22 +12,24 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { useLocation } from '@/app/ui/location-context';
-
-const links = [
-  { name: 'Home', href: '/home', icon: HomeIcon },
-  { name: 'Recommend', href: '/recommend', icon: SparklesIcon },
-  { name: 'Add', href: '/add', icon: PlusCircleIcon },
-  { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
-];
+import { useT } from '@/app/ui/lang-context';
 
 export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' | 'bottom' }) {
   const pathname = usePathname();
   const { location } = useLocation();
+  const t = useT();
+
+  const links = [
+    { name: t.navHome, href: '/home', icon: HomeIcon },
+    { name: t.navRecommend, href: '/recommend', icon: SparklesIcon },
+    { name: t.navAdd, href: '/add', icon: PlusCircleIcon },
+    { name: t.navSettings, href: '/settings', icon: Cog6ToothIcon },
+  ];
 
   if (variant === 'bottom') {
     const allLinks = [
       ...links,
-      { name: location?.address.split(/[省市区县]/)[0] ?? 'Map', href: '/map', icon: MapPinIcon },
+      { name: location?.address.split(/[省市区县]/)[0] ?? t.navMap, href: '/map', icon: MapPinIcon },
     ];
     return (
       <>
@@ -58,7 +60,7 @@ export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' 
         const LinkIcon = link.icon;
         return (
           <Link
-            key={link.name}
+            key={link.href}
             href={link.href}
             className={clsx('nav-link', { 'bg-sky-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400': pathname === link.href })}
           >
@@ -73,7 +75,7 @@ export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' 
       >
         <MapPinIcon className="w-6 shrink-0" />
         <p className="hidden truncate md:block">
-          {location ? location.address : 'Getting location...'}
+          {location ? location.address : t.navGettingLocation}
         </p>
       </Link>
     </>

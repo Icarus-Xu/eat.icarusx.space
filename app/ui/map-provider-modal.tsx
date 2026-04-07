@@ -3,28 +3,30 @@
 
 import { useMapProvider } from './map-provider-context';
 import type { MapProvider } from './map-provider-context';
-
-const OPTIONS: { value: MapProvider; label: string; desc: string }[] = [
-  { value: 'amap', label: 'Amap (高德地图)', desc: 'Better coverage in smaller cities' },
-  { value: 'baidu', label: 'Baidu Maps (百度地图)', desc: 'Widely used across China' },
-];
+import { useT } from '@/app/ui/lang-context';
 
 export default function MapProviderModal() {
   const { provider, ready, setProvider } = useMapProvider();
+  const t = useT();
 
   if (!ready || provider !== null) return null;
+
+  const options: { value: MapProvider; label: string; desc: string }[] = [
+    { value: 'amap', label: t.mapProviderAmapLabel, desc: t.mapProviderAmapDesc },
+    { value: 'baidu', label: t.mapProviderBaiduLabel, desc: t.mapProviderBaiduDesc },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
         <h2 className="mb-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Choose your map provider
+          {t.mapProviderChoose}
         </h2>
         <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-          Controls search, navigation links, and location services. You can change it later in Settings.
+          {t.mapProviderDesc}
         </p>
         <div className="flex flex-col gap-3">
-          {OPTIONS.map((opt) => (
+          {options.map((opt) => (
             <button
               key={opt.value}
               onClick={() => setProvider(opt.value)}

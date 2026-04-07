@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react';
 import type { AmapPoi } from '@/app/lib/amap';
 import { useLocation } from '@/app/ui/location-context';
 import { useMapProvider } from '@/app/ui/map-provider-context';
+import { useT } from '@/app/ui/lang-context';
 import StarInput from './star-input';
 import CrossSearchModal, { type CrossPoi } from '@/app/ui/cross-search-modal';
 import {
@@ -24,7 +25,13 @@ function todayString() {
 export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
   const { location } = useLocation();
   const { provider } = useMapProvider();
+  const t = useT();
   const effectiveProvider = provider ?? 'amap';
+
+  const providerName: Record<string, string> = {
+    amap: t.mapProviderAmapLabel,
+    baidu: t.mapProviderBaiduLabel,
+  };
 
   const [mode, setMode] = useState<Mode>('search');
   const [step, setStep] = useState<Step>('input');
@@ -159,11 +166,11 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         }
         const res = await fetch(`/api/search-restaurant?${params}`);
         const data = await res.json();
-        if (!res.ok) { setSearchError(data.error ?? 'Search failed.'); return; }
-        if (!data.pois.length) { setSearchError('No restaurants found. Try a different name.'); return; }
+        if (!res.ok) { setSearchError(data.error ?? t.formSearchFailed); return; }
+        if (!data.pois.length) { setSearchError(t.formNoResults); return; }
         setSearchResults(data.pois);
       } catch {
-        setSearchError('Network error. Please try again.');
+        setSearchError(t.formNetworkError);
       }
     });
   }
@@ -175,11 +182,11 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
       try {
         const res = await fetch(`/api/parse-restaurant?url=${encodeURIComponent(url.trim())}`);
         const data = await res.json();
-        if (!res.ok) { setParseError(data.error ?? 'Failed to parse link.'); return; }
+        if (!res.ok) { setParseError(data.error ?? t.formParseFailed); return; }
         const parsedProvider: 'amap' | 'baidu' = data.provider ?? 'amap';
         await selectPoi(data.poi, parsedProvider);
       } catch {
-        setParseError('Network error. Please try again.');
+        setParseError(t.formNetworkError);
       }
     });
   }
@@ -209,13 +216,13 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         const data = await res.json();
         if (!res.ok) {
           if (data.duplicate) setIsDuplicate(true);
-          else setSaveError(data.error ?? 'Failed to save.');
+          else setSaveError(data.error ?? t.formSaveFailed);
           return;
         }
         onSaved?.();
         setStep('done');
       } catch {
-        setSaveError('Network error. Please try again.');
+        setSaveError(t.formNetworkError);
       }
     });
   }
@@ -226,8 +233,8 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <CheckCircleIcon className="h-12 w-12 text-green-500" />
-        <p className="font-medium text-gray-700 dark:text-gray-200">Saved successfully!</p>
-        <button onClick={reset} className="btn-primary">Add another</button>
+        <p className="font-medium text-gray-700 dark:text-gray-200">{t.formSavedSuccess}</p>
+        <button onClick={reset} className="btn-primary">{t.formAddAnother}</button>
       </div>
     );
   }
@@ -255,7 +262,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                   : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
-              {m === 'search' ? 'Search by name' : 'Paste link'}
+              {m === 'search' ? t.formSearchTab : t.formLinkTab}
             </button>
           ))}
         </div>
@@ -263,14 +270,14 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         {/* Search mode */}
         {mode === 'search' && step === 'input' && (
           <div>
-            <label className="form-label">Restaurant name</label>
+            <label className="form-label">{t.formRestaurantName}</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="e.g. Haidilao, McDonald's..."
+                placeholder={t.formSearchPlaceholder}
                 className="form-input flex-1"
               />
               <button
@@ -281,7 +288,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 {isSearching
                   ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
                   : <MagnifyingGlassIcon className="h-4 w-4" />}
-                Search
+                {t.formSearch}
               </button>
             </div>
             {searchError && (
@@ -294,7 +301,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             {isCrossSearching && (
               <p className="mt-3 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
                 <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                Looking up on {crossTargetProvider === 'baidu' ? 'Baidu Maps' : 'Amap'}...
+                {t.formLookingUp(providerName[crossTargetProvider])}
               </p>
             )}
 
@@ -320,13 +327,13 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         {/* Link mode */}
         {mode === 'link' && step === 'input' && (
           <div>
-            <label className="form-label">Paste a share link</label>
+            <label className="form-label">{t.formPasteLink}</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="Amap or Baidu Maps share link..."
+                placeholder={t.formLinkPlaceholder}
                 className="form-input flex-1"
               />
               <button
@@ -335,7 +342,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 className="btn-primary flex items-center gap-1.5"
               >
                 {isParsing && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
-                Parse
+                {t.formParse}
               </button>
             </div>
             {parseError && (
@@ -347,7 +354,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             {isCrossSearching && (
               <p className="mt-3 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
                 <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                Looking up on {crossTargetProvider === 'baidu' ? 'Baidu Maps' : 'Amap'}...
+                {t.formLookingUp(providerName[crossTargetProvider])}
               </p>
             )}
           </div>
@@ -365,7 +372,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Have you been there?</p>
+              <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">{t.formHaveYouBeen}</p>
               <div className="flex gap-3">
                 {([true, false] as const).map((v) => (
                   <button
@@ -378,7 +385,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                         : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500'
                     }`}
                   >
-                    {v ? 'Visited' : 'Not yet'}
+                    {v ? t.formVisited : t.formNotYet}
                   </button>
                 ))}
               </div>
@@ -387,7 +394,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             {visited === true && (
               <div className="flex flex-col gap-4">
                 <div>
-                  <label className="form-label">Date visited</label>
+                  <label className="form-label">{t.formDateVisited}</label>
                   <input
                     type="date"
                     value={visitDate}
@@ -398,19 +405,19 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 </div>
                 <div>
                   <label className="form-label">
-                    Rating <span className="font-normal text-gray-400 dark:text-gray-500">(optional)</span>
+                    {t.formRating} <span className="font-normal text-gray-400 dark:text-gray-500">({t.formOptional})</span>
                   </label>
                   <StarInput value={rating} onChange={setRating} />
                 </div>
                 <div>
                   <label className="form-label">
-                    Notes <span className="font-normal text-gray-400 dark:text-gray-500">(optional)</span>
+                    {t.formNotes} <span className="font-normal text-gray-400 dark:text-gray-500">({t.formOptional})</span>
                   </label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={3}
-                    placeholder="Recommended dishes, impressions..."
+                    placeholder={t.formNotesPlaceholder}
                     className="form-input w-full resize-none"
                   />
                 </div>
@@ -420,7 +427,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             {isDuplicate && (
               <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-700 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">
                 <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
-                This restaurant is already in your collection.
+                {t.formDuplicate}
               </p>
             )}
 
@@ -438,7 +445,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 className="btn-primary flex items-center justify-center gap-1.5 py-2.5"
               >
                 {isSaving && <ArrowPathIcon className="h-4 w-4 animate-spin" />}
-                Save
+                {t.formSave}
               </button>
             )}
           </>

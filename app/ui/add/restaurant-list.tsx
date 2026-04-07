@@ -6,11 +6,12 @@ import type { RestaurantRow } from '@/app/lib/restaurant-data';
 import { haversineDistance } from '@/app/lib/amap';
 import { useLocation } from '@/app/ui/location-context';
 import { useMapProvider } from '@/app/ui/map-provider-context';
+import { useT } from '@/app/ui/lang-context';
 
 type RestaurantWithDistance = RestaurantRow & { distanceM: number | null };
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('zh-CN', {
+function formatDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -32,7 +33,7 @@ function StarRating({ rating }: { rating: number | null }) {
   );
 }
 
-function CardContent({ r }: { r: RestaurantWithDistance }) {
+function CardContent({ r, t }: { r: RestaurantWithDistance; t: ReturnType<typeof useT> }) {
   return (
     <>
       <div className="flex items-start justify-between gap-2">
@@ -42,9 +43,9 @@ function CardContent({ r }: { r: RestaurantWithDistance }) {
             <span className="text-xs text-gray-400 dark:text-gray-500">{formatDistance(r.distanceM)}</span>
           )}
           {r.visited ? (
-            <span className="badge-visited">Visited</span>
+            <span className="badge-visited">{t.badgeVisited}</span>
           ) : (
-            <span className="badge-unvisited">Not yet</span>
+            <span className="badge-unvisited">{t.badgeNotYet}</span>
           )}
         </div>
       </div>
@@ -53,7 +54,7 @@ function CardContent({ r }: { r: RestaurantWithDistance }) {
         <div className="flex items-center gap-2">
           <StarRating rating={r.maxRating} />
           {r.lastVisitedAt && (
-            <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(r.lastVisitedAt)}</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(r.lastVisitedAt, t.dateLocale)}</span>
           )}
         </div>
       )}
@@ -72,6 +73,7 @@ function CardContent({ r }: { r: RestaurantWithDistance }) {
 export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
   const { location } = useLocation();
   const { provider } = useMapProvider();
+  const t = useT();
   const [restaurants, setRestaurants] = useState<RestaurantWithDistance[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -96,14 +98,14 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
     );
   }, [location, restaurants.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (loading) return <p className="text-sm text-gray-400 dark:text-gray-500">Loading...</p>;
+  if (loading) return <p className="text-sm text-gray-400 dark:text-gray-500">{t.listLoading}</p>;
 
   const effectiveProvider = provider ?? 'amap';
 
   return (
     <div className="flex flex-col gap-4">
       {restaurants.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-6 dark:text-gray-500">No restaurants added yet.</p>
+        <p className="text-sm text-gray-400 text-center py-6 dark:text-gray-500">{t.listEmpty}</p>
       ) : (
         <div className="flex flex-col gap-2">
           {restaurants.map((r) => {
@@ -121,13 +123,13 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
                   rel="noopener noreferrer"
                   className="card flex flex-col gap-1.5 hover:border-blue-400 dark:hover:border-blue-500"
                 >
-                  <CardContent r={r} />
+                  <CardContent r={r} t={t} />
                 </a>
               );
             }
             return (
               <div key={r.id} className="card flex flex-col gap-1.5 opacity-60">
-                <CardContent r={r} />
+                <CardContent r={r} t={t} />
               </div>
             );
           })}
