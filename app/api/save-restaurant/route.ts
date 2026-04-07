@@ -5,7 +5,7 @@ import postgres from 'postgres';
 const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
 
 interface CollectBody {
-  amapPoiId: string;
+  amapPoiId?: string | null;
   baiduPoiId?: string | null;
   name: string;
   address: string;
@@ -27,10 +27,13 @@ export async function POST(request: Request) {
     const body: CollectBody = await request.json();
     const { amapPoiId, baiduPoiId, name, address, lat, lng, visited, rating, notes, visitedAt } = body;
 
-    const sourceUrl = `https://ditu.amap.com/place/${amapPoiId}`;
+    if (!amapPoiId && !baiduPoiId) {
+      return Response.json({ error: 'At least one POI ID is required.' }, { status: 400 });
+    }
+
+    const sourceUrl = amapPoiId ? `https://ditu.amap.com/place/${amapPoiId}` : null;
     const baiduSourceUrl = baiduPoiId ? `https://map.baidu.com/?uid=${baiduPoiId}` : null;
 
-    // Resolve current user id
     const userRows = (await sql`
       SELECT id FROM users WHERE email = ${session.user.email} LIMIT 1
     `) as { id: string }[];
@@ -39,9 +42,13 @@ export async function POST(request: Request) {
     }
     const userId = userRows[0].id;
 
-    // Check if restaurant already exists
+    // Duplicate check: match on either POI ID
     const existing = (await sql`
-      SELECT id FROM restaurants WHERE amap_poi_id = ${amapPoiId} LIMIT 1
+      SELECT id FROM restaurants
+      WHERE
+        (amap_poi_id IS NOT NULL AND amap_poi_id = ${amapPoiId ?? ''})
+        OR (baidu_poi_id IS NOT NULL AND baidu_poi_id = ${baiduPoiId ?? ''})
+      LIMIT 1
     `) as { id: string }[];
 
     if (!visited) {
@@ -49,20 +56,23 @@ export async function POST(request: Request) {
         return Response.json({ duplicate: true, error: 'This restaurant is already in your collection.' }, { status: 409 });
       }
       await sql`
-        INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
-        VALUES (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
+        INSERT INTO restaurants
+          (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
+        VALUES
+          (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId ?? null}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
       `;
       return Response.json({ success: true });
     }
 
-    // Visited: create restaurant if needed, then add visit record
     let restaurantId: string;
     if (existing.length > 0) {
       restaurantId = existing[0].id;
     } else {
       const inserted = (await sql`
-        INSERT INTO restaurants (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
-        VALUES (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
+        INSERT INTO restaurants
+          (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
+        VALUES
+          (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId ?? null}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
         RETURNING id
       `) as { id: string }[];
       restaurantId = inserted[0].id;
@@ -71,18 +81,12 @@ export async function POST(request: Request) {
     const visitDate = visitedAt ? new Date(visitedAt) : new Date();
     await sql`
       INSERT INTO visits (restaurant_id, user_id, rating, notes, visited_at)
-      VALUES (
-        ${restaurantId},
-        ${userId},
-        ${rating ?? null},
-        ${notes ?? null},
-        ${visitDate}
-      )
+      VALUES (${restaurantId}, ${userId}, ${rating ?? null}, ${notes ?? null}, ${visitDate})
     `;
 
     return Response.json({ success: true });
   } catch (e) {
-    console.error('[/api/collect]', e);
+    console.error('[/api/save-restaurant]', e);
     return Response.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }

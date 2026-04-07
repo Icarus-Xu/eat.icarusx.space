@@ -150,6 +150,7 @@ export async function geocodeAddress(address: string): Promise<{ lat: number; ln
 export async function searchPoiByName(
   keywords: string,
   location?: { lat: number; lng: number },
+  radius = 5000,
 ): Promise<AmapPoi[]> {
   const params = new URLSearchParams({
     keywords,
@@ -159,7 +160,10 @@ export async function searchPoiByName(
     offset: '10',
     page: '1',
   });
-  if (location) params.set('location', `${location.lng},${location.lat}`);
+  if (location) {
+    params.set('location', `${location.lng},${location.lat}`);
+    params.set('radius', String(radius));
+  }
 
   const res = await fetch(`https://restapi.amap.com/v3/place/text?${params}`);
   const data = await res.json();

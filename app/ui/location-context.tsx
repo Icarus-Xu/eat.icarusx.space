@@ -28,7 +28,8 @@ export function LocationProvider({ children }: { children: ReactNode }) {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       try {
-        const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}`);
+        const provider = localStorage.getItem('mapProvider') ?? 'amap';
+        const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}&provider=${provider}`);
         const data = await res.json();
         setLocation({ lat, lng, address: data.address ?? `${lat.toFixed(4)}, ${lng.toFixed(4)}` });
       } catch {

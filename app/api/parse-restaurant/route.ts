@@ -1,6 +1,12 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import { auth } from '@/auth';
 import { parseAmapUrl } from '@/app/lib/amap';
+import { parseBaiduShortLink } from '@/app/lib/baidu';
+import type { AmapPoi } from '@/app/lib/amap';
+
+function isBaiduUrl(url: string): boolean {
+  return url.includes('map.baidu.com') || url.includes('j.map.baidu.com');
+}
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -10,20 +16,40 @@ export async function GET(request: Request) {
   const raw = searchParams.get('url')?.trim();
   if (!raw) return Response.json({ error: 'Missing url parameter' }, { status: 400 });
 
-  // Extract first URL from the pasted text (user may paste full share text)
   const urlMatch = raw.match(/https?:\/\/\S+/);
   const url = urlMatch ? urlMatch[0] : raw;
+
+  if (isBaiduUrl(url)) {
+    let baiduPoi;
+    try {
+      baiduPoi = await parseBaiduShortLink(url);
+    } catch (e) {
+      console.error('[parse-restaurant] baidu error:', e);
+      return Response.json({ error: 'Failed to fetch Baidu link.' }, { status: 500 });
+    }
+    if (!baiduPoi) {
+      return Response.json({ error: 'Could not parse restaurant from this Baidu link.' }, { status: 422 });
+    }
+    // Map BaiduPoi to AmapPoi shape using uid as id
+    const poi: AmapPoi = {
+      id: baiduPoi.uid,
+      name: baiduPoi.name,
+      address: baiduPoi.address,
+      lat: baiduPoi.lat,
+      lng: baiduPoi.lng,
+    };
+    return Response.json({ poi, provider: 'baidu' });
+  }
 
   let poi;
   try {
     poi = await parseAmapUrl(url);
   } catch (e) {
-    console.error('[parse-restaurant] error:', e);
+    console.error('[parse-restaurant] amap error:', e);
     return Response.json({ error: 'Failed to fetch link. Please check your network and try again.' }, { status: 500 });
   }
   if (!poi) {
-    return Response.json({ error: 'Could not parse restaurant from this link. Please use an Amap share link.' }, { status: 422 });
+    return Response.json({ error: 'Could not parse restaurant from this link. Please use an Amap or Baidu Maps share link.' }, { status: 422 });
   }
-
-  return Response.json({ poi });
+  return Response.json({ poi, provider: 'amap' });
 }
