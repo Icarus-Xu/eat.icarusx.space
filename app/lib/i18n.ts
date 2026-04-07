@@ -22,7 +22,8 @@ const en = {
   locationUseCurrentTitle: 'Use current location',
 
   // recommend
-  recommendSetLocation: 'Set your location on the Map page first.',
+  recommendSetLocation: 'Location not set.',
+  recommendLocateButton: 'Tap to enable location',
   recommendFinding: 'Finding nearby restaurants...',
   recommendFailed: 'Failed to load recommendations.',
   recommendRefresh: 'Refresh',
@@ -116,7 +117,8 @@ const zh: typeof en = {
   locationNotFound: '未找到该地址。',
   locationUseCurrentTitle: '使用当前位置',
 
-  recommendSetLocation: '请先在地图页面设置您的位置。',
+  recommendSetLocation: '未获取到位置。',
+  recommendLocateButton: '点击开启定位',
   recommendFinding: '正在查找附近餐厅...',
   recommendFailed: '加载推荐失败。',
   recommendRefresh: '刷新',

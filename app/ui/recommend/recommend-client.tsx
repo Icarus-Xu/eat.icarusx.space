@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { RestaurantCard } from '@/app/api/recommend/route';
 import RestaurantCardComponent from './restaurant-card';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { useLocation } from '@/app/ui/location-context';
 import { useT } from '@/app/ui/lang-context';
 
@@ -14,8 +14,9 @@ const DISTANCE_OPTIONS = [1, 2, 3, 5, 10];
 const DEFAULT_RADIUS_KM = 3;
 
 export default function RecommendClient() {
-  const { location } = useLocation();
+  const { location, locate } = useLocation();
   const t = useT();
+  const [locating, setLocating] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [cards, setCards] = useState<RestaurantCard[]>([]);
@@ -51,7 +52,26 @@ export default function RecommendClient() {
   };
 
   if (!location) {
-    return <StatusMessage>{t.recommendSetLocation}</StatusMessage>;
+    const handleLocate = async () => {
+      setLocating(true);
+      await locate();
+      setLocating(false);
+    };
+    return (
+      <div className="flex flex-col items-start gap-3">
+        <span className="text-sm text-gray-500 dark:text-gray-400">{t.recommendSetLocation}</span>
+        <button
+          onClick={handleLocate}
+          disabled={locating}
+          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+          {locating
+            ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
+            : <MapPinIcon className="h-4 w-4" />}
+          {t.recommendLocateButton}
+        </button>
+      </div>
+    );
   }
 
   return (
