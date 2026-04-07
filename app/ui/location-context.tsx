@@ -9,37 +9,62 @@ export interface Location {
   address: string;
 }
 
+const LOCATION_KEY = 'lastLocation';
+
 interface LocationContextValue {
   location: Location | null;
   setLocation: (loc: Location) => void;
+  locate: () => Promise<void>;
 }
 
 const LocationContext = createContext<LocationContextValue>({
   location: null,
   setLocation: () => {},
+  locate: async () => {},
 });
 
+async function gpsReverseGeocode(lat: number, lng: number): Promise<Location> {
+  try {
+    const provider = localStorage.getItem('mapProvider') ?? 'amap';
+    const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}&provider=${provider}`);
+    const data = await res.json();
+    return { lat, lng, address: data.address ?? `${lat.toFixed(4)}, ${lng.toFixed(4)}` };
+  } catch {
+    return { lat, lng, address: `${lat.toFixed(4)}, ${lng.toFixed(4)}` };
+  }
+}
+
 export function LocationProvider({ children }: { children: ReactNode }) {
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocationState] = useState<Location | null>(null);
+
+  const setLocation = (loc: Location) => {
+    setLocationState(loc);
+    localStorage.setItem(LOCATION_KEY, JSON.stringify(loc));
+  };
+
+  const locate = async (): Promise<void> => {
+    if (!navigator.geolocation) return;
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const loc = await gpsReverseGeocode(pos.coords.latitude, pos.coords.longitude);
+        setLocation(loc);
+        resolve();
+      }, () => resolve());
+    });
+  };
 
   useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      try {
-        const provider = localStorage.getItem('mapProvider') ?? 'amap';
-        const res = await fetch(`/api/reverse-geocode?lat=${lat}&lng=${lng}&provider=${provider}`);
-        const data = await res.json();
-        setLocation({ lat, lng, address: data.address ?? `${lat.toFixed(4)}, ${lng.toFixed(4)}` });
-      } catch {
-        setLocation({ lat, lng, address: `${lat.toFixed(4)}, ${lng.toFixed(4)}` });
-      }
-    });
+    const saved = localStorage.getItem(LOCATION_KEY);
+    if (saved) {
+      try { setLocationState(JSON.parse(saved)); } catch { /* ignore */ }
+    } else {
+      locate();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <LocationContext.Provider value={{ location, setLocation }}>
+    <LocationContext.Provider value={{ location, setLocation, locate }}>
       {children}
     </LocationContext.Provider>
   );

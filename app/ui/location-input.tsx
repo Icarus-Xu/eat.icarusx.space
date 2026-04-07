@@ -3,6 +3,7 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { ArrowPathIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { useLocation } from '@/app/ui/location-context';
 
 interface Props {
   onCoords: (coords: { lat: number; lng: number }) => void;
@@ -11,9 +12,17 @@ interface Props {
 }
 
 export default function LocationInput({ onCoords, defaultCoords, defaultAddress }: Props) {
+  const { locate } = useLocation();
   const [address, setAddress] = useState(defaultAddress ?? '');
   const [error, setError] = useState('');
   const [isPending, startTransition] = useTransition();
+  const [locating, setLocating] = useState(false);
+
+  const handleLocate = async () => {
+    setLocating(true);
+    await locate();
+    setLocating(false);
+  };
 
   // Apply default coords immediately without waiting for user input
   useEffect(() => {
@@ -44,17 +53,24 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
-        <div className="relative flex-1">
-          <MapPinIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}
-            placeholder="Enter your location..."
-            className="form-input w-full pl-9 pr-3"
-          />
-        </div>
+        <button
+          onClick={handleLocate}
+          disabled={locating}
+          title="Use current location"
+          className="flex items-center justify-center rounded-lg border border-gray-200 bg-white px-2.5 text-gray-500 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+        >
+          {locating
+            ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
+            : <MapPinIcon className="h-4 w-4" />}
+        </button>
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}
+          placeholder="Enter your location..."
+          className="form-input flex-1"
+        />
         <button
           onClick={handleConfirm}
           disabled={isPending || !address.trim()}
