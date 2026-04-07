@@ -92,11 +92,11 @@ app/(main)/home/page.tsx               Home page
 app/(main)/recommend/page.tsx          Recommendation page (server)
 app/(main)/add/page.tsx                Add restaurant page
 app/(main)/map/page.tsx                Map view page
-app/(main)/settings/page.tsx           Settings: map provider + language toggle
+app/(main)/settings/page.tsx           Settings: map provider, language, theme toggle
 
 app/ui/dashboard/sidenav.tsx           Desktop sidebar with nav + sign-out
 app/ui/dashboard/nav-links.tsx         Nav links (sidebar + bottom tab bar); uses useT()
-app/ui/sign-out-button.tsx             Clears localStorage keys [user_id, mapProvider, lang]
+app/ui/sign-out-button.tsx             Clears localStorage keys + resets theme context to auto
 app/ui/recommend/recommend-client.tsx  Client: fetch recommendations, radius selector, refresh
 app/ui/recommend/restaurant-card.tsx   Card: name, distance, rating, notes; links to provider map
 app/ui/add/add-page-client.tsx         Add page client: refreshKey state
@@ -115,6 +115,9 @@ app/ui/map-provider-modal.tsx          First-run modal to choose map provider
 app/ui/cross-search-modal.tsx          Modal: select matching POI on the other provider (0/many results)
 app/ui/lang-context.tsx                Language context (en | zh); localStorage lang;
                                        auto-detects from navigator.language on first visit
+app/ui/theme-context.tsx               Theme context (auto | light | dark); localStorage theme;
+                                       auto follows matchMedia when no saved preference;
+                                       auto listens for system changes via matchMedia event
 app/ui/login-form.tsx                  Login form with localStorage auto-login
 
 app/api/recommend/route.ts             Recommendation API
@@ -159,6 +162,17 @@ All coordinates stored in the DB and held in LocationContext are **WGS-84** (GPS
 - Cleared on sign-out (re-detected next session)
 - Toggle in Settings page; all UI strings come from `useT()` hook (`lang-context.tsx`)
 
+## Theme System
+
+- Settings: `auto` (default) | `light` | `dark`
+- `auto` is stored as absent key; `light`/`dark` stored as `localStorage.theme`
+- `auto` follows system preference via `matchMedia('(prefers-color-scheme: dark)')` and
+  listens for OS-level changes; explicit `light`/`dark` ignores system preference
+- Applies `dark` class to `<html>` via `ThemeProvider` (`theme-context.tsx`) in root layout
+- Tailwind `darkMode: 'class'` is enabled
+- Cleared on sign-out (reverts to auto, re-follows system next session)
+- `body` has `transition: background-color 0.3s, color 0.3s` for smooth switching
+
 ## Amap Integration
 
 Server-side uses `AMAP_WEB_SERVICE_KEY` to call:
@@ -191,5 +205,4 @@ with `callback=` URL parameter pattern for initialization sequencing.
 - Login: user enters an ID; system creates or retrieves user by `${id}@local` email
 - Auto-login: saved userId in localStorage, cleared on sign-out via SignOutButton
 - `AUTH_URL` must be set to the canonical deployment URL for NextAuth callbacks
-- localStorage keys cleared on sign-out: `user_id`, `mapProvider`, `lang`, `lastLocation`
-  is NOT cleared (location cache persists across sessions)
+- localStorage keys cleared on sign-out: `user_id`, `mapProvider`, `lang`, `theme`, `lastLocation`

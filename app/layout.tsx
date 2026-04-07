@@ -2,6 +2,7 @@ import '@/app/ui/global.css';
 import { inter } from '@/app/ui/fonts';
 import type { Metadata } from 'next';
 import ServiceWorkerRegister from '@/app/ui/service-worker-register';
+import { ThemeProvider } from '@/app/ui/theme-context';
 
 export const metadata: Metadata = {
   title: {
@@ -30,7 +31,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
       </head>
       <body className={inter.className}>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <ServiceWorkerRegister />
       </body>
     </html>

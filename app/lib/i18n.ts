@@ -93,6 +93,11 @@ const en = {
     'Affects restaurant search, navigation links, and reverse geocoding.',
   settingsLanguage: 'Language',
   settingsLanguageDesc: 'Switch the display language.',
+  settingsTheme: 'Appearance',
+  settingsThemeDesc: 'Switch between light and dark mode. Auto follows the system setting.',
+  themeAuto: 'Auto',
+  themeLight: 'Light',
+  themeDark: 'Dark',
 };
 
 const zh: typeof en = {
@@ -173,6 +178,11 @@ const zh: typeof en = {
   settingsMapProviderDesc: '影响餐厅搜索、导航链接和逆地理编码。',
   settingsLanguage: '语言',
   settingsLanguageDesc: '切换界面显示语言。',
+  settingsTheme: '外观',
+  settingsThemeDesc: '切换亮色和暗色模式。自动跟随系统设置。',
+  themeAuto: '自动',
+  themeLight: '亮色',
+  themeDark: '暗色',
 };
 
 export const translations = { en, zh } as const;
