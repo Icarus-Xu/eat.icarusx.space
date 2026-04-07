@@ -49,15 +49,16 @@ A restaurant is "good" if max rating across all users >= 3.
 /login               Login page (NextAuth Credentials, auto-login from localStorage)
 /home                Home page (placeholder)
 /recommend           Recommendation page (default landing after login)
-/add                 Add restaurant page (parse Amap URL, manual input)
-/map                 Map view page
-/api/recommend       GET ?lat=&lng= -- returns up to 3 restaurant cards
-/api/restaurants     GET/POST/DELETE -- restaurants CRUD
-/api/save-restaurant POST -- upsert restaurant + optional visit record
-/api/parse-restaurant POST -- parse Amap URL to POI info
-/api/geocode         GET ?address= -- address to coordinates
-/api/reverse-geocode GET ?lat=&lng= -- coordinates to address
-/migrate             GET -- creates tables (run once)
+/add                      Add restaurant page (search by name or parse Amap URL)
+/map                      Map view page
+/api/recommend            GET ?lat=&lng= -- returns up to 3 restaurant cards
+/api/restaurants          GET/POST/DELETE -- restaurants CRUD
+/api/save-restaurant      POST -- upsert restaurant + optional visit record
+/api/parse-restaurant     POST -- parse Amap URL to POI info
+/api/search-restaurant    GET ?q=&lat=&lng= -- search restaurants by name via Amap
+/api/geocode              GET ?address= -- address to coordinates
+/api/reverse-geocode      GET ?lat=&lng= -- coordinates to address
+/migrate                  GET -- creates tables (run once)
 ```
 
 All routes under /home, /recommend, /add, /map require authentication.
@@ -89,8 +90,8 @@ app/ui/sign-out-button.tsx             Client component: clears localStorage the
 app/ui/recommend/recommend-client.tsx  Client: geolocation, fetch, refresh
 app/ui/recommend/restaurant-card.tsx   Card: name, distance, rating, notes
 app/ui/add/add-page-client.tsx         Add page client logic
-app/ui/add/collect-form.tsx            Restaurant form (URL parse + manual input)
-app/ui/add/restaurant-list.tsx         Restaurant list with edit/delete
+app/ui/add/collect-form.tsx            Restaurant form: search by name tab + paste link tab
+app/ui/add/restaurant-list.tsx         Restaurant list; cards link to ditu.amap.com/place/{id}
 app/ui/add/star-input.tsx              Star rating input (0-5)
 app/ui/location-input.tsx              Location input with Amap autocomplete
 app/ui/map-view.tsx                    Interactive map (Amap JS SDK)
@@ -98,11 +99,12 @@ app/ui/location-context.tsx            React context: shared GPS location state
 app/ui/login-form.tsx                  Login form with localStorage auto-login
 app/api/recommend/route.ts             Recommendation API
 app/api/restaurants/route.ts           Restaurants CRUD API
-app/api/save-restaurant/route.ts       Save restaurant + visit API
+app/api/save-restaurant/route.ts       Save restaurant + visit API; constructs source_url from poiId
 app/api/parse-restaurant/route.ts      Parse Amap URL API
+app/api/search-restaurant/route.ts     Search restaurants by name via Amap place/text API
 app/api/geocode/route.ts               Geocode API
 app/api/reverse-geocode/route.ts       Reverse geocode API
-app/lib/amap.ts                        Amap URL parsing, POI lookup, Haversine distance
+app/lib/amap.ts                        Amap URL parsing, POI lookup, name search, Haversine distance
 app/lib/restaurant-data.ts             Restaurant data helpers
 app/lib/action.ts                      Server actions (authenticate)
 app/migrate/route.ts                   DB migration endpoint
@@ -115,12 +117,15 @@ auth.ts                                NextAuth config with Credentials provider
 Server-side uses `AMAP_WEB_SERVICE_KEY` to call:
 - `GET /v3/place/detail?id=POI_ID` -- fetch POI name, address, coordinates
 - `GET /v3/geocode/regeo` -- reverse geocode (coordinates to address)
-- `GET /v3/place/text` -- text search / autocomplete
+- `GET /v3/place/text` -- name search (types=050000 restaurants, offset=10)
 
-Supported URL formats for parsing:
+Supported URL formats for parsing (paste link mode):
 - `https://surl.amap.com/XXXXX` (short link, follows redirect)
 - `https://www.amap.com/detail/POIID`
 - `https://uri.amap.com/poi?id=POIID`
+
+source_url is always stored as `https://ditu.amap.com/place/{amap_poi_id}`, constructed
+server-side in save-restaurant -- never taken from client input.
 
 ## Auth Notes
 

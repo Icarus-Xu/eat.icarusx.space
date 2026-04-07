@@ -10,7 +10,6 @@ interface CollectBody {
   address: string;
   lat: number;
   lng: number;
-  sourceUrl: string;
   visited: boolean;
   rating?: number | null;
   notes?: string | null;
@@ -25,7 +24,8 @@ export async function POST(request: Request) {
     }
 
     const body: CollectBody = await request.json();
-    const { poiId, name, address, lat, lng, sourceUrl, visited, rating, notes, visitedAt } = body;
+    const { poiId, name, address, lat, lng, visited, rating, notes, visitedAt } = body;
+    const sourceUrl = `https://ditu.amap.com/place/${poiId}`;
 
     // Resolve current user id
     const userRows = (await sql`

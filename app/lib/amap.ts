@@ -147,6 +147,36 @@ export async function geocodeAddress(address: string): Promise<{ lat: number; ln
   return { lat: parseFloat(latStr), lng: parseFloat(lngStr) };
 }
 
+export async function searchPoiByName(
+  keywords: string,
+  location?: { lat: number; lng: number },
+): Promise<AmapPoi[]> {
+  const params = new URLSearchParams({
+    keywords,
+    types: '050000',
+    key: AMAP_KEY,
+    output: 'json',
+    offset: '10',
+    page: '1',
+  });
+  if (location) params.set('location', `${location.lng},${location.lat}`);
+
+  const res = await fetch(`https://restapi.amap.com/v3/place/text?${params}`);
+  const data = await res.json();
+  if (data.status !== '1' || !data.pois?.length) return [];
+
+  return (data.pois as Record<string, unknown>[]).map((poi) => {
+    const [lngStr, latStr] = (poi.location as string).split(',');
+    return {
+      id: poi.id as string,
+      name: poi.name as string,
+      address: (poi.address as string) || '',
+      lat: parseFloat(latStr),
+      lng: parseFloat(lngStr),
+    };
+  });
+}
+
 // Haversine distance in meters
 export function haversineDistance(
   lat1: number,

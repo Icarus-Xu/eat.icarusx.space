@@ -66,9 +66,12 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
       ) : (
         <div className="flex flex-col gap-2">
           {restaurants.map((r) => (
-            <div
+            <a
               key={r.id}
-              className="card flex flex-col gap-1.5"
+              href={`https://ditu.amap.com/place/${r.amapPoiId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card flex flex-col gap-1.5 hover:border-blue-400 dark:hover:border-blue-500"
             >
               <div className="flex items-start justify-between gap-2">
                 <span className="font-medium text-gray-900 text-sm leading-snug dark:text-gray-100">{r.name}</span>
@@ -100,7 +103,7 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
               )}
 
               <p className="text-xs text-gray-400 truncate dark:text-gray-500">{r.address}</p>
-            </div>
+            </a>
           ))}
         </div>
       )}
