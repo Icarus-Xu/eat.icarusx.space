@@ -299,7 +299,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             )}
 
             {isCrossSearching && (
-              <p className="mt-3 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
+              <p className="status-pending">
                 <ArrowPathIcon className="h-4 w-4 animate-spin" />
                 {t.formLookingUp(providerName[crossTargetProvider])}
               </p>
@@ -312,7 +312,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                     <button
                       type="button"
                       onClick={() => selectPoi(r, effectiveProvider)}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-left transition-colors hover:border-blue-400 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500 dark:hover:bg-blue-950"
+                      className="poi-item"
                     >
                       <p className="font-medium text-gray-900 dark:text-gray-100">{r.name}</p>
                       <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{r.address}</p>
@@ -352,7 +352,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
               </p>
             )}
             {isCrossSearching && (
-              <p className="mt-3 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">
+              <p className="status-pending">
                 <ArrowPathIcon className="h-4 w-4 animate-spin" />
                 {t.formLookingUp(providerName[crossTargetProvider])}
               </p>

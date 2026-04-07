@@ -30,8 +30,8 @@ export default function CrossSearchModal({ isOpen, targetProvider, results, onSe
   // Zero results: warn and ask to confirm
   if (results.length === 0) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-        <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
+      <div className="modal-overlay">
+        <div className="modal-panel">
           <div className="mb-4 flex items-start gap-3">
             <ExclamationCircleIcon className="mt-0.5 h-5 w-5 shrink-0 text-yellow-500" />
             <div>
@@ -56,8 +56,8 @@ export default function CrossSearchModal({ isOpen, targetProvider, results, onSe
 
   // Multiple results: let user pick
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800">
+    <div className="modal-overlay">
+      <div className="modal-panel">
         <p className="mb-1 font-medium text-gray-900 dark:text-gray-100">
           {t.crossSelectOn(label)}
         </p>
@@ -70,7 +70,7 @@ export default function CrossSearchModal({ isOpen, targetProvider, results, onSe
               <button
                 type="button"
                 onClick={() => onSelect(r)}
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-left transition-colors hover:border-blue-400 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500 dark:hover:bg-blue-950"
+                className="poi-item"
               >
                 <p className="font-medium text-gray-900 dark:text-gray-100">{r.name}</p>
                 <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{r.address}</p>

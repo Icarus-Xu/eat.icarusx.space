@@ -38,11 +38,7 @@ export default function SettingsPage() {
               <button
                 key={opt.value}
                 onClick={() => setProvider(opt.value)}
-                className={`flex-1 rounded-lg border-2 py-2.5 text-sm font-medium transition-colors ${
-                  provider === opt.value
-                    ? 'border-blue-600 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500'
-                }`}
+                className={`btn-option ${provider === opt.value ? 'btn-option-active' : 'btn-option-inactive'}`}
               >
                 {opt.label}
               </button>
@@ -62,11 +58,7 @@ export default function SettingsPage() {
               <button
                 key={opt.value}
                 onClick={() => setLang(opt.value)}
-                className={`flex-1 rounded-lg border-2 py-2.5 text-sm font-medium transition-colors ${
-                  lang === opt.value
-                    ? 'border-blue-600 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400'
-                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500'
-                }`}
+                className={`btn-option ${lang === opt.value ? 'btn-option-active' : 'btn-option-inactive'}`}
               >
                 {opt.label}
               </button>

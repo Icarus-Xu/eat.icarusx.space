@@ -56,6 +56,48 @@
   .error-inline {
     @apply flex items-center gap-1 text-sm text-red-500;
   }
+
+  /* Modal backdrop and content panel */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4;
+  }
+
+  .modal-panel {
+    @apply w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-800;
+  }
+
+  /* Selectable POI list item (search results, cross-search picks) */
+  .poi-item {
+    @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-left transition-colors
+      hover:border-blue-400 hover:bg-blue-50
+      dark:border-gray-700 dark:bg-gray-800 dark:hover:border-blue-500 dark:hover:bg-blue-950;
+  }
+
+  /* Map provider choice button (modal) */
+  .provider-option {
+    @apply w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-left transition-colors
+      hover:border-blue-500 hover:bg-blue-50
+      dark:border-gray-700 dark:bg-gray-900 dark:hover:border-blue-500 dark:hover:bg-blue-950;
+  }
+
+  /* Settings toggle button */
+  .btn-option {
+    @apply flex-1 rounded-lg border-2 py-2.5 text-sm font-medium transition-colors;
+  }
+
+  .btn-option-active {
+    @apply border-blue-600 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400;
+  }
+
+  .btn-option-inactive {
+    @apply border-gray-200 bg-white text-gray-600 hover:border-gray-300
+      dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500;
+  }
+
+  /* Inline pending/loading status row */
+  .status-pending {
+    @apply mt-3 flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500;
+  }
 }
 
 input[type='number'] {
