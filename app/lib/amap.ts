@@ -126,6 +126,36 @@ export async function reverseGeocode(lat: number, lng: number): Promise<string |
   return (data.regeocode?.formatted_address as string) ?? null;
 }
 
+export interface GeoCandidate {
+  name: string;
+  address: string;
+  lat: number; // GCJ-02
+  lng: number; // GCJ-02
+}
+
+export async function geocodeAddressList(query: string): Promise<GeoCandidate[]> {
+  const poiRes = await fetch(
+    `https://restapi.amap.com/v3/place/text?keywords=${encodeURIComponent(query)}&key=${AMAP_KEY}&offset=5`,
+  );
+  const poiData = await poiRes.json();
+  if (poiData.status === '1' && poiData.pois?.length) {
+    return (poiData.pois as Record<string, string>[]).slice(0, 5).map((poi) => {
+      const [lngStr, latStr] = poi.location.split(',');
+      return { name: poi.name, address: poi.address || '', lat: parseFloat(latStr), lng: parseFloat(lngStr) };
+    });
+  }
+
+  const geoRes = await fetch(
+    `https://restapi.amap.com/v3/geocode/geo?address=${encodeURIComponent(query)}&key=${AMAP_KEY}`,
+  );
+  const geoData = await geoRes.json();
+  if (geoData.status !== '1' || !geoData.geocodes?.length) return [];
+  return (geoData.geocodes as Record<string, string>[]).slice(0, 5).map((geo) => {
+    const [lngStr, latStr] = geo.location.split(',');
+    return { name: geo.formatted_address, address: '', lat: parseFloat(latStr), lng: parseFloat(lngStr) };
+  });
+}
+
 export async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
   // Try POI search first (handles building names, landmarks, etc.)
   const poiRes = await fetch(

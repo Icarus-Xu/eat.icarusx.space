@@ -19,6 +19,7 @@ const en = {
   locationGo: 'Go',
   locationNetworkError: 'Network error. Please try again.',
   locationNotFound: 'Address not found.',
+  locationSelectResult: 'Select a location:',
   locationUseCurrentTitle: 'Use current location',
 
   // recommend
@@ -115,6 +116,7 @@ const zh: typeof en = {
   locationGo: '确认',
   locationNetworkError: '网络错误，请重试。',
   locationNotFound: '未找到该地址。',
+  locationSelectResult: '请选择位置：',
   locationUseCurrentTitle: '使用当前位置',
 
   recommendSetLocation: '未获取到位置。',
