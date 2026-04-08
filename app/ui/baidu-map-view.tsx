@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { wgs84ToBd09 } from '@/app/lib/coords';
+import { wgs84ToBd09, bd09ToGcj02, gcj02ToWgs84 } from '@/app/lib/coords';
 
 declare global {
   interface Window {
@@ -14,13 +14,16 @@ declare global {
 interface Props {
   lat: number;
   lng: number;
+  onMapClick?: (coords: { lat: number; lng: number }) => void;
 }
 
-export default function BaiduMapView({ lat, lng }: Props) {
+export default function BaiduMapView({ lat, lng, onMapClick }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
   const loadedRef = useRef(false);
+  const onMapClickRef = useRef(onMapClick);
+  useEffect(() => { onMapClickRef.current = onMapClick; }, [onMapClick]);
 
   useEffect(() => {
     if (loadedRef.current) return;
@@ -35,6 +38,11 @@ export default function BaiduMapView({ lat, lng }: Props) {
       map.enableScrollWheelZoom();
       map.addOverlay(new window.BMapGL.Marker(point));
       mapRef.current = map;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      map.addEventListener('click', (e: any) => {
+        const gcj02 = bd09ToGcj02(e.latlng.lat, e.latlng.lng);
+        onMapClickRef.current?.(gcj02ToWgs84(gcj02.lat, gcj02.lng));
+      });
     };
 
     if (window.BMapGL) {

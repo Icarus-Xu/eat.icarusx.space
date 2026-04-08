@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { wgs84ToGcj02 } from '@/app/lib/coords';
+import { wgs84ToGcj02, gcj02ToWgs84 } from '@/app/lib/coords';
 
 declare global {
   interface Window {
@@ -15,13 +15,16 @@ declare global {
 interface Props {
   lat: number;
   lng: number;
+  onMapClick?: (coords: { lat: number; lng: number }) => void;
 }
 
-export default function MapView({ lat, lng }: Props) {
+export default function MapView({ lat, lng, onMapClick }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
   const loadedRef = useRef(false);
+  const onMapClickRef = useRef(onMapClick);
+  useEffect(() => { onMapClickRef.current = onMapClick; }, [onMapClick]);
 
   useEffect(() => {
     if (loadedRef.current) return;
@@ -41,6 +44,11 @@ export default function MapView({ lat, lng }: Props) {
         zoom: 15,
       });
       new window.AMap.Marker({ position: [gcj.lng, gcj.lat], map: mapRef.current });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mapRef.current.on('click', (e: any) => {
+        const wgs84 = gcj02ToWgs84(e.lnglat.getLat(), e.lnglat.getLng());
+        onMapClickRef.current?.(wgs84);
+      });
     };
     document.head.appendChild(script);
   // eslint-disable-next-line react-hooks/exhaustive-deps
