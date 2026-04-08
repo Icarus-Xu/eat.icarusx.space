@@ -10,26 +10,55 @@ New source files must use: `Copyright (C) <current_year> Icarus. All rights rese
 ## Tech Stack
 
 - Framework: Next.js 16 (App Router), React, TypeScript
-- Database: PostgreSQL via Neon serverless, raw SQL using `postgres` library
+- Database: PostgreSQL (self-hosted in Docker on Raspberry Pi 5), raw SQL using `postgres` library
 - Auth: NextAuth.js v5 beta (5.0.0-beta.30), Credentials provider
 - Styling: Tailwind CSS, Heroicons
 - Validation: Zod
 - Package manager: pnpm
-- Deployment: Vercel (automatic deploy on push to main)
+- Deployment: Raspberry Pi 5 (Docker) + Alibaba Cloud ECS reverse proxy via frp tunnel
+
+## Deployment Architecture
+
+```
+eat.icarusx.space
+      |
+  ECS OpenResty (112.124.70.222)
+      |  frp tunnel (port 7000)
+  Raspberry Pi 5 (LAN)
+      |-- eat-app container (Next.js :3000)
+      |-- postgres container (PostgreSQL :5432)
+      |-- frpc container (frp client)
+```
+
+- frps runs on ECS (managed via 1Panel), frpc runs on Pi
+- OpenResty on ECS proxies eat.icarusx.space -> localhost:7001 (frp remote port)
+- Pi services managed via docker compose at `~/eat/docker-compose.yml`
+- Deploy script: `~/eat/repo/scripts/deploy.sh` (git pull + docker build + restart)
+
+## Build & Docker
+
+- `next.config.ts` uses `output: 'standalone'` for self-hosted deployment
+- Multi-stage `Dockerfile`: builder stage installs deps + builds; runner stage runs standalone output
+- Static assets are copied after build: `public/` and `.next/static/` -> `.next/standalone/`
+- `NEXT_PUBLIC_*` vars must be passed as Docker build args (baked into JS bundle at build time)
+- Pi `docker-compose.yml` passes build args from `.env` via `${VAR}` substitution
 
 ## Environment Variables
 
 ```
-DATABASE_URL                   Neon PostgreSQL connection string (via postgres library)
+DATABASE_URL                   PostgreSQL connection string; append ?sslmode=disable for local PG
 AUTH_SECRET                    NextAuth secret
 AUTH_URL                       Full URL of the deployment (e.g. https://eat.icarusx.space)
 AMAP_WEB_SERVICE_KEY           Amap Web Service API key (server-side)
-NEXT_PUBLIC_AMAP_JS_KEY        Amap JS API key (frontend)
-NEXT_PUBLIC_AMAP_JS_SECRET     Amap JS API security code (frontend)
+NEXT_PUBLIC_AMAP_JS_KEY        Amap JS API key (frontend, baked at build time)
+NEXT_PUBLIC_AMAP_JS_SECRET     Amap JS API security code (frontend, baked at build time)
 BAIDU_MAP_AK                   Baidu Maps Web Service API key (server-side)
-NEXT_PUBLIC_BAIDU_MAP_AK       Baidu Maps JS API key (frontend)
+NEXT_PUBLIC_BAIDU_MAP_AK       Baidu Maps JS API key (frontend, baked at build time)
 ALLOWED_DEV_ORIGINS            Comma-separated IPs allowed for cross-origin dev access
 ```
+
+SSL note: all `postgres()` calls use `{ ssl: DATABASE_URL?.includes('sslmode=disable') ? false : 'require' }`.
+Append `?sslmode=disable` to `DATABASE_URL` when connecting to a local PostgreSQL without TLS.
 
 ## Database Schema
 
@@ -70,6 +99,7 @@ Both `amap_poi_id` and `baidu_poi_id` are optional; at least one must be present
 /api/parse-restaurant     GET ?url= -- parse Amap or Baidu share link to POI info
 /api/search-restaurant    GET ?q=&lat=&lng=&provider= -- search by name (Amap or Baidu)
 /api/geocode              GET ?address= -- address to WGS-84 coordinates (normalised from GCJ-02)
+/api/geocode-search       GET ?q=&provider= -- address/POI search returning up to 5 candidates
 /api/reverse-geocode      GET ?lat=&lng=&provider= -- coordinates to address
 /api/cross-search         POST -- find same POI on the other map provider
 /api/client-log           POST -- receive client-side log events (no auth required)
@@ -113,10 +143,14 @@ app/ui/add/collect-form.tsx            Restaurant form: search by name tab + pas
                                        triggers cross-search after POI selection
 app/ui/add/restaurant-list.tsx         Restaurant list with distances; cards link to provider map
 app/ui/add/star-input.tsx              Star rating input (0-5)
-app/ui/location-input.tsx              Location input: locate button (GPS) + address search
-app/ui/map-view.tsx                    Interactive map (Amap JS SDK, WGS-84 -> GCJ-02)
-app/ui/baidu-map-view.tsx              Interactive map (Baidu Maps GL, WGS-84 -> BD-09)
-app/ui/map/map-page-client.tsx         Switches between MapView and BaiduMapView by provider
+app/ui/location-input.tsx              Location input: GPS button + text search (multi-candidate) +
+                                       map click confirm mode (mapPending prop from MapPageClient)
+app/ui/map-view.tsx                    Interactive map (Amap JS SDK, WGS-84 -> GCJ-02);
+                                       accepts optional onMapClick for location picking
+app/ui/baidu-map-view.tsx              Interactive map (Baidu Maps GL, WGS-84 -> BD-09);
+                                       accepts optional onMapClick for location picking
+app/ui/map/map-page-client.tsx         Manages map click state (mapPending); passes to
+                                       LocationInput and map components; handles reverse geocode
 app/ui/location-context.tsx            Location context: reads/writes localStorage lastLocation;
                                        auto-GPS only when no cached location; exposes locate()
 app/ui/map-provider-context.tsx        Map provider context (amap | baidu); localStorage mapProvider
@@ -140,11 +174,14 @@ app/api/save-restaurant/route.ts       Save restaurant + visit; accepts amapPoiI
 app/api/parse-restaurant/route.ts      Parse Amap or Baidu share link; returns { poi, provider }
 app/api/search-restaurant/route.ts     Search by name; provider param selects Amap or Baidu
 app/api/geocode/route.ts               Geocode API; normalises Amap GCJ-02 output to WGS-84
+app/api/geocode-search/route.ts        Address/POI search returning up to 5 candidates (WGS-84);
+                                       tries POI text search first, falls back to geocode
 app/api/reverse-geocode/route.ts       Reverse geocode; provider param selects Amap or Baidu
 app/api/cross-search/route.ts          Cross-provider POI search (Amap <-> Baidu)
 app/api/client-log/route.ts            Receive client-side log events; no auth required
 
-app/lib/amap.ts                        Amap API: URL parsing, POI lookup, name search, Haversine
+app/lib/amap.ts                        Amap API: URL parsing, POI lookup, name search, Haversine,
+                                       geocodeAddressList (multi-candidate address search)
 app/lib/baidu.ts                       Baidu API: Suggestion search, POI detail, reverse geocode,
                                        short link parsing (j.map.baidu.com)
 app/lib/coords.ts                      Coordinate conversions: WGS-84 <-> GCJ-02 <-> BD-09
@@ -156,14 +193,32 @@ app/lib/action.ts                      Server actions (authenticate)
 app/migrate/route.ts                   DB migration endpoint
 auth.config.ts                         Auth middleware: protects /home /recommend /add /map /settings /log
 auth.ts                                NextAuth config with Credentials provider
+Dockerfile                             Multi-stage build: builder (pnpm install + build) + runner
+scripts/deploy.sh                      Pi deploy script: git pull + docker build + restart eat-app
 ```
+
+## Location Input Interaction
+
+`LocationInput` has three modes:
+
+- **Search mode** (default): user types address → click Go → calls `/api/geocode-search`
+  - 0 results: error message
+  - 1 result: auto-confirms
+  - Multiple results: shows candidate list for selection
+- **Map confirm mode**: triggered when `mapPending` prop is set (map click in `MapPageClient`)
+  - Input shows reverse-geocoded address of clicked point
+  - Button shows "Confirm"; clicking confirms without search
+  - User typing dismisses map mode and returns to search mode
+- **GPS**: locate button always available; calls `locate()` from LocationContext
 
 ## Coordinate System Notes
 
 All coordinates stored in the DB and held in LocationContext are **WGS-84** (GPS standard).
 
 - `/api/geocode` normalises Amap's GCJ-02 output to WGS-84 before returning
+- `/api/geocode-search` returns WGS-84; converts from GCJ-02 (Amap) or BD-09->GCJ-02->WGS-84 (Baidu)
 - Map components convert on the fly: `wgs84ToGcj02` (Amap), `wgs84ToBd09` (Baidu)
+- Map click events return native coords (GCJ-02/BD-09); converted to WGS-84 before calling onMapClick
 - Cross-search converts between providers using `bd09ToGcj02` / `gcj02ToWgs84` as needed
 
 ## Map Provider System
@@ -195,7 +250,8 @@ All coordinates stored in the DB and held in LocationContext are **WGS-84** (GPS
 Server-side uses `AMAP_WEB_SERVICE_KEY` to call:
 - `GET /v3/place/detail?id=POI_ID` -- fetch POI name, address, coordinates
 - `GET /v3/geocode/regeo` -- reverse geocode (returns GCJ-02, normalised to WGS-84)
-- `GET /v3/place/text` -- name search (types=050000 restaurants, offset=10)
+- `GET /v3/place/text` -- name search (types=050000 restaurants, offset=10);
+  also used without type filter for address search in geocodeAddressList
 
 Supported URL formats for parsing (paste link mode):
 - `https://surl.amap.com/XXXXX` (short link, follows redirect)
