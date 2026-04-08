@@ -2,10 +2,11 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { ArrowPathIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, MapPinIcon, MapIcon } from '@heroicons/react/24/outline';
 import { useLocation } from '@/app/ui/location-context';
 import { useT } from '@/app/ui/lang-context';
 import { useMapProvider } from '@/app/ui/map-provider-context';
+import MapPickerModal from '@/app/ui/map-picker-modal';
 
 interface LocationCandidate {
   name: string;
@@ -27,6 +28,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress 
   const [address, setAddress] = useState(defaultAddress ?? '');
   const [error, setError] = useState('');
   const [candidates, setCandidates] = useState<LocationCandidate[] | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [locating, setLocating] = useState(false);
 
@@ -72,7 +74,22 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress 
     onCoords(c);
   };
 
+  const handlePickerConfirm = (coords: { lat: number; lng: number }, addr: string) => {
+    setShowPicker(false);
+    if (addr) setAddress(addr);
+    onCoords(coords);
+  };
+
   return (
+    <>
+    {showPicker && provider && (
+      <MapPickerModal
+        provider={provider}
+        initialCoords={defaultCoords}
+        onConfirm={handlePickerConfirm}
+        onClose={() => setShowPicker(false)}
+      />
+    )}
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
         <button
@@ -100,6 +117,15 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress 
         >
           {isPending ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : t.locationGo}
         </button>
+        {provider && (
+          <button
+            onClick={() => setShowPicker(true)}
+            title={t.locationPickOnMap}
+            className="flex items-center justify-center rounded-lg border border-gray-200 bg-white px-2.5 text-gray-500 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+          >
+            <MapIcon className="h-4 w-4" />
+          </button>
+        )}
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
       {candidates && (
@@ -120,5 +146,6 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress 
         </div>
       )}
     </div>
+    </>
   );
 }

@@ -20,6 +20,9 @@ const en = {
   locationNetworkError: 'Network error. Please try again.',
   locationNotFound: 'Address not found.',
   locationSelectResult: 'Select a location:',
+  locationPickOnMap: 'Pick on map',
+  locationPickerTitle: 'Pick Location',
+  locationPickerHint: 'Tap the map to select a location',
   locationUseCurrentTitle: 'Use current location',
 
   // recommend
@@ -117,6 +120,9 @@ const zh: typeof en = {
   locationNetworkError: '网络错误，请重试。',
   locationNotFound: '未找到该地址。',
   locationSelectResult: '请选择位置：',
+  locationPickOnMap: '在地图上选点',
+  locationPickerTitle: '选择位置',
+  locationPickerHint: '点击地图选择位置',
   locationUseCurrentTitle: '使用当前位置',
 
   recommendSetLocation: '未获取到位置。',
