@@ -29,6 +29,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
   const [address, setAddress] = useState(defaultAddress ?? '');
   const [error, setError] = useState('');
   const [candidates, setCandidates] = useState<LocationCandidate[] | null>(null);
+  const [justConfirmed, setJustConfirmed] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [locating, setLocating] = useState(false);
 
@@ -55,6 +56,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
       setAddress(mapPending.address || '…');
       setCandidates(null);
       setError('');
+      setJustConfirmed(false);
     }
   }, [mapPending]);
 
@@ -62,6 +64,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
     setAddress(value);
     setCandidates(null);
     setError('');
+    setJustConfirmed(false);
     if (mapPending) onMapPendingDismiss?.();
   };
 
@@ -69,6 +72,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
     if (!mapPending) return;
     onCoords(mapPending.coords);
     onMapPendingDismiss?.();
+    setJustConfirmed(true);
   };
 
   const handleSearch = () => {
@@ -91,7 +95,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
     });
   };
 
-  const isConfirmMode = !!mapPending;
+  const isConfirmMode = !!mapPending || justConfirmed;
 
   return (
     <div className="flex flex-col gap-2">
