@@ -2,7 +2,7 @@
 import postgres from 'postgres';
 import { auth } from '@/auth';
 
-const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL?.includes('sslmode=disable') ? false : 'require' });
 
 export interface LogEntry {
   type: 'api' | 'page' | 'client_error';

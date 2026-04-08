@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import postgres from 'postgres';
 import { logApiRequest } from '@/app/lib/log';
 
-const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL?.includes('sslmode=disable') ? false : 'require' });
 
 interface CollectBody {
   amapPoiId?: string | null;
