@@ -22,6 +22,10 @@ pnpm install --frozen-lockfile
 echo "==> Building application..."
 pnpm build
 
+echo "==> Copying static assets..."
+cp -r public .next/standalone/public
+cp -r .next/static .next/standalone/.next/static
+
 echo "==> Starting server..."
 export NODE_ENV=production
 exec node .next/standalone/server.js
