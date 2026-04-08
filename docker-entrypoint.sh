@@ -16,6 +16,7 @@ cd "$REPO_DIR"
 
 echo "==> Installing dependencies..."
 corepack enable pnpm
+pnpm config set registry https://registry.npmmirror.com
 pnpm install --frozen-lockfile
 
 echo "==> Building application..."
