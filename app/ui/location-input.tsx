@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { ArrowPathIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, MapPinIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useLocation } from '@/app/ui/location-context';
 import { useT } from '@/app/ui/lang-context';
 import { useMapProvider } from '@/app/ui/map-provider-context';
@@ -128,7 +128,9 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
             disabled={isPending || !address.trim()}
             className="btn-primary flex items-center gap-1.5"
           >
-            {isPending ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : t.locationGo}
+            {isPending
+              ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
+              : <><MagnifyingGlassIcon className="h-4 w-4" />{t.locationGo}</>}
           </button>
         )}
       </div>
