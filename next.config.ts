@@ -5,6 +5,7 @@ const allowedDevOrigins = process.env.ALLOWED_DEV_ORIGINS
   : [];
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   ...(allowedDevOrigins.length > 0 && { allowedDevOrigins }),
 };
 

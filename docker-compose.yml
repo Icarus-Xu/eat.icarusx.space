@@ -1,0 +1,18 @@
+# Copyright (C) 2026 Icarus. All rights reserved.
+
+services:
+  eat-app:
+    build: .
+    env_file: /opt/eat/.env
+    volumes:
+      - eat-source:/app/source
+    networks:
+      - 1panel-network
+    restart: unless-stopped
+
+volumes:
+  eat-source:
+
+networks:
+  1panel-network:
+    external: true
