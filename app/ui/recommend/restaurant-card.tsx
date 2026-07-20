@@ -4,6 +4,8 @@
 import type { RestaurantCard } from '@/app/api/recommend/route';
 import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
+import { StarRating } from '@/app/ui/stars';
+import VisitBadge from '@/app/ui/visit-badge';
 
 function formatDistance(m: number): string {
   if (m < 1000) return `${Math.round(m)} m`;
@@ -17,29 +19,6 @@ function formatDate(iso: string | null, locale: string): string {
     month: 'short',
     day: 'numeric',
   });
-}
-
-function StarRating({ rating }: { rating: number | null }) {
-  if (rating === null) return null;
-  const full = Math.round(rating);
-  return (
-    <span className="inline-flex gap-0.5" aria-label={`${rating} stars`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg
-          key={i}
-          viewBox="0 0 20 20"
-          strokeWidth={1.4}
-          className={
-            i < full
-              ? 'h-3.5 w-3.5 fill-star dark:fill-star-d'
-              : 'h-3.5 w-3.5 fill-none stroke-muted opacity-60 dark:stroke-muted-d'
-          }
-        >
-          <path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L2.6 7.7l5.8-.8z" />
-        </svg>
-      ))}
-    </span>
-  );
 }
 
 export default function RestaurantCard({ r }: { r: RestaurantCard }) {
@@ -72,11 +51,7 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
         </div>
       )}
 
-      {!r.visited && (
-        <span className="self-start rounded-full bg-appetite-soft px-2.5 py-0.5 text-xs font-semibold text-appetite dark:bg-appetite-soft-d dark:text-appetite-d">
-          {t.cardNotVisitedYet}
-        </span>
-      )}
+      {!r.visited && <VisitBadge visited={false} className="self-start" />}
 
       {notePreview && (
         <p className="text-sm text-sub dark:text-sub-d">{notePreview}</p>

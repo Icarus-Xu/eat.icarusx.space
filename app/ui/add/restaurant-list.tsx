@@ -7,6 +7,8 @@ import { haversineDistance } from '@/app/lib/amap';
 import { useLocation } from '@/app/ui/location-context';
 import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
+import { StarRating } from '@/app/ui/stars';
+import VisitBadge from '@/app/ui/visit-badge';
 
 type RestaurantWithDistance = RestaurantRow & { distanceM: number | null };
 
@@ -23,30 +25,16 @@ function formatDistance(m: number): string {
   return `${(m / 1000).toFixed(1)} km`;
 }
 
-function StarRating({ rating }: { rating: number | null }) {
-  if (rating === null) return null;
-  const full = Math.round(rating);
-  return (
-    <span className="text-star text-sm">
-      {'★'.repeat(full)}{'☆'.repeat(5 - full)}
-    </span>
-  );
-}
-
 function CardContent({ r, t }: { r: RestaurantWithDistance; t: ReturnType<typeof useT> }) {
   return (
     <>
       <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-ink text-sm leading-snug dark:text-ink-d">{r.name}</span>
+        <span className="min-w-0 break-words font-medium text-ink text-sm leading-snug dark:text-ink-d">{r.name}</span>
         <div className="flex items-center gap-1.5 shrink-0">
           {r.distanceM !== null && (
             <span className="text-xs text-muted dark:text-muted-d">{formatDistance(r.distanceM)}</span>
           )}
-          {r.visited ? (
-            <span className="badge-visited">{t.badgeVisited}</span>
-          ) : (
-            <span className="badge-unvisited">{t.badgeNotYet}</span>
-          )}
+          <VisitBadge visited={r.visited} />
         </div>
       </div>
 
@@ -132,7 +120,7 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="card flex flex-col gap-1.5 hover:border-appetite dark:hover:border-appetite-d"
+                  className="card flex flex-col gap-1.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d"
                 >
                   <CardContent r={r} t={t} />
                 </a>

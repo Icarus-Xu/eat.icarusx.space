@@ -81,20 +81,6 @@
       dark:border-line-d dark:bg-card-d dark:hover:border-appetite-d dark:hover:bg-appetite-soft-d;
   }
 
-  /* Settings toggle button */
-  .btn-option {
-    @apply flex-1 rounded-lg border-2 py-2.5 text-sm font-medium transition-colors;
-  }
-
-  .btn-option-active {
-    @apply border-appetite bg-appetite-soft text-appetite dark:border-appetite-d dark:bg-appetite-soft-d dark:text-appetite-d;
-  }
-
-  .btn-option-inactive {
-    @apply border-line bg-card text-sub hover:border-appetite
-      dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d;
-  }
-
   /* Inline pending/loading status row */
   .status-pending {
     @apply mt-3 flex items-center gap-2 text-sm text-muted dark:text-muted-d;

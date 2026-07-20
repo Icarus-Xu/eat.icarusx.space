@@ -7,6 +7,7 @@ import { useLang, useT } from '@/app/ui/lang-context';
 import type { Lang } from '@/app/ui/lang-context';
 import { useTheme } from '@/app/ui/theme-context';
 import type { ThemeSetting } from '@/app/ui/theme-context';
+import Segmented from '@/app/ui/segmented';
 
 const LANG_OPTIONS: { value: Lang; label: string }[] = [
   { value: 'zh', label: '中文' },
@@ -42,17 +43,7 @@ export default function SettingsPage() {
               {t.settingsMapProviderDesc}
             </p>
           </div>
-          <div className="flex gap-2">
-            {mapOptions.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setProvider(opt.value)}
-                className={`btn-option ${provider === opt.value ? 'btn-option-active' : 'btn-option-inactive'}`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <Segmented options={mapOptions} value={provider} onChange={setProvider} />
         </div>
 
         <div className="card flex flex-col gap-3">
@@ -62,17 +53,7 @@ export default function SettingsPage() {
               {t.settingsLanguageDesc}
             </p>
           </div>
-          <div className="flex gap-2">
-            {LANG_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setLang(opt.value)}
-                className={`btn-option ${lang === opt.value ? 'btn-option-active' : 'btn-option-inactive'}`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <Segmented options={LANG_OPTIONS} value={lang} onChange={setLang} />
         </div>
 
         <div className="card flex flex-col gap-3">
@@ -82,17 +63,7 @@ export default function SettingsPage() {
               {t.settingsThemeDesc}
             </p>
           </div>
-          <div className="flex gap-2">
-            {themeOptions.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setTheme(opt.value)}
-                className={`btn-option ${theme === opt.value ? 'btn-option-active' : 'btn-option-inactive'}`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <Segmented options={themeOptions} value={theme} onChange={setTheme} />
         </div>
       </div>
     </div>

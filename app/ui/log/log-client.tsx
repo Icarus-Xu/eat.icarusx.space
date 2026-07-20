@@ -95,7 +95,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 items-center">
         <select
-          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1"
+          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 transition-colors focus:border-appetite focus:outline-none dark:focus:border-appetite-d"
           value={params.type ?? ''}
           onChange={(e) => updateFilter('type', e.target.value)}
         >
@@ -107,7 +107,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
         <input
           type="text"
           placeholder="Path contains..."
-          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 w-44"
+          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 transition-colors focus:border-appetite focus:outline-none dark:focus:border-appetite-d w-44"
           defaultValue={params.path ?? ''}
           onKeyDown={(e) => {
             if (e.key === 'Enter') updateFilter('path', (e.target as HTMLInputElement).value.trim());
@@ -117,7 +117,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
         <input
           type="number"
           placeholder="Status"
-          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 w-20"
+          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 transition-colors focus:border-appetite focus:outline-none dark:focus:border-appetite-d w-20"
           defaultValue={params.status ?? ''}
           onKeyDown={(e) => {
             if (e.key === 'Enter') updateFilter('status', (e.target as HTMLInputElement).value.trim());
@@ -151,12 +151,12 @@ export default function LogClient({ logs, params, totalPages }: Props) {
               </tr>
             )}
             {logs.map((row) => (
-              <tr key={row.id} className="hover:bg-paper dark:hover:bg-card-d transition-colors">
+              <tr key={row.id} className="hover:bg-appetite-soft dark:hover:bg-appetite-soft-d transition-colors">
                 <td className="px-2 py-1.5 whitespace-nowrap text-muted dark:text-muted-d">
                   {formatTime(row.created_at)}
                 </td>
                 <td className="px-2 py-1.5">
-                  <span className={`inline-block rounded px-1 py-0.5 text-xs font-medium ${typeBadge(row.type)}`}>
+                  <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${typeBadge(row.type)}`}>
                     {row.type}
                   </span>
                 </td>
@@ -203,7 +203,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
           <button
             disabled={currentPage <= 1}
             onClick={() => goPage(currentPage - 1)}
-            className="px-2 py-1 rounded border border-line dark:border-line-d text-sm disabled:opacity-40"
+            className="px-2 py-1 rounded border border-line dark:border-line-d text-sm transition-colors hover:border-appetite disabled:opacity-40 dark:hover:border-appetite-d"
           >
             Prev
           </button>
@@ -213,7 +213,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
           <button
             disabled={currentPage >= totalPages}
             onClick={() => goPage(currentPage + 1)}
-            className="px-2 py-1 rounded border border-line dark:border-line-d text-sm disabled:opacity-40"
+            className="px-2 py-1 rounded border border-line dark:border-line-d text-sm transition-colors hover:border-appetite disabled:opacity-40 dark:hover:border-appetite-d"
           >
             Next
           </button>

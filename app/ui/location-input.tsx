@@ -104,7 +104,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
           onClick={handleLocate}
           disabled={locating}
           title={t.locationUseCurrentTitle}
-          className="flex items-center justify-center rounded-lg border border-line bg-card px-2.5 text-muted shadow-sm hover:bg-paper active:scale-95 transition-transform disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:bg-card-d"
+          className="flex items-center justify-center rounded-lg border border-line bg-card px-2.5 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
         >
           {locating
             ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
@@ -148,7 +148,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
             <button
               key={i}
               onClick={() => { setCandidates(null); onCoords(c); }}
-              className="flex flex-col px-3 py-2 text-left hover:bg-paper dark:hover:bg-card-d border-b last:border-b-0 border-line dark:border-line-d transition-colors"
+              className="flex flex-col px-3 py-2 text-left hover:bg-appetite-soft dark:hover:bg-appetite-soft-d border-b last:border-b-0 border-line dark:border-line-d transition-colors"
             >
               <span className="text-sm font-medium text-ink dark:text-ink-d">{c.name}</span>
               {c.address && <span className="text-xs text-muted dark:text-muted-d">{c.address}</span>}

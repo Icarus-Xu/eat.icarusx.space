@@ -10,9 +10,12 @@ import StarInput from './star-input';
 import CrossSearchModal, { type CrossPoi } from '@/app/ui/cross-search-modal';
 import {
   ArrowPathIcon,
+  BookmarkIcon,
   CheckCircleIcon,
+  ChevronRightIcon,
   ExclamationCircleIcon,
   MagnifyingGlassIcon,
+  MapPinIcon,
 } from '@heroicons/react/24/outline';
 
 type Mode = 'search' | 'link';
@@ -312,10 +315,14 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                     <button
                       type="button"
                       onClick={() => selectPoi(r, effectiveProvider)}
-                      className="poi-item"
+                      className="card group flex w-full items-center gap-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d"
                     >
-                      <p className="font-medium text-ink dark:text-ink-d">{r.name}</p>
-                      <p className="mt-0.5 text-sm text-muted dark:text-muted-d">{r.address}</p>
+                      <MapPinIcon className="h-5 w-5 shrink-0 text-appetite dark:text-appetite-d" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-medium text-ink dark:text-ink-d">{r.name}</span>
+                        <span className="block truncate text-sm text-muted dark:text-muted-d">{r.address}</span>
+                      </span>
+                      <ChevronRightIcon className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 dark:text-muted-d" />
                     </button>
                   </li>
                 ))}
@@ -379,12 +386,13 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                     key={String(v)}
                     type="button"
                     onClick={() => setVisited(v)}
-                    className={`btn-toggle ${
+                    className={`btn-toggle inline-flex items-center justify-center gap-1.5 ${
                       visited === v
                         ? 'border-appetite bg-appetite-soft text-appetite dark:border-appetite-d dark:bg-appetite-soft-d dark:text-appetite-d'
-                        : 'border-line bg-card text-sub hover:border-line dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-line-d'
+                        : 'border-line bg-card text-sub hover:border-appetite dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d'
                     }`}
                   >
+                    {v ? <CheckCircleIcon className="h-4 w-4" /> : <BookmarkIcon className="h-4 w-4" />}
                     {v ? t.formVisited : t.formNotYet}
                   </button>
                 ))}
