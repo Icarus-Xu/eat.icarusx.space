@@ -92,6 +92,49 @@ input[type='number'] {
   appearance: textfield;
 }
 
+/* ---- custom scrollbar (warm theme) ---- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #C8BDAE;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A89882;
+}
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: #4A3D30;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5E4E3E;
+  }
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #4A3D30;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #5E4E3E;
+}
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #C8BDAE transparent;
+}
+@media (prefers-color-scheme: dark) {
+  * {
+    scrollbar-color: #4A3D30 transparent;
+  }
+}
+.dark * {
+  scrollbar-color: #4A3D30 transparent;
+}
+
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
