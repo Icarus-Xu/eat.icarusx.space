@@ -7,7 +7,9 @@ import { useLang, useT } from '@/app/ui/lang-context';
 import type { Lang } from '@/app/ui/lang-context';
 import { useTheme } from '@/app/ui/theme-context';
 import type { ThemeSetting } from '@/app/ui/theme-context';
-import Segmented from '@/app/ui/segmented';
+import Dropdown from '@/app/ui/dropdown';
+import { MapIcon, LanguageIcon, SunIcon } from '@heroicons/react/24/outline';
+import type { ComponentType, SVGProps } from 'react';
 
 const LANG_OPTIONS: { value: Lang; label: string }[] = [
   { value: 'zh', label: '中文' },
@@ -31,40 +33,51 @@ export default function SettingsPage() {
     { value: 'dark', label: t.themeDark },
   ];
 
+  const sections: {
+    icon: ComponentType<SVGProps<SVGSVGElement>>;
+    title: string;
+    desc: string;
+    control: React.ReactNode;
+  }[] = [
+    {
+      icon: MapIcon,
+      title: t.settingsMapProvider,
+      desc: t.settingsMapProviderDesc,
+      control: <Dropdown options={mapOptions} value={provider} onChange={setProvider} label={t.settingsMapProvider} />,
+    },
+    {
+      icon: LanguageIcon,
+      title: t.settingsLanguage,
+      desc: t.settingsLanguageDesc,
+      control: <Dropdown options={LANG_OPTIONS} value={lang} onChange={setLang} label={t.settingsLanguage} />,
+    },
+    {
+      icon: SunIcon,
+      title: t.settingsTheme,
+      desc: t.settingsThemeDesc,
+      control: <Dropdown options={themeOptions} value={theme} onChange={setTheme} label={t.settingsTheme} />,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-8">
       <h1 className="page-heading">{t.settingsTitle}</h1>
 
-      <div className="max-w-md flex flex-col gap-4">
-        <div className="card flex flex-col gap-3">
-          <div>
-            <p className="text-sm font-medium text-ink dark:text-ink-d">{t.settingsMapProvider}</p>
-            <p className="mt-0.5 text-xs text-muted dark:text-muted-d">
-              {t.settingsMapProviderDesc}
-            </p>
-          </div>
-          <Segmented options={mapOptions} value={provider} onChange={setProvider} />
-        </div>
-
-        <div className="card flex flex-col gap-3">
-          <div>
-            <p className="text-sm font-medium text-ink dark:text-ink-d">{t.settingsLanguage}</p>
-            <p className="mt-0.5 text-xs text-muted dark:text-muted-d">
-              {t.settingsLanguageDesc}
-            </p>
-          </div>
-          <Segmented options={LANG_OPTIONS} value={lang} onChange={setLang} />
-        </div>
-
-        <div className="card flex flex-col gap-3">
-          <div>
-            <p className="text-sm font-medium text-ink dark:text-ink-d">{t.settingsTheme}</p>
-            <p className="mt-0.5 text-xs text-muted dark:text-muted-d">
-              {t.settingsThemeDesc}
-            </p>
-          </div>
-          <Segmented options={themeOptions} value={theme} onChange={setTheme} />
-        </div>
+      <div className="card w-full max-w-lg divide-y divide-line p-0 dark:divide-line-d">
+        {sections.map(({ icon: Icon, title, desc, control }) => (
+          <section key={title} className="flex items-center justify-between gap-4 p-5">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d">
+                <Icon className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-ink dark:text-ink-d">{title}</p>
+                <p className="mt-0.5 text-xs text-muted dark:text-muted-d">{desc}</p>
+              </div>
+            </div>
+            <div className="w-36 shrink-0">{control}</div>
+          </section>
+        ))}
       </div>
     </div>
   );
