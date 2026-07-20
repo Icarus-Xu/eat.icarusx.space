@@ -3,7 +3,7 @@
 FROM node:22-alpine AS builder
 RUN sed -i 's|https://dl-cdn.alpinelinux.org|https://mirrors.aliyun.com|g' /etc/apk/repositories
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN corepack enable pnpm && pnpm config set registry https://registry.npmmirror.com && pnpm install --frozen-lockfile
 COPY . .
 ARG NEXT_PUBLIC_AMAP_JS_KEY
