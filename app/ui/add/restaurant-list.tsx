@@ -27,7 +27,7 @@ function StarRating({ rating }: { rating: number | null }) {
   if (rating === null) return null;
   const full = Math.round(rating);
   return (
-    <span className="text-yellow-400 text-sm">
+    <span className="text-star text-sm">
       {'★'.repeat(full)}{'☆'.repeat(5 - full)}
     </span>
   );
@@ -37,10 +37,10 @@ function CardContent({ r, t }: { r: RestaurantWithDistance; t: ReturnType<typeof
   return (
     <>
       <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-gray-900 text-sm leading-snug dark:text-gray-100">{r.name}</span>
+        <span className="font-medium text-ink text-sm leading-snug dark:text-ink-d">{r.name}</span>
         <div className="flex items-center gap-1.5 shrink-0">
           {r.distanceM !== null && (
-            <span className="text-xs text-gray-400 dark:text-gray-500">{formatDistance(r.distanceM)}</span>
+            <span className="text-xs text-muted dark:text-muted-d">{formatDistance(r.distanceM)}</span>
           )}
           {r.visited ? (
             <span className="badge-visited">{t.badgeVisited}</span>
@@ -54,18 +54,18 @@ function CardContent({ r, t }: { r: RestaurantWithDistance; t: ReturnType<typeof
         <div className="flex items-center gap-2">
           <StarRating rating={r.maxRating} />
           {r.lastVisitedAt && (
-            <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(r.lastVisitedAt, t.dateLocale)}</span>
+            <span className="text-xs text-muted dark:text-muted-d">{formatDate(r.lastVisitedAt, t.dateLocale)}</span>
           )}
         </div>
       )}
 
       {r.notes && (
-        <p className="text-xs text-gray-500 dark:text-gray-400">
+        <p className="text-xs text-muted dark:text-muted-d">
           {r.notes.slice(0, 20)}{r.notes.length > 20 ? '...' : ''}
         </p>
       )}
 
-      <p className="text-xs text-gray-400 truncate dark:text-gray-500">{r.address}</p>
+      <p className="text-xs text-muted truncate dark:text-muted-d">{r.address}</p>
     </>
   );
 }
@@ -109,14 +109,14 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
     );
   }, [location]);
 
-  if (loading) return <p className="text-sm text-gray-400 dark:text-gray-500">{t.listLoading}</p>;
+  if (loading) return <p className="text-sm text-muted dark:text-muted-d">{t.listLoading}</p>;
 
   const effectiveProvider = provider ?? 'amap';
 
   return (
     <div className="flex flex-col gap-4">
       {restaurants.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-6 dark:text-gray-500">{t.listEmpty}</p>
+        <p className="text-sm text-muted text-center py-6 dark:text-muted-d">{t.listEmpty}</p>
       ) : (
         <div className="flex flex-col gap-2">
           {restaurants.map((r) => {
@@ -132,7 +132,7 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="card flex flex-col gap-1.5 hover:border-blue-400 dark:hover:border-blue-500"
+                  className="card flex flex-col gap-1.5 hover:border-appetite dark:hover:border-appetite-d"
                 >
                   <CardContent r={r} t={t} />
                 </a>

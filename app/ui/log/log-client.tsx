@@ -6,29 +6,29 @@ import { useCallback } from 'react';
 import type { LogRow } from '@/app/lib/log';
 
 function statusColor(code: number | null): string {
-  if (code === null) return 'text-gray-400';
+  if (code === null) return 'text-muted';
   if (code < 300) return 'text-green-600 dark:text-green-400';
-  if (code < 400) return 'text-blue-600 dark:text-blue-400';
-  if (code < 500) return 'text-yellow-600 dark:text-yellow-400';
+  if (code < 400) return 'text-appetite dark:text-appetite-d';
+  if (code < 500) return 'text-star dark:text-star-d';
   return 'text-red-600 dark:text-red-400';
 }
 
 function methodColor(method: string | null): string {
   switch (method) {
-    case 'GET': return 'text-blue-600 dark:text-blue-400';
+    case 'GET': return 'text-appetite dark:text-appetite-d';
     case 'POST': return 'text-green-600 dark:text-green-400';
     case 'DELETE': return 'text-red-600 dark:text-red-400';
     case 'GEOLOCATION': return 'text-purple-600 dark:text-purple-400';
-    default: return 'text-gray-500';
+    default: return 'text-muted';
   }
 }
 
 function typeBadge(type: string): string {
   switch (type) {
-    case 'api': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-    case 'page': return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+    case 'api': return 'bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d';
+    case 'page': return 'bg-paper text-ink dark:bg-card-d dark:text-sub-d';
     case 'client_error': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-    default: return 'bg-gray-100 text-gray-600';
+    default: return 'bg-paper text-sub';
   }
 }
 
@@ -95,7 +95,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
       {/* Filters */}
       <div className="flex flex-wrap gap-2 items-center">
         <select
-          className="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-2 py-1"
+          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1"
           value={params.type ?? ''}
           onChange={(e) => updateFilter('type', e.target.value)}
         >
@@ -107,7 +107,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
         <input
           type="text"
           placeholder="Path contains..."
-          className="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-2 py-1 w-44"
+          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 w-44"
           defaultValue={params.path ?? ''}
           onKeyDown={(e) => {
             if (e.key === 'Enter') updateFilter('path', (e.target as HTMLInputElement).value.trim());
@@ -117,42 +117,42 @@ export default function LogClient({ logs, params, totalPages }: Props) {
         <input
           type="number"
           placeholder="Status"
-          className="rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm px-2 py-1 w-20"
+          className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 w-20"
           defaultValue={params.status ?? ''}
           onKeyDown={(e) => {
             if (e.key === 'Enter') updateFilter('status', (e.target as HTMLInputElement).value.trim());
           }}
           onBlur={(e) => updateFilter('status', e.target.value.trim())}
         />
-        <span className="text-xs text-gray-400 ml-auto">{logs.length} rows (last 7 days)</span>
+        <span className="text-xs text-muted ml-auto">{logs.length} rows (last 7 days)</span>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full text-xs divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+      <div className="overflow-x-auto rounded border border-line dark:border-line-d">
+        <table className="min-w-full text-xs divide-y divide-line dark:divide-line-d">
+          <thead className="bg-paper dark:bg-card-d">
             <tr>
               {['Time', 'Type', 'User', 'Method', 'Path', 'Status', 'ms', 'Error', 'UA / IP'].map((h) => (
                 <th
                   key={h}
-                  className="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 whitespace-nowrap"
+                  className="px-2 py-2 text-left text-xs font-medium text-muted dark:text-muted-d whitespace-nowrap"
                 >
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
+          <tbody className="bg-card dark:bg-paper-d divide-y divide-line dark:divide-line-d">
             {logs.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-2 py-6 text-center text-gray-400">
+                <td colSpan={9} className="px-2 py-6 text-center text-muted">
                   No logs found.
                 </td>
               </tr>
             )}
             {logs.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <td className="px-2 py-1.5 whitespace-nowrap text-gray-500 dark:text-gray-400">
+              <tr key={row.id} className="hover:bg-paper dark:hover:bg-card-d transition-colors">
+                <td className="px-2 py-1.5 whitespace-nowrap text-muted dark:text-muted-d">
                   {formatTime(row.created_at)}
                 </td>
                 <td className="px-2 py-1.5">
@@ -160,14 +160,14 @@ export default function LogClient({ logs, params, totalPages }: Props) {
                     {row.type}
                   </span>
                 </td>
-                <td className="px-2 py-1.5 text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                  {row.user_id ?? <span className="text-gray-400">-</span>}
+                <td className="px-2 py-1.5 text-ink dark:text-sub-d whitespace-nowrap">
+                  {row.user_id ?? <span className="text-muted">-</span>}
                 </td>
                 <td className={`px-2 py-1.5 font-mono font-semibold whitespace-nowrap ${methodColor(row.method)}`}>
                   {row.method ?? '-'}
                 </td>
                 <td
-                  className="px-2 py-1.5 font-mono text-gray-800 dark:text-gray-200 max-w-[200px] truncate"
+                  className="px-2 py-1.5 font-mono text-ink dark:text-ink-d max-w-[200px] truncate"
                   title={row.path}
                 >
                   {row.path}
@@ -175,7 +175,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
                 <td className={`px-2 py-1.5 font-mono font-semibold whitespace-nowrap ${statusColor(row.status_code)}`}>
                   {row.status_code ?? '-'}
                 </td>
-                <td className="px-2 py-1.5 text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                <td className="px-2 py-1.5 text-right text-muted dark:text-muted-d whitespace-nowrap">
                   {row.duration_ms != null ? row.duration_ms : '-'}
                 </td>
                 <td
@@ -185,11 +185,11 @@ export default function LogClient({ logs, params, totalPages }: Props) {
                   {row.error_message ?? '-'}
                 </td>
                 <td
-                  className="px-2 py-1.5 text-gray-400 dark:text-gray-500 max-w-[160px] truncate"
+                  className="px-2 py-1.5 text-muted dark:text-muted-d max-w-[160px] truncate"
                   title={[row.user_agent, row.ip].filter(Boolean).join(' | ')}
                 >
                   {shortUa(row.user_agent)}
-                  {row.ip && <span className="ml-1 text-gray-300 dark:text-gray-600">{row.ip}</span>}
+                  {row.ip && <span className="ml-1 text-muted dark:text-muted-d">{row.ip}</span>}
                 </td>
               </tr>
             ))}
@@ -203,17 +203,17 @@ export default function LogClient({ logs, params, totalPages }: Props) {
           <button
             disabled={currentPage <= 1}
             onClick={() => goPage(currentPage - 1)}
-            className="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-40"
+            className="px-2 py-1 rounded border border-line dark:border-line-d text-sm disabled:opacity-40"
           >
             Prev
           </button>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm text-sub dark:text-muted-d">
             Page {currentPage} / {totalPages}
           </span>
           <button
             disabled={currentPage >= totalPages}
             onClick={() => goPage(currentPage + 1)}
-            className="px-2 py-1 rounded border border-gray-300 dark:border-gray-600 text-sm disabled:opacity-40"
+            className="px-2 py-1 rounded border border-line dark:border-line-d text-sm disabled:opacity-40"
           >
             Next
           </button>

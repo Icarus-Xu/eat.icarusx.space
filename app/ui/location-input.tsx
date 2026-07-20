@@ -104,7 +104,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
           onClick={handleLocate}
           disabled={locating}
           title={t.locationUseCurrentTitle}
-          className="flex items-center justify-center rounded-lg border border-gray-200 bg-white px-2.5 text-gray-500 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+          className="flex items-center justify-center rounded-lg border border-line bg-card px-2.5 text-muted shadow-sm hover:bg-paper active:scale-95 transition-transform disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:bg-card-d"
         >
           {locating
             ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
@@ -140,18 +140,18 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
       {candidates && (
-        <div className="flex flex-col rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden dark:border-gray-700 dark:bg-gray-800">
-          <p className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex flex-col rounded-lg border border-line bg-card shadow-sm overflow-hidden dark:border-line-d dark:bg-card-d">
+          <p className="px-3 py-2 text-xs text-muted dark:text-muted-d border-b border-line dark:border-line-d">
             {t.locationSelectResult}
           </p>
           {candidates.map((c, i) => (
             <button
               key={i}
               onClick={() => { setCandidates(null); onCoords(c); }}
-              className="flex flex-col px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b last:border-b-0 border-gray-100 dark:border-gray-700 transition-colors"
+              className="flex flex-col px-3 py-2 text-left hover:bg-paper dark:hover:bg-card-d border-b last:border-b-0 border-line dark:border-line-d transition-colors"
             >
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{c.name}</span>
-              {c.address && <span className="text-xs text-gray-500 dark:text-gray-400">{c.address}</span>}
+              <span className="text-sm font-medium text-ink dark:text-ink-d">{c.name}</span>
+              {c.address && <span className="text-xs text-muted dark:text-muted-d">{c.address}</span>}
             </button>
           ))}
         </div>

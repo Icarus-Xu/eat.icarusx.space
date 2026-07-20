@@ -42,7 +42,7 @@ export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' 
               href={link.href}
               className={clsx(
                 'flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs font-medium transition-colors',
-                active ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100',
+                active ? 'text-appetite dark:text-appetite-d' : 'text-muted hover:text-ink dark:text-muted-d dark:hover:text-ink-d',
               )}
             >
               <LinkIcon className="h-6 w-6" />
@@ -62,7 +62,7 @@ export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' 
           <Link
             key={link.href}
             href={link.href}
-            className={clsx('nav-link', { 'bg-sky-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400': pathname === link.href })}
+            className={clsx('nav-link', { 'bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d': pathname === link.href })}
           >
             <LinkIcon className="w-6" />
             <p className="hidden md:block">{link.name}</p>
@@ -71,7 +71,7 @@ export default function NavLinks({ variant = 'sidebar' }: { variant?: 'sidebar' 
       })}
       <Link
         href="/map"
-        className={clsx('nav-link', { 'bg-sky-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400': pathname === '/map' })}
+        className={clsx('nav-link', { 'bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d': pathname === '/map' })}
       >
         <MapPinIcon className="w-6 shrink-0" />
         <p className="hidden truncate md:block">

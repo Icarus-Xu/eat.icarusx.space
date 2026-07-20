@@ -19,10 +19,10 @@ export default function MapProviderModal() {
   return (
     <div className="modal-overlay">
       <div className="modal-panel">
-        <h2 className="mb-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="mb-1 text-lg font-semibold text-ink dark:text-ink-d">
           {t.mapProviderChoose}
         </h2>
-        <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mb-6 text-sm text-muted dark:text-muted-d">
           {t.mapProviderDesc}
         </p>
         <div className="flex flex-col gap-3">
@@ -32,8 +32,8 @@ export default function MapProviderModal() {
               onClick={() => setProvider(opt.value)}
               className="provider-option"
             >
-              <p className="font-medium text-gray-900 dark:text-gray-100">{opt.label}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{opt.desc}</p>
+              <p className="font-medium text-ink dark:text-ink-d">{opt.label}</p>
+              <p className="text-sm text-muted dark:text-muted-d">{opt.desc}</p>
             </button>
           ))}
         </div>

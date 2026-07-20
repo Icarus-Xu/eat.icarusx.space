@@ -59,11 +59,11 @@ export default function RecommendClient() {
     };
     return (
       <div className="flex flex-col items-start gap-3">
-        <span className="text-sm text-gray-500 dark:text-gray-400">{t.recommendSetLocation}</span>
+        <span className="text-sm text-muted dark:text-muted-d">{t.recommendSetLocation}</span>
         <button
           onClick={handleLocate}
           disabled={locating}
-          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="flex items-center gap-2 rounded-xl border border-line bg-card px-3 py-2 text-sm text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
         >
           {locating
             ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
@@ -85,8 +85,8 @@ export default function RecommendClient() {
               disabled={status === 'loading'}
               className={`rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
                 radiusKm === km
-                  ? 'bg-blue-600 text-white dark:bg-blue-700'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                  ? 'bg-appetite text-white dark:bg-appetite-d dark:text-paper-d'
+                  : 'border border-line bg-card text-sub hover:border-appetite dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d'
               }`}
             >
               {km} km
@@ -96,7 +96,7 @@ export default function RecommendClient() {
         <button
           onClick={handleRefresh}
           disabled={status === 'loading'}
-          className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 active:scale-95 transition-transform disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="flex items-center gap-1.5 rounded-xl border border-line bg-card px-3 py-1.5 text-sm font-medium text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
         >
           <ArrowPathIcon className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
           {t.recommendRefresh}
@@ -122,6 +122,6 @@ export default function RecommendClient() {
 
 function StatusMessage({ children, isError }: { children: React.ReactNode; isError?: boolean }) {
   return (
-    <div className={`text-sm ${isError ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>{children}</div>
+    <div className={`text-sm ${isError ? 'text-red-500' : 'text-muted dark:text-muted-d'}`}>{children}</div>
   );
 }

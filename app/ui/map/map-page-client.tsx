@@ -49,7 +49,7 @@ export default function MapPageClient() {
         mapPending={mapPending}
         onMapPendingDismiss={() => setMapPending(null)}
       />
-      <div className="relative flex-1 overflow-hidden rounded-xl border border-gray-200">
+      <div className="relative flex-1 overflow-hidden rounded-xl border border-line">
         {effectiveProvider === 'baidu' ? (
           <BaiduMapView key="baidu" lat={displayCoords.lat} lng={displayCoords.lng} onMapClick={handleMapClick} />
         ) : (

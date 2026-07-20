@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: 'Recommend' };
 export default function RecommendPage() {
   return (
     <div>
-      <h1 className="page-heading">What to eat today?</h1>
+      <h1 className="mb-6 text-2xl font-bold tracking-tight text-ink dark:text-ink-d">What to eat today?</h1>
       <RecommendClient />
     </div>
   );

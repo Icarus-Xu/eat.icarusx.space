@@ -1,5 +1,4 @@
 import '@/app/ui/global.css';
-import { inter } from '@/app/ui/fonts';
 import type { Metadata } from 'next';
 import ServiceWorkerRegister from '@/app/ui/service-worker-register';
 import { ThemeProvider } from '@/app/ui/theme-context';
@@ -27,10 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#FBF5EC" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#211A15" media="(prefers-color-scheme: dark)" />
       </head>
-      <body className={inter.className}>
+      <body>
         <ThemeProvider>
           {children}
         </ThemeProvider>

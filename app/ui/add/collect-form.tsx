@@ -233,7 +233,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <CheckCircleIcon className="h-12 w-12 text-green-500" />
-        <p className="font-medium text-gray-700 dark:text-gray-200">{t.formSavedSuccess}</p>
+        <p className="font-medium text-ink dark:text-ink-d">{t.formSavedSuccess}</p>
         <button onClick={reset} className="btn-primary">{t.formAddAnother}</button>
       </div>
     );
@@ -250,7 +250,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
       <div className="flex flex-col gap-6">
         {/* Mode tabs */}
-        <div className="flex gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1 dark:border-gray-700 dark:bg-gray-800">
+        <div className="flex gap-1 rounded-lg border border-line bg-paper p-1 dark:border-line-d dark:bg-card-d">
           {(['search', 'link'] as const).map((m) => (
             <button
               key={m}
@@ -258,8 +258,8 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
               onClick={() => switchMode(m)}
               className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 mode === m
-                  ? 'bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-gray-100'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'bg-card text-ink shadow-sm dark:bg-card-d dark:text-ink-d'
+                  : 'text-muted hover:text-ink dark:text-muted-d dark:hover:text-ink-d'
               }`}
             >
               {m === 'search' ? t.formSearchTab : t.formLinkTab}
@@ -314,8 +314,8 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                       onClick={() => selectPoi(r, effectiveProvider)}
                       className="poi-item"
                     >
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{r.name}</p>
-                      <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{r.address}</p>
+                      <p className="font-medium text-ink dark:text-ink-d">{r.name}</p>
+                      <p className="mt-0.5 text-sm text-muted dark:text-muted-d">{r.address}</p>
                     </button>
                   </li>
                 ))}
@@ -363,16 +363,16 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         {/* Preview + form */}
         {step === 'preview' && poi && (
           <>
-            <div className="card bg-gray-50 dark:bg-gray-700">
-              <p className="font-semibold text-gray-900 dark:text-gray-100">{poi.name}</p>
-              <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">{poi.address}</p>
-              <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+            <div className="card bg-paper dark:bg-card-d">
+              <p className="font-semibold text-ink dark:text-ink-d">{poi.name}</p>
+              <p className="mt-0.5 text-sm text-muted dark:text-muted-d">{poi.address}</p>
+              <p className="mt-1 text-xs text-muted dark:text-muted-d">
                 {amapPoiId ? 'Amap ✓' : 'Amap —'} &nbsp; {baiduPoiId ? 'Baidu ✓' : 'Baidu —'}
               </p>
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">{t.formHaveYouBeen}</p>
+              <p className="mb-2 text-sm font-medium text-ink dark:text-ink-d">{t.formHaveYouBeen}</p>
               <div className="flex gap-3">
                 {([true, false] as const).map((v) => (
                   <button
@@ -381,8 +381,8 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                     onClick={() => setVisited(v)}
                     className={`btn-toggle ${
                       visited === v
-                        ? 'border-blue-600 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-500'
+                        ? 'border-appetite bg-appetite-soft text-appetite dark:border-appetite-d dark:bg-appetite-soft-d dark:text-appetite-d'
+                        : 'border-line bg-card text-sub hover:border-line dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-line-d'
                     }`}
                   >
                     {v ? t.formVisited : t.formNotYet}
@@ -405,13 +405,13 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 </div>
                 <div>
                   <label className="form-label">
-                    {t.formRating} <span className="font-normal text-gray-400 dark:text-gray-500">({t.formOptional})</span>
+                    {t.formRating} <span className="font-normal text-muted dark:text-muted-d">({t.formOptional})</span>
                   </label>
                   <StarInput value={rating} onChange={setRating} />
                 </div>
                 <div>
                   <label className="form-label">
-                    {t.formNotes} <span className="font-normal text-gray-400 dark:text-gray-500">({t.formOptional})</span>
+                    {t.formNotes} <span className="font-normal text-muted dark:text-muted-d">({t.formOptional})</span>
                   </label>
                   <textarea
                     value={notes}
@@ -425,7 +425,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             )}
 
             {isDuplicate && (
-              <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-700 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-300">
+              <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-600 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-400">
                 <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
                 {t.formDuplicate}
               </p>

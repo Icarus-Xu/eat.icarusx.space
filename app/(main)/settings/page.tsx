@@ -37,8 +37,8 @@ export default function SettingsPage() {
       <div className="max-w-md flex flex-col gap-4">
         <div className="card flex flex-col gap-3">
           <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{t.settingsMapProvider}</p>
-            <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-sm font-medium text-ink dark:text-ink-d">{t.settingsMapProvider}</p>
+            <p className="mt-0.5 text-xs text-muted dark:text-muted-d">
               {t.settingsMapProviderDesc}
             </p>
           </div>
@@ -57,8 +57,8 @@ export default function SettingsPage() {
 
         <div className="card flex flex-col gap-3">
           <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{t.settingsLanguage}</p>
-            <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-sm font-medium text-ink dark:text-ink-d">{t.settingsLanguage}</p>
+            <p className="mt-0.5 text-xs text-muted dark:text-muted-d">
               {t.settingsLanguageDesc}
             </p>
           </div>
@@ -77,8 +77,8 @@ export default function SettingsPage() {
 
         <div className="card flex flex-col gap-3">
           <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{t.settingsTheme}</p>
-            <p className="mt-0.5 text-xs text-gray-400 dark:text-gray-500">
+            <p className="text-sm font-medium text-ink dark:text-ink-d">{t.settingsTheme}</p>
+            <p className="mt-0.5 text-xs text-muted dark:text-muted-d">
               {t.settingsThemeDesc}
             </p>
           </div>

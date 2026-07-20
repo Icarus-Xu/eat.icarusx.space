@@ -19,9 +19,9 @@ export default async function SideNav() {
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 dark:bg-gray-800 md:block"></div>
-        <div className="flex h-[48px] w-full items-center justify-between rounded-md bg-gray-50 p-3 dark:bg-gray-800 md:p-2 md:px-3">
-          <span className="hidden truncate text-sm font-bold text-gray-700 dark:text-gray-200 md:block">{userName}</span>
+        <div className="hidden h-auto w-full grow rounded-md bg-paper dark:bg-card-d md:block"></div>
+        <div className="flex h-[48px] w-full items-center justify-between rounded-md bg-paper p-3 dark:bg-card-d md:p-2 md:px-3">
+          <span className="hidden truncate text-sm font-bold text-ink dark:text-ink-d md:block">{userName}</span>
           <SignOutButton action={async () => {
             'use server';
             await signOut({ redirectTo: '/login' });
