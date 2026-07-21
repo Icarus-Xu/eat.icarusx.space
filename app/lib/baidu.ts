@@ -46,6 +46,42 @@ export async function searchPoiByName(
     });
 }
 
+// Circle place search (place/v2/search). Reliable for locating a specific POI
+// near known coordinates — unlike the suggestion API used by searchPoiByName.
+// coord_type of the input location: 1=WGS84, 2=GCJ-02, 3=BD-09.
+export async function nearbySearchBaidu(
+  keywords: string,
+  location: { lat: number; lng: number },
+  coordType: 1 | 2 | 3 = 1,
+  radius = 2000,
+): Promise<BaiduPoi[]> {
+  const params = new URLSearchParams({
+    query: keywords,
+    location: `${location.lat},${location.lng}`,
+    radius: String(radius),
+    coord_type: String(coordType),
+    output: 'json',
+    ak: BAIDU_AK,
+  });
+
+  const res = await fetch(`https://api.map.baidu.com/place/v2/search?${params}`);
+  const data = await res.json();
+  if (data.status !== 0 || !data.results?.length) return [];
+
+  return (data.results as Record<string, unknown>[])
+    .filter((r) => r.uid && (r.location as Record<string, number> | undefined)?.lat)
+    .map((r) => {
+      const loc = r.location as { lat: number; lng: number };
+      return {
+        uid: r.uid as string,
+        name: r.name as string,
+        address: (r.address as string) || '',
+        lat: loc.lat,
+        lng: loc.lng,
+      };
+    });
+}
+
 export async function fetchPoiByUid(uid: string): Promise<BaiduPoi | null> {
   const params = new URLSearchParams({ uid, output: 'json', scope: '1', ak: BAIDU_AK });
   const res = await fetch(`https://api.map.baidu.com/place/v2/detail?${params}`);

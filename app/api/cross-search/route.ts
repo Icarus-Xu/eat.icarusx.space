@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { searchPoiByName as searchAmap } from '@/app/lib/amap';
-import { searchPoiByName as searchBaidu } from '@/app/lib/baidu';
+import { searchPoiByName as searchBaidu, nearbySearchBaidu } from '@/app/lib/baidu';
 import { bd09ToGcj02 } from '@/app/lib/coords';
 import { logApiRequest } from '@/app/lib/log';
 
@@ -21,8 +21,10 @@ export async function POST(req: NextRequest) {
     const { name, lat, lng, sourceProvider }: CrossSearchBody = await req.json();
 
     if (sourceProvider === 'amap') {
-      // Source is Amap (GCJ-02) → search Baidu with coordtype=2
-      const pois = await searchBaidu(name, { lat, lng }, 2);
+      // Source is Amap (GCJ-02): search Baidu near the POI coords via place search,
+      // falling back to the suggestion API if the place search finds nothing.
+      let pois = await nearbySearchBaidu(name, { lat, lng }, 2);
+      if (pois.length === 0) pois = await searchBaidu(name, { lat, lng }, 2);
       return NextResponse.json({
         pois: pois.map((p) => ({ id: p.uid, name: p.name, address: p.address })),
       });
