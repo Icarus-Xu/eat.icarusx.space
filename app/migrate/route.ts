@@ -46,6 +46,17 @@ export async function GET() {
         ADD COLUMN IF NOT EXISTS baidu_source_url TEXT
     `;
 
+    // Prevent duplicate restaurants per provider. Partial indexes because both
+    // POI IDs are optional (a restaurant may have only one of them).
+    await sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS restaurants_amap_poi_id_key
+        ON restaurants (amap_poi_id) WHERE amap_poi_id IS NOT NULL
+    `;
+    await sql`
+      CREATE UNIQUE INDEX IF NOT EXISTS restaurants_baidu_poi_id_key
+        ON restaurants (baidu_poi_id) WHERE baidu_poi_id IS NOT NULL
+    `;
+
     await sql`
       CREATE TABLE IF NOT EXISTS logs (
         id BIGSERIAL PRIMARY KEY,

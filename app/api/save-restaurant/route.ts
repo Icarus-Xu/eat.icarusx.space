@@ -18,6 +18,12 @@ interface CollectBody {
   visitedAt?: string | null;
 }
 
+interface RestaurantMatch {
+  id: string;
+  amap_poi_id: string | null;
+  baidu_poi_id: string | null;
+}
+
 export async function POST(request: Request) {
   return logApiRequest('/api/save-restaurant', request, async () => {
   try {
@@ -44,41 +50,68 @@ export async function POST(request: Request) {
     }
     const userId = userRows[0].id;
 
-    // Duplicate check: match on either POI ID
-    const existing = (await sql`
-      SELECT id FROM restaurants
-      WHERE
-        (amap_poi_id IS NOT NULL AND amap_poi_id = ${amapPoiId ?? ''})
-        OR (baidu_poi_id IS NOT NULL AND baidu_poi_id = ${baiduPoiId ?? ''})
-      LIMIT 1
-    `) as { id: string }[];
+    // Fill in any provider ID/URL the existing row is missing (e.g. the same
+    // place saved earlier via one provider only).
+    const enrichRestaurant = async (row: RestaurantMatch) => {
+      if ((row.amap_poi_id || !amapPoiId) && (row.baidu_poi_id || !baiduPoiId)) return;
+      await sql`
+        UPDATE restaurants SET
+          amap_poi_id = COALESCE(amap_poi_id, ${amapPoiId ?? null}),
+          source_url = COALESCE(source_url, ${sourceUrl}),
+          baidu_poi_id = COALESCE(baidu_poi_id, ${baiduPoiId ?? null}),
+          baidu_source_url = COALESCE(baidu_source_url, ${baiduSourceUrl})
+        WHERE id = ${row.id}
+      `;
+    };
+
+    // Find a restaurant matching either POI ID.
+    const findMatch = async (): Promise<RestaurantMatch | null> => {
+      const rows = (await sql`
+        SELECT id, amap_poi_id, baidu_poi_id FROM restaurants
+        WHERE
+          (amap_poi_id IS NOT NULL AND amap_poi_id = ${amapPoiId ?? ''})
+          OR (baidu_poi_id IS NOT NULL AND baidu_poi_id = ${baiduPoiId ?? ''})
+        LIMIT 1
+      `) as RestaurantMatch[];
+      return rows[0] ?? null;
+    };
+
+    // Atomically get-or-create the restaurant. The unique indexes on
+    // amap_poi_id / baidu_poi_id turn a lost check-then-insert race into a
+    // 23505 unique violation, which we recover from by re-reading the row.
+    const getOrCreateRestaurant = async (): Promise<{ id: string; existed: boolean }> => {
+      const match = await findMatch();
+      if (match) {
+        await enrichRestaurant(match);
+        return { id: match.id, existed: true };
+      }
+      try {
+        const inserted = (await sql`
+          INSERT INTO restaurants
+            (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
+          VALUES
+            (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId ?? null}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
+          RETURNING id
+        `) as { id: string }[];
+        return { id: inserted[0].id, existed: false };
+      } catch (err) {
+        if ((err as { code?: string }).code !== '23505') throw err;
+        const raced = await findMatch();
+        if (!raced) throw err;
+        await enrichRestaurant(raced);
+        return { id: raced.id, existed: true };
+      }
+    };
 
     if (!visited) {
-      if (existing.length > 0) {
+      const { existed } = await getOrCreateRestaurant();
+      if (existed) {
         return Response.json({ duplicate: true, error: 'This restaurant is already in your collection.' }, { status: 409 });
       }
-      await sql`
-        INSERT INTO restaurants
-          (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
-        VALUES
-          (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId ?? null}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
-      `;
       return Response.json({ success: true });
     }
 
-    let restaurantId: string;
-    if (existing.length > 0) {
-      restaurantId = existing[0].id;
-    } else {
-      const inserted = (await sql`
-        INSERT INTO restaurants
-          (name, address, lat, lng, amap_poi_id, source_url, baidu_poi_id, baidu_source_url, added_by)
-        VALUES
-          (${name}, ${address}, ${lat}, ${lng}, ${amapPoiId ?? null}, ${sourceUrl}, ${baiduPoiId ?? null}, ${baiduSourceUrl}, ${userId})
-        RETURNING id
-      `) as { id: string }[];
-      restaurantId = inserted[0].id;
-    }
+    const { id: restaurantId } = await getOrCreateRestaurant();
 
     const visitDate = visitedAt ? new Date(visitedAt) : new Date();
     await sql`
