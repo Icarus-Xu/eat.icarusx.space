@@ -51,70 +51,78 @@ export default function RecommendClient() {
     if (location) fetchRecommendations(location.lat, location.lng, km);
   };
 
-  if (!location) {
-    const handleLocate = async () => {
-      setLocating(true);
-      await locate();
-      setLocating(false);
-    };
-    return (
-      <div className="flex flex-col items-start gap-3">
-        <span className="text-sm text-muted dark:text-muted-d">{t.recommendSetLocation}</span>
-        <button
-          onClick={handleLocate}
-          disabled={locating}
-          className="flex items-center gap-2 rounded-xl border border-line bg-card px-3 py-2 text-sm text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
-        >
-          {locating
-            ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
-            : <MapPinIcon className="h-4 w-4" />}
-          {t.recommendLocateButton}
-        </button>
-      </div>
-    );
-  }
+  const handleLocate = async () => {
+    setLocating(true);
+    await locate();
+    setLocating(false);
+  };
+
+  const subtitle = location && status === 'done' ? t.recommendSubtitle(radiusKm, cards.length) : undefined;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5">
-          {DISTANCE_OPTIONS.map((km) => (
-            <button
-              key={km}
-              onClick={() => handleRadiusChange(km)}
-              disabled={status === 'loading'}
-              className={`rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
-                radiusKm === km
-                  ? 'bg-appetite text-white dark:bg-appetite-d dark:text-paper-d'
-                  : 'border border-line bg-card text-sub hover:border-appetite dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d'
-              }`}
-            >
-              {km} km
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={handleRefresh}
-          disabled={status === 'loading'}
-          className="flex items-center gap-1.5 rounded-xl border border-line bg-card px-3 py-1.5 text-sm font-medium text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
-        >
-          <ArrowPathIcon className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
-          {t.recommendRefresh}
-        </button>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-ink dark:text-ink-d">{t.recommendTitle}</h1>
+        {subtitle && <p className="mt-1.5 text-xs text-muted dark:text-muted-d">{subtitle}</p>}
       </div>
 
-      {status === 'idle' || status === 'loading' ? (
-        <StatusMessage>{t.recommendFinding}</StatusMessage>
-      ) : status === 'error' ? (
-        <StatusMessage isError>{errorMsg}</StatusMessage>
-      ) : cards.length === 0 ? (
-        <StatusMessage>{t.recommendNoResults(radiusKm)}</StatusMessage>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {cards.map((r) => (
-            <RestaurantCardComponent key={r.id} r={r} />
-          ))}
+      {!location ? (
+        <div className="flex flex-col items-start gap-3">
+          <span className="text-sm text-muted dark:text-muted-d">{t.recommendSetLocation}</span>
+          <button
+            onClick={handleLocate}
+            disabled={locating}
+            className="flex items-center gap-2 rounded-xl border border-line bg-card px-3 py-2 text-sm text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
+          >
+            {locating
+              ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
+              : <MapPinIcon className="h-4 w-4" />}
+            {t.recommendLocateButton}
+          </button>
         </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {DISTANCE_OPTIONS.map((km) => (
+                <button
+                  key={km}
+                  onClick={() => handleRadiusChange(km)}
+                  disabled={status === 'loading'}
+                  className={`rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
+                    radiusKm === km
+                      ? 'bg-appetite text-white dark:bg-appetite-d dark:text-paper-d'
+                      : 'border border-line bg-card text-sub hover:border-appetite dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d'
+                  }`}
+                >
+                  {km} km
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={status === 'loading'}
+              className="flex items-center gap-1.5 rounded-xl bg-appetite px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+            >
+              <ArrowPathIcon className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
+              {t.recommendRefresh}
+            </button>
+          </div>
+
+          {status === 'idle' || status === 'loading' ? (
+            <StatusMessage>{t.recommendFinding}</StatusMessage>
+          ) : status === 'error' ? (
+            <StatusMessage isError>{errorMsg}</StatusMessage>
+          ) : cards.length === 0 ? (
+            <StatusMessage>{t.recommendNoResults(radiusKm)}</StatusMessage>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {cards.map((r) => (
+                <RestaurantCardComponent key={r.id} r={r} />
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -1,6 +1,5 @@
 'use client';
 
-import { lusitana } from '@/app/ui/fonts';
 import { ExclamationCircleIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
@@ -41,7 +40,7 @@ export default function LoginForm() {
   return (
     <form ref={formRef} action={formAction} onSubmit={handleSubmit}>
       <div className="card px-6 pb-6 pt-7 shadow-sm">
-        <h1 className={`${lusitana.className} mb-5 text-center text-xl text-ink dark:text-ink-d`}>
+        <h1 className="mb-5 text-center text-xl text-ink dark:text-ink-d">
           Enter your ID to continue.
         </h1>
         <div className="w-full">

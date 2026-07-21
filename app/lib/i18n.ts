@@ -6,6 +6,9 @@ const en = {
   // date
   dateLocale: 'en-US' as string,
 
+  // brand
+  appName: 'What to Eat',
+
   // nav
   navHome: 'Home',
   navRecommend: 'Recommend',
@@ -13,31 +16,29 @@ const en = {
   navSettings: 'Settings',
   navMap: 'Map',
   navGettingLocation: 'Getting location...',
+  signOut: 'Sign out',
 
   // location input
   locationPlaceholder: 'Enter your location...',
-  locationGo: 'Go',
   locationNetworkError: 'Network error. Please try again.',
   locationNotFound: 'Address not found.',
   locationSelectResult: 'Select a location:',
   locationSearch: 'Search',
   locationConfirm: 'Confirm',
-  locationPickOnMap: 'Pick on map',
-  locationPickerTitle: 'Pick Location',
-  locationPickerHint: 'Tap the map to select a location',
   locationUseCurrentTitle: 'Use current location',
 
   // recommend
+  recommendTitle: 'What to eat today?',
   recommendSetLocation: 'Location not set.',
   recommendLocateButton: 'Tap to enable location',
   recommendFinding: 'Finding nearby restaurants...',
   recommendFailed: 'Failed to load recommendations.',
-  recommendRefresh: 'Refresh',
+  recommendRefresh: 'Shuffle',
+  recommendSubtitle: (km: number, count: number) => `Nearby ${km} km · ${count} ${count === 1 ? 'place' : 'places'}`,
   recommendNoResults: (km: number) => `No restaurants found within ${km} km.`,
 
   // restaurant card (recommend page)
   cardLastVisited: 'Last visited',
-  cardNotVisitedYet: 'Not visited yet',
 
   // restaurant list (add page)
   listLoading: 'Loading...',
@@ -110,34 +111,34 @@ const en = {
 const zh: typeof en = {
   dateLocale: 'zh-CN' as string,
 
+  appName: '吃什么',
+
   navHome: '首页',
   navRecommend: '推荐',
   navAdd: '添加',
   navSettings: '设置',
   navMap: '地图',
   navGettingLocation: '正在获取位置...',
+  signOut: '退出登录',
 
   locationPlaceholder: '输入您的位置...',
-  locationGo: '确认',
   locationNetworkError: '网络错误，请重试。',
   locationNotFound: '未找到该地址。',
   locationSelectResult: '请选择位置：',
   locationSearch: '搜索',
   locationConfirm: '确认',
-  locationPickOnMap: '在地图上选点',
-  locationPickerTitle: '选择位置',
-  locationPickerHint: '点击地图选择位置',
   locationUseCurrentTitle: '使用当前位置',
 
+  recommendTitle: '为你推荐',
   recommendSetLocation: '未获取到位置。',
   recommendLocateButton: '点击开启定位',
   recommendFinding: '正在查找附近餐厅...',
   recommendFailed: '加载推荐失败。',
-  recommendRefresh: '刷新',
+  recommendRefresh: '换一批',
+  recommendSubtitle: (km: number, count: number) => `附近 ${km} 公里 · ${count} 家`,
   recommendNoResults: (km: number) => `附近 ${km} 公里内没有餐厅。`,
 
   cardLastVisited: '上次到访',
-  cardNotVisitedYet: '尚未到访',
 
   listLoading: '加载中...',
   listEmpty: '还没有添加任何餐厅。',

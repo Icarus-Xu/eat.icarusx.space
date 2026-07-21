@@ -1,5 +1,6 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import Link from 'next/link';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import NavLinks from '@/app/ui/dashboard/nav-links';
 import AppLogo from '@/app/ui/app-logo';
 import { signOut, auth } from '@/auth';
@@ -12,20 +13,28 @@ export default async function SideNav() {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
       <Link
-        className="mb-2 flex h-20 items-center justify-center rounded-md border-2 border-amber-400 bg-amber-50 p-4 dark:border-amber-600 dark:bg-amber-950 md:h-40"
+        className="mb-2 flex h-20 items-center justify-center p-4 md:h-40"
         href="/home"
       >
         <AppLogo />
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
-        <div className="hidden h-auto w-full grow rounded-md bg-paper dark:bg-card-d md:block"></div>
-        <div className="flex h-[48px] w-full items-center justify-between rounded-md bg-paper p-3 dark:bg-card-d md:p-2 md:px-3">
-          <span className="hidden truncate text-sm font-bold text-ink dark:text-ink-d md:block">{userName}</span>
-          <SignOutButton action={async () => {
-            'use server';
-            await signOut({ redirectTo: '/login' });
-          }} />
+        <div className="hidden h-auto w-full grow md:block"></div>
+        <div className="flex h-[48px] w-full items-center justify-between rounded-xl bg-paper p-3 dark:bg-card-d md:p-2 md:px-3">
+          <span className="hidden items-center gap-2 truncate text-sm font-bold text-ink dark:text-ink-d md:flex">
+            <span className="h-6 w-6 shrink-0 rounded-full border border-appetite bg-appetite-soft dark:border-appetite-d dark:bg-appetite-soft-d" />
+            <span className="truncate">{userName}</span>
+          </span>
+          <div className="flex items-center gap-1">
+            <Link href="/settings" aria-label="Settings" className="icon-btn">
+              <Cog6ToothIcon className="w-5" />
+            </Link>
+            <SignOutButton action={async () => {
+              'use server';
+              await signOut({ redirectTo: '/login' });
+            }} />
+          </div>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@
 
 @layer components {
   .btn-primary {
-    @apply rounded-lg bg-appetite px-4 py-2 text-sm font-medium text-white transition hover:brightness-105 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d;
+    @apply rounded-xl bg-appetite px-4 py-2 text-sm font-medium text-white transition hover:brightness-105 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d;
   }
 
   .card {
@@ -35,11 +35,11 @@
   }
 
   .nav-link {
-    @apply flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-card p-3 text-sm font-medium hover:bg-appetite-soft hover:text-appetite dark:bg-card-d dark:hover:bg-appetite-soft-d dark:hover:text-appetite-d md:flex-none md:justify-start md:p-2 md:px-3;
+    @apply flex h-[48px] grow items-center justify-center gap-2 rounded-xl bg-card p-3 text-sm font-medium hover:bg-appetite-soft hover:text-appetite dark:bg-card-d dark:hover:bg-appetite-soft-d dark:hover:text-appetite-d md:flex-none md:justify-start md:p-2 md:px-3;
   }
 
   .page-heading {
-    @apply mb-6 text-xl font-semibold text-ink dark:text-ink-d;
+    @apply mb-6 text-2xl font-bold tracking-tight text-ink dark:text-ink-d;
   }
 
   .section-heading {

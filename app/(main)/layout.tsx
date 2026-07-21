@@ -1,9 +1,8 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
-import Link from 'next/link';
 import SideNav from '@/app/ui/dashboard/sidenav';
-import SignOutButton from '@/app/ui/sign-out-button';
 import NavLinks from '@/app/ui/dashboard/nav-links';
-import AppLogo from '@/app/ui/app-logo';
+import AppBrand from '@/app/ui/app-brand';
+import UserMenu from '@/app/ui/user-menu';
 import { LocationProvider } from '@/app/ui/location-context';
 import { MapProviderContextProvider } from '@/app/ui/map-provider-context';
 import MapProviderModal from '@/app/ui/map-provider-modal';
@@ -26,15 +25,15 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
 
           {/* Mobile: top header */}
-          <header className="flex flex-none items-center justify-between border-b bg-card px-4 py-2 dark:border-line-d dark:bg-paper-d md:hidden">
-            <Link href="/home">
-              <AppLogo small />
-            </Link>
-            <span className="text-sm font-bold text-ink dark:text-ink-d">{userName}</span>
-            <SignOutButton action={async () => {
-              'use server';
-              await signOut({ redirectTo: '/login' });
-            }} />
+          <header className="flex flex-none items-center justify-between border-b border-line bg-paper px-6 py-5 dark:border-line-d dark:bg-paper-d md:hidden">
+            <AppBrand />
+            <UserMenu
+              userName={userName}
+              signOutAction={async () => {
+                'use server';
+                await signOut({ redirectTo: '/login' });
+              }}
+            />
           </header>
 
           {/* Desktop: sidebar */}
@@ -43,12 +42,12 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           </div>
 
           {/* Content */}
-          <div className="grow overflow-y-auto p-4 pb-20 md:p-12 md:pb-12">
+          <div className="grow overflow-y-auto px-5 pt-6 pb-24 md:p-12 md:pb-12">
             {children}
           </div>
 
           {/* Mobile: bottom tab bar */}
-          <nav className="fixed bottom-0 left-0 right-0 flex border-t bg-card dark:border-line-d dark:bg-paper-d md:hidden">
+          <nav className="fixed bottom-0 left-0 right-0 flex border-t border-line bg-paper dark:border-line-d dark:bg-paper-d md:hidden">
             <NavLinks variant="bottom" />
           </nav>
 
