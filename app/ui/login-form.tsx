@@ -39,21 +39,21 @@ export default function LoginForm() {
   };
 
   return (
-    <form ref={formRef} action={formAction} onSubmit={handleSubmit} className="space-y-3">
-      <div className="flex-1 rounded-lg bg-paper px-6 pb-4 pt-8 dark:bg-card-d">
-        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
+    <form ref={formRef} action={formAction} onSubmit={handleSubmit}>
+      <div className="card px-6 pb-6 pt-7 shadow-sm">
+        <h1 className={`${lusitana.className} mb-5 text-center text-xl text-ink dark:text-ink-d`}>
           Enter your ID to continue.
         </h1>
         <div className="w-full">
           <label
-            className="mb-3 mt-5 block text-xs font-medium text-ink dark:text-ink-d"
+            className="mb-1.5 block text-xs font-medium text-sub dark:text-sub-d"
             htmlFor="userId"
           >
             ID
           </label>
           <div className="relative">
             <input
-              className="peer block w-full rounded-md border border-line bg-card py-[9px] pl-10 text-sm text-ink outline-2 placeholder:text-muted dark:border-line-d dark:bg-card-d dark:text-ink-d dark:placeholder:text-muted-d"
+              className="peer block w-full rounded-lg border border-line bg-card py-2.5 pl-10 text-sm text-ink outline-none transition-colors placeholder:text-muted focus:border-appetite dark:border-line-d dark:bg-card-d dark:text-ink-d dark:placeholder:text-muted-d dark:focus:border-appetite-d"
               id="userId"
               type="text"
               name="userId"
@@ -63,14 +63,14 @@ export default function LoginForm() {
               required
               autoComplete="off"
             />
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted peer-focus:text-ink dark:text-muted-d dark:peer-focus:text-ink-d" />
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted peer-focus:text-appetite dark:text-muted-d dark:peer-focus:text-appetite-d" />
           </div>
         </div>
         <input type="hidden" name="redirectTo" value={callbackUrl} />
-        <Button className="mt-4 w-full" aria-disabled={isPending}>
-          Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-white" />
+        <Button className="mt-4 w-full justify-center" aria-disabled={isPending}>
+          Log in <ArrowRightIcon className="ml-2 h-5 w-5 text-white" />
         </Button>
-        <div className="flex h-8 items-end space-x-1" aria-live="polite" aria-atomic="true">
+        <div className="flex h-8 items-end justify-center space-x-1" aria-live="polite" aria-atomic="true">
           {errorMessage && (
             <>
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />

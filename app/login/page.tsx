@@ -8,10 +8,11 @@ import { Suspense } from 'react';
 
 export default function LoginPage() {
     return (
-        <main className="flex items-center justify-center md:h-screen">
-            <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
-                <div className="flex h-20 w-full items-center justify-center rounded-lg bg-amber-50 p-3 md:h-36">
+        <main className="flex min-h-screen items-center justify-center bg-paper px-4 dark:bg-paper-d">
+            <div className="w-full max-w-[380px]">
+                <div className="mb-6 flex flex-col items-center gap-3">
                     <AppLogo />
+                    <p className="text-sm font-medium tracking-wide text-muted dark:text-muted-d">What to Eat</p>
                 </div>
                 <Suspense>
                     <LoginForm />

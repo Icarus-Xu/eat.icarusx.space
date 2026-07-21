@@ -39,6 +39,7 @@ export default function MapPageClient() {
   };
 
   const displayCoords = mapPending?.coords ?? location ?? DEFAULT;
+  const displayAddress = mapPending?.address || location?.address;
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -49,11 +50,18 @@ export default function MapPageClient() {
         mapPending={mapPending}
         onMapPendingDismiss={() => setMapPending(null)}
       />
-      <div className="relative flex-1 overflow-hidden rounded-xl border border-line">
+      <div className="relative flex-1 overflow-hidden rounded-2xl border border-line shadow-sm dark:border-line-d">
         {effectiveProvider === 'baidu' ? (
           <BaiduMapView key="baidu" lat={displayCoords.lat} lng={displayCoords.lng} onMapClick={handleMapClick} />
         ) : (
           <MapView key="amap" lat={displayCoords.lat} lng={displayCoords.lng} onMapClick={handleMapClick} />
+        )}
+        {displayAddress && (
+          <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex justify-start sm:right-auto">
+            <p className="pointer-events-auto max-w-full truncate rounded-full border border-line bg-card/95 px-3.5 py-1.5 text-xs font-medium text-ink shadow-md backdrop-blur-sm dark:border-line-d dark:bg-card-d/95 dark:text-ink-d">
+              {displayAddress}
+            </p>
+          </div>
         )}
       </div>
     </div>
