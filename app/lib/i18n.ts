@@ -106,6 +106,35 @@ const en = {
   themeAuto: 'Auto',
   themeLight: 'Light',
   themeDark: 'Dark',
+
+  // restaurant detail modal
+  detailNavigate: 'Navigate',
+  detailNavigateVia: (provider: string) => `Navigate via ${provider}`,
+  detailAddVisit: 'Add visit',
+  detailEdit: 'Edit',
+  detailVisitHistory: 'Visit history',
+  detailNoVisits: 'No visits recorded yet.',
+  detailAddedBy: (name: string, date: string) => `Added by ${name} · ${date}`,
+  detailAddedOn: (date: string) => `Added ${date}`,
+  detailMapPlaceholder: 'Map preview',
+  detailCopyAddress: 'Copy address',
+  detailCopied: 'Copied',
+  detailClose: 'Close',
+  detailLoadFailed: 'Failed to load details.',
+  detailNoCurrentPoi: (provider: string) => `Not linked on ${provider}. Search to relink it in Edit.`,
+
+  // add-visit form (inside modal)
+  addVisitTitle: 'Log a visit',
+
+  // edit restaurant (inside modal)
+  editTitle: 'Edit restaurant',
+  editRelinkHint: (provider: string) => `Search on ${provider} and pick a result to relink this restaurant.`,
+  editSelectedNew: 'New selection',
+  editDelete: 'Delete restaurant',
+  editDeleteConfirm: 'Delete this restaurant? Its visit records will be removed too.',
+  editDeleteFailed: 'Failed to delete.',
+
+  commonCancel: 'Cancel',
 };
 
 const zh: typeof en = {
@@ -198,6 +227,35 @@ const zh: typeof en = {
   themeAuto: '自动',
   themeLight: '亮色',
   themeDark: '暗色',
+
+  // restaurant detail modal
+  detailNavigate: '导航到店',
+  detailNavigateVia: (provider: string) => `用${provider}导航`,
+  detailAddVisit: '增加到访记录',
+  detailEdit: '编辑',
+  detailVisitHistory: '到访记录',
+  detailNoVisits: '还没有到访记录。',
+  detailAddedBy: (name: string, date: string) => `由 ${name} 添加 · ${date}`,
+  detailAddedOn: (date: string) => `${date} 添加`,
+  detailMapPlaceholder: '地图预览',
+  detailCopyAddress: '复制地址',
+  detailCopied: '已复制',
+  detailClose: '关闭',
+  detailLoadFailed: '加载详情失败。',
+  detailNoCurrentPoi: (provider: string) => `${provider}暂无此餐厅的定位，可在编辑中搜索关联。`,
+
+  // add-visit form (inside modal)
+  addVisitTitle: '记录一次到访',
+
+  // edit restaurant (inside modal)
+  editTitle: '编辑餐厅',
+  editRelinkHint: (provider: string) => `在${provider}上搜索并选择结果，以重新关联此餐厅。`,
+  editSelectedNew: '已选择新地点',
+  editDelete: '删除餐厅',
+  editDeleteConfirm: '确定删除这家餐厅？它的到访记录也会一并删除。',
+  editDeleteFailed: '删除失败。',
+
+  commonCancel: '取消',
 };
 
 export const translations = { en, zh } as const;

@@ -1,7 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RestaurantRow } from '@/app/lib/restaurant-data';
 import { haversineDistance } from '@/app/lib/amap';
 import { useLocation } from '@/app/ui/location-context';
@@ -9,6 +9,7 @@ import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
 import { StarRating } from '@/app/ui/stars';
 import VisitBadge from '@/app/ui/visit-badge';
+import InteractiveCard from '@/app/ui/restaurant/interactive-card';
 
 type RestaurantWithDistance = RestaurantRow & { distanceM: number | null };
 
@@ -61,15 +62,18 @@ function CardContent({ r, t }: { r: RestaurantWithDistance; t: ReturnType<typeof
 export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
   const { location } = useLocation();
   const { provider } = useMapProvider();
+  const effectiveProvider = provider ?? 'amap';
   const t = useT();
   const [restaurants, setRestaurants] = useState<RestaurantWithDistance[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Always holds the latest location without being a stale closure in the fetch callback
   const locationRef = useRef(location);
-  locationRef.current = location;
-
   useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
+
+  const loadRestaurants = useCallback(() => {
     setLoading(true);
     fetch('/api/restaurants')
       .then((r) => r.json())
@@ -84,7 +88,11 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
       })
       .catch(() => setRestaurants([]))
       .finally(() => setLoading(false));
-  }, [refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    loadRestaurants();
+  }, [refreshKey, loadRestaurants]);
 
   // Recalculate distances when location changes after restaurants are loaded
   useEffect(() => {
@@ -99,8 +107,6 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
 
   if (loading) return <p className="text-sm text-muted dark:text-muted-d">{t.listLoading}</p>;
 
-  const effectiveProvider = provider ?? 'amap';
-
   return (
     <div className="flex flex-col gap-4">
       {restaurants.length === 0 ? (
@@ -108,28 +114,19 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
       ) : (
         <div className="flex flex-col gap-2">
           {restaurants.map((r) => {
-            const poiId = effectiveProvider === 'baidu' ? r.baiduPoiId : r.amapPoiId;
-            const href = effectiveProvider === 'baidu'
-              ? `https://map.baidu.com/?uid=${r.baiduPoiId}`
-              : `https://ditu.amap.com/place/${r.amapPoiId}`;
-
-            if (poiId) {
-              return (
-                <a
-                  key={r.id}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="card flex flex-col gap-1.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d"
-                >
-                  <CardContent r={r} t={t} />
-                </a>
-              );
-            }
+            const hasCurrentPoi = (effectiveProvider === 'baidu' ? r.baiduPoiId : r.amapPoiId) != null;
             return (
-              <div key={r.id} className="card flex flex-col gap-1.5 opacity-60">
+              <InteractiveCard
+                key={r.id}
+                restaurantId={r.id}
+                amapPoiId={r.amapPoiId}
+                baiduPoiId={r.baiduPoiId}
+                distanceM={r.distanceM}
+                onChanged={loadRestaurants}
+                className={`card flex flex-col gap-1.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d${hasCurrentPoi ? '' : ' opacity-60'}`}
+              >
                 <CardContent r={r} t={t} />
-              </div>
+              </InteractiveCard>
             );
           })}
         </div>

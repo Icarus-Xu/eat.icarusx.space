@@ -118,7 +118,7 @@ export default function RecommendClient() {
           ) : (
             <div className="flex flex-col gap-4">
               {cards.map((r) => (
-                <RestaurantCardComponent key={r.id} r={r} />
+                <RestaurantCardComponent key={r.id} r={r} onChanged={handleRefresh} />
               ))}
             </div>
           )}

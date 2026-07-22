@@ -2,10 +2,11 @@
 'use client';
 
 import type { RestaurantCard } from '@/app/api/recommend/route';
-import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
+import { useMapProvider } from '@/app/ui/map-provider-context';
 import { StarRating } from '@/app/ui/stars';
 import VisitBadge from '@/app/ui/visit-badge';
+import InteractiveCard from '@/app/ui/restaurant/interactive-card';
 
 function formatDistance(m: number): string {
   if (m < 1000) return `${Math.round(m)} m`;
@@ -21,17 +22,12 @@ function formatDate(iso: string | null, locale: string): string {
   });
 }
 
-export default function RestaurantCard({ r }: { r: RestaurantCard }) {
-  const { provider } = useMapProvider();
+export default function RestaurantCard({ r, onChanged }: { r: RestaurantCard; onChanged?: () => void }) {
   const t = useT();
-  const notePreview = r.notes ? r.notes.slice(0, 20) + (r.notes.length > 20 ? '...' : '') : null;
-
+  const { provider } = useMapProvider();
   const effectiveProvider = provider ?? 'amap';
-  const poiId = effectiveProvider === 'baidu' ? r.baiduPoiId : r.amapPoiId;
-  const href = effectiveProvider === 'baidu'
-    ? `https://map.baidu.com/?uid=${r.baiduPoiId}`
-    : `https://ditu.amap.com/place/${r.amapPoiId}`;
-  const clickable = poiId !== null;
+  const hasCurrentPoi = (effectiveProvider === 'baidu' ? r.baiduPoiId : r.amapPoiId) != null;
+  const notePreview = r.notes ? r.notes.slice(0, 20) + (r.notes.length > 20 ? '...' : '') : null;
 
   const content = (
     <>
@@ -62,24 +58,19 @@ export default function RestaurantCard({ r }: { r: RestaurantCard }) {
   );
 
   const base =
-    'flex flex-col gap-2.5 rounded-2xl border border-line bg-card p-5 shadow-sm dark:border-line-d dark:bg-card-d';
-
-  if (clickable) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`${base} transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d`}
-      >
-        {content}
-      </a>
-    );
-  }
+    'flex flex-col gap-2.5 rounded-2xl border border-line bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:border-line-d dark:bg-card-d dark:hover:border-appetite-d' +
+    (hasCurrentPoi ? '' : ' opacity-60');
 
   return (
-    <div className={`${base} opacity-60`}>
+    <InteractiveCard
+      restaurantId={r.id}
+      amapPoiId={r.amapPoiId}
+      baiduPoiId={r.baiduPoiId}
+      distanceM={r.distanceM}
+      onChanged={onChanged}
+      className={base}
+    >
       {content}
-    </div>
+    </InteractiveCard>
   );
 }
