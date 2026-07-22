@@ -39,6 +39,7 @@ export default function RestaurantModal({ restaurantId, distanceM, initialMode =
   const { provider } = useMapProvider();
   const [detail, setDetail] = useState<RestaurantDetail | null>(null);
   const [loadError, setLoadError] = useState(false);
+  const [mapError, setMapError] = useState(false);
   const [mode, setMode] = useState<ModalMode>(initialMode);
 
   const loadDetail = useCallback(async () => {
@@ -78,6 +79,7 @@ export default function RestaurantModal({ restaurantId, distanceM, initialMode =
         ? amapPlaceUrl(detail.amapPoiId!)
         : baiduPlaceUrl(detail.baiduPoiId!);
   const navUsesOther = navProvider !== null && navProvider !== effectiveProvider;
+  const thumbProvider = navProvider ?? effectiveProvider;
 
   const ratings = detail ? detail.visits.map((v) => v.rating).filter((r): r is number => r !== null) : [];
   const maxRating = ratings.length ? Math.max(...ratings) : null;
@@ -93,12 +95,22 @@ export default function RestaurantModal({ restaurantId, distanceM, initialMode =
         className="flex max-h-[86vh] w-full max-w-md flex-col overflow-hidden rounded-2xl bg-card shadow-xl dark:bg-card-d"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Map placeholder header */}
-        <div className="relative h-32 flex-none">
-          <div className="flex h-full w-full items-center justify-center gap-2 bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d">
-            <MapPinIcon className="h-5 w-5" />
-            <span className="text-sm font-medium">{t.detailMapPlaceholder}</span>
-          </div>
+        {/* Map thumbnail header (static map proxied via /api/static-map) */}
+        <div className="relative h-32 flex-none bg-appetite-soft dark:bg-appetite-soft-d">
+          {detail && !mapError ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`/api/static-map?lat=${detail.lat}&lng=${detail.lng}&provider=${thumbProvider}`}
+              alt=""
+              className="h-full w-full object-cover"
+              onError={() => setMapError(true)}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center gap-2 text-appetite dark:text-appetite-d">
+              <MapPinIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">{t.detailMapPlaceholder}</span>
+            </div>
+          )}
           <button
             onClick={onClose}
             aria-label={t.detailClose}
