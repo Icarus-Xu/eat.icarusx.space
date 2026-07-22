@@ -1,5 +1,6 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import postgres from 'postgres';
+import { gcj02ToWgs84, bd09ToGcj02 } from '@/app/lib/coords';
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL?.includes('sslmode=disable') ? false : 'require' });
 
@@ -43,8 +44,24 @@ export async function GET() {
     await sql`
       ALTER TABLE restaurants
         ADD COLUMN IF NOT EXISTS baidu_poi_id VARCHAR(64),
-        ADD COLUMN IF NOT EXISTS baidu_source_url TEXT
+        ADD COLUMN IF NOT EXISTS baidu_source_url TEXT,
+        ADD COLUMN IF NOT EXISTS coord_type TEXT
     `;
+
+    // One-time: normalise legacy provider-native coords to WGS-84. Coords were
+    // stored raw in the source provider's system (GCJ-02 for amap-linked rows,
+    // BD-09 for baidu-only rows). Guarded by coord_type so it runs only once.
+    const legacy = (await sql`
+      SELECT id, lat::text AS lat, lng::text AS lng, amap_poi_id
+      FROM restaurants WHERE coord_type IS NULL AND lat IS NOT NULL AND lng IS NOT NULL
+    `) as { id: string; lat: string; lng: string; amap_poi_id: string | null }[];
+    for (const row of legacy) {
+      const la = parseFloat(row.lat);
+      const ln = parseFloat(row.lng);
+      const gcj = row.amap_poi_id ? { lat: la, lng: ln } : bd09ToGcj02(la, ln);
+      const wgs = gcj02ToWgs84(gcj.lat, gcj.lng);
+      await sql`UPDATE restaurants SET lat = ${wgs.lat}, lng = ${wgs.lng}, coord_type = 'wgs84' WHERE id = ${row.id}`;
+    }
 
     // Prevent duplicate restaurants per provider. Partial indexes because both
     // POI IDs are optional (a restaurant may have only one of them).

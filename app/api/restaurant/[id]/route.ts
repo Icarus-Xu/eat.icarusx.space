@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import postgres from 'postgres';
 import { logApiRequest } from '@/app/lib/log';
 import { amapPlaceUrl, baiduPlaceUrl } from '@/app/lib/provider-links';
+import { gcj02ToWgs84, bd09ToGcj02 } from '@/app/lib/coords';
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL?.includes('sslmode=disable') ? false : 'require' });
 
@@ -98,17 +99,21 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return Response.json({ error: 'Invalid payload.' }, { status: 400 });
     }
 
+    // Incoming coords are in the search provider's system; store as WGS-84.
+    const gcj = provider === 'baidu' ? bd09ToGcj02(lat, lng) : { lat, lng };
+    const wgs = gcj02ToWgs84(gcj.lat, gcj.lng);
+
     try {
       const updated = (provider === 'amap'
         ? await sql`
             UPDATE restaurants SET
-              name = ${name.trim()}, address = ${address?.trim() ?? ''}, lat = ${lat}, lng = ${lng},
-              amap_poi_id = ${poiId}, source_url = ${amapPlaceUrl(poiId)}
+              name = ${name.trim()}, address = ${address?.trim() ?? ''}, lat = ${wgs.lat}, lng = ${wgs.lng},
+              amap_poi_id = ${poiId}, source_url = ${amapPlaceUrl(poiId)}, coord_type = 'wgs84'
             WHERE id = ${id} RETURNING id`
         : await sql`
             UPDATE restaurants SET
-              name = ${name.trim()}, address = ${address?.trim() ?? ''}, lat = ${lat}, lng = ${lng},
-              baidu_poi_id = ${poiId}, baidu_source_url = ${baiduPlaceUrl(poiId)}
+              name = ${name.trim()}, address = ${address?.trim() ?? ''}, lat = ${wgs.lat}, lng = ${wgs.lng},
+              baidu_poi_id = ${poiId}, baidu_source_url = ${baiduPlaceUrl(poiId)}, coord_type = 'wgs84'
             WHERE id = ${id} RETURNING id`) as { id: string }[];
 
       if (!updated.length) return Response.json({ error: 'Not found' }, { status: 404 });

@@ -202,6 +202,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
           body: JSON.stringify({
             amapPoiId,
             baiduPoiId,
+            coordProvider: poiSource,
             name: poi.name,
             address: poi.address,
             lat: poi.lat,
