@@ -27,9 +27,10 @@ export async function GET(req: NextRequest) {
     if (provider === 'baidu') {
       const b = wgs84ToBd09(lat, lng);
       const c = `${b.lng},${b.lat}`;
+      // Baidu zoom runs lower in scale than Amap's; 18 pairs with Amap 16 here.
       upstream =
         `https://api.map.baidu.com/staticimage/v2?ak=${BAIDU_AK}` +
-        `&center=${c}&zoom=16&width=448&height=160&scale=2&markers=${c}&markerStyles=m,,0xE4572E`;
+        `&center=${c}&zoom=18&width=448&height=160&scale=2&markers=${c}&markerStyles=m,,0xE4572E`;
     } else {
       const g = wgs84ToGcj02(lat, lng);
       const c = `${g.lng},${g.lat}`;
