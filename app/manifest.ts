@@ -7,8 +7,13 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'What to Eat',
     icons: [
       {
-        src: '/logo.png',
-        sizes: '192x192 512x512 1024x1024 2048x2048',
+        src: '/icon.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+      },
+      {
+        src: '/icon.png',
+        sizes: '512x512',
         type: 'image/png',
       },
     ],

@@ -9,8 +9,11 @@ export const metadata: Metadata = {
     default: 'What to Eat',
   },
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: '/icon.png',
   },
   appleWebApp: {
     capable: true,
