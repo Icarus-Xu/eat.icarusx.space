@@ -4,6 +4,7 @@
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import type { LogRow } from '@/app/lib/log';
+import { useT } from '@/app/ui/lang-context';
 
 function statusColor(code: number | null): string {
   if (code === null) return 'text-muted';
@@ -65,6 +66,7 @@ interface Props {
 }
 
 export default function LogClient({ logs, params, totalPages }: Props) {
+  const t = useT();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -99,14 +101,14 @@ export default function LogClient({ logs, params, totalPages }: Props) {
           value={params.type ?? ''}
           onChange={(e) => updateFilter('type', e.target.value)}
         >
-          <option value="">All types</option>
+          <option value="">{t.logAllTypes}</option>
           <option value="api">api</option>
           <option value="page">page</option>
           <option value="client_error">client_error</option>
         </select>
         <input
           type="text"
-          placeholder="Path contains..."
+          placeholder={t.logPathPlaceholder}
           className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 transition-colors focus:border-appetite focus:outline-none dark:focus:border-appetite-d w-44"
           defaultValue={params.path ?? ''}
           onKeyDown={(e) => {
@@ -116,7 +118,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
         />
         <input
           type="number"
-          placeholder="Status"
+          placeholder={t.logStatusPlaceholder}
           className="rounded border border-line dark:border-line-d bg-card dark:bg-card-d text-sm px-2 py-1 transition-colors focus:border-appetite focus:outline-none dark:focus:border-appetite-d w-20"
           defaultValue={params.status ?? ''}
           onKeyDown={(e) => {
@@ -124,7 +126,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
           }}
           onBlur={(e) => updateFilter('status', e.target.value.trim())}
         />
-        <span className="text-xs text-muted ml-auto">{logs.length} rows (last 7 days)</span>
+        <span className="text-xs text-muted ml-auto">{t.logRows(logs.length)}</span>
       </div>
 
       {/* Table */}
@@ -132,7 +134,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
         <table className="min-w-full text-xs divide-y divide-line dark:divide-line-d">
           <thead className="bg-paper dark:bg-card-d">
             <tr>
-              {['Time', 'Type', 'User', 'Method', 'Path', 'Status', 'ms', 'Error', 'UA / IP'].map((h) => (
+              {[t.logColTime, t.logColType, t.logColUser, t.logColMethod, t.logColPath, t.logColStatus, t.logColMs, t.logColError, t.logColUaIp].map((h) => (
                 <th
                   key={h}
                   className="px-2 py-2 text-left text-xs font-medium text-muted dark:text-muted-d whitespace-nowrap"
@@ -146,7 +148,7 @@ export default function LogClient({ logs, params, totalPages }: Props) {
             {logs.length === 0 && (
               <tr>
                 <td colSpan={9} className="px-2 py-6 text-center text-muted">
-                  No logs found.
+                  {t.logNoLogs}
                 </td>
               </tr>
             )}
@@ -205,17 +207,17 @@ export default function LogClient({ logs, params, totalPages }: Props) {
             onClick={() => goPage(currentPage - 1)}
             className="px-2 py-1 rounded border border-line dark:border-line-d text-sm transition-colors hover:border-appetite disabled:opacity-40 dark:hover:border-appetite-d"
           >
-            Prev
+            {t.logPrev}
           </button>
           <span className="text-sm text-sub dark:text-muted-d">
-            Page {currentPage} / {totalPages}
+            {t.logPage(currentPage, totalPages)}
           </span>
           <button
             disabled={currentPage >= totalPages}
             onClick={() => goPage(currentPage + 1)}
             className="px-2 py-1 rounded border border-line dark:border-line-d text-sm transition-colors hover:border-appetite disabled:opacity-40 dark:hover:border-appetite-d"
           >
-            Next
+            {t.logNext}
           </button>
         </div>
       )}

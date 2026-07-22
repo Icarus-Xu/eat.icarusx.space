@@ -27,7 +27,7 @@ export default async function SideNav() {
             <span className="truncate">{userName}</span>
           </span>
           <div className="flex items-center gap-1">
-            <Link href="/settings" aria-label="Settings" className="icon-btn">
+            <Link href="/settings" aria-label="设置" className="icon-btn">
               <Cog6ToothIcon className="w-5" />
             </Link>
             <SignOutButton action={async () => {

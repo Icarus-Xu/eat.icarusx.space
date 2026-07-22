@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { STAR_PATH } from '@/app/ui/stars';
+import { useT } from '@/app/ui/lang-context';
 
 interface StarInputProps {
   value: number | null;
@@ -10,6 +11,7 @@ interface StarInputProps {
 }
 
 export default function StarInput({ value, onChange }: StarInputProps) {
+  const t = useT();
   const [hover, setHover] = useState<number | null>(null);
   const active = hover ?? value ?? 0;
 
@@ -17,7 +19,7 @@ export default function StarInput({ value, onChange }: StarInputProps) {
     <div
       className="flex gap-1.5"
       role="group"
-      aria-label="Star rating"
+      aria-label={t.starRatingLabel}
       onMouseLeave={() => setHover(null)}
     >
       {[1, 2, 3, 4, 5].map((star) => (

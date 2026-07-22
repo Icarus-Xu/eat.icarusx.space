@@ -6,10 +6,12 @@ import { Button } from './button';
 import { startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { authenticate } from '@/app/lib/action';
 import { useSearchParams } from 'next/navigation';
+import { useT } from '@/app/ui/lang-context';
 
 const STORAGE_KEY = 'user_id';
 
 export default function LoginForm() {
+  const t = useT();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/recommend';
   const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
@@ -40,15 +42,18 @@ export default function LoginForm() {
   return (
     <form ref={formRef} action={formAction} onSubmit={handleSubmit}>
       <div className="card px-6 pb-6 pt-7 shadow-sm">
-        <h1 className="mb-5 text-center text-xl text-ink dark:text-ink-d">
-          Enter your ID to continue.
+        <h1 className="mb-1 text-center text-xl font-bold text-ink dark:text-ink-d">
+          {t.loginTitle}
         </h1>
+        <p className="mb-5 text-center text-sm text-muted dark:text-muted-d">
+          {t.loginSubtitle}
+        </p>
         <div className="w-full">
           <label
             className="mb-1.5 block text-xs font-medium text-sub dark:text-sub-d"
             htmlFor="userId"
           >
-            ID
+            {t.loginIdLabel}
           </label>
           <div className="relative">
             <input
@@ -56,7 +61,7 @@ export default function LoginForm() {
               id="userId"
               type="text"
               name="userId"
-              placeholder="Enter your ID"
+              placeholder={t.loginPlaceholder}
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               required
@@ -67,7 +72,7 @@ export default function LoginForm() {
         </div>
         <input type="hidden" name="redirectTo" value={callbackUrl} />
         <Button className="mt-4 w-full justify-center" aria-disabled={isPending}>
-          Log in <ArrowRightIcon className="ml-2 h-5 w-5 text-white" />
+          {t.loginButton} <ArrowRightIcon className="ml-2 h-5 w-5 text-white" />
         </Button>
         <div className="flex h-8 items-end justify-center space-x-1" aria-live="polite" aria-atomic="true">
           {errorMessage && (

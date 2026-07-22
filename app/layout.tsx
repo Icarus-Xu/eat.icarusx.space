@@ -2,6 +2,7 @@ import '@/app/ui/global.css';
 import type { Metadata } from 'next';
 import ServiceWorkerRegister from '@/app/ui/service-worker-register';
 import { ThemeProvider } from '@/app/ui/theme-context';
+import { LangProvider } from '@/app/ui/lang-context';
 
 export const metadata: Metadata = {
   title: {
@@ -34,7 +35,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          {children}
+          <LangProvider>
+            {children}
+          </LangProvider>
         </ThemeProvider>
         <ServiceWorkerRegister />
       </body>

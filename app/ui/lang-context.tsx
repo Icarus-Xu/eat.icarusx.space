@@ -20,22 +20,23 @@ interface LangContextValue {
 }
 
 const LangContext = createContext<LangContextValue>({
-  lang: 'en',
+  lang: detectLang(),
   setLang: () => {},
 });
 
-export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('en');
+function initialLang(): Lang {
+  if (typeof window === 'undefined') return 'en';
+  const saved = localStorage.getItem(LANG_KEY);
+  return saved === 'en' || saved === 'zh' ? saved : detectLang();
+}
 
+export function LangProvider({ children }: { children: ReactNode }) {
+  const [lang, setLangState] = useState<Lang>(initialLang);
+
+  // Persist the initial detected language once (no-op if already saved).
   useEffect(() => {
-    const saved = localStorage.getItem(LANG_KEY);
-    if (saved === 'en' || saved === 'zh') {
-      setLangState(saved);
-    } else {
-      const detected = detectLang();
-      setLangState(detected);
-      localStorage.setItem(LANG_KEY, detected);
-    }
+    localStorage.setItem(LANG_KEY, lang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setLang = (l: Lang) => {

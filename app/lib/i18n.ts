@@ -135,6 +135,40 @@ const en = {
   editDeleteFailed: 'Failed to delete.',
 
   commonCancel: 'Cancel',
+
+  // add page
+  addTitle: '🍽️ Add a restaurant',
+  addListTitle: '📖 All restaurants',
+
+  // login
+  loginTitle: "👋 Let's eat!",
+  loginSubtitle: 'Enter your ID to continue.',
+  loginIdLabel: 'ID',
+  loginPlaceholder: 'Enter your ID',
+  loginButton: "Let's go",
+
+  // star input
+  starRatingLabel: 'Star rating',
+
+  // log viewer
+  logTitle: '📋 Access Logs',
+  logAllTypes: 'All types',
+  logPathPlaceholder: 'Path contains...',
+  logStatusPlaceholder: 'Status',
+  logRows: (n: number) => `${n} rows (last 7 days)`,
+  logNoLogs: 'No logs found. 🍃',
+  logPrev: 'Prev',
+  logNext: 'Next',
+  logPage: (cur: number, total: number) => `Page ${cur} / ${total}`,
+  logColTime: 'Time',
+  logColType: 'Type',
+  logColUser: 'User',
+  logColMethod: 'Method',
+  logColPath: 'Path',
+  logColStatus: 'Status',
+  logColMs: 'ms',
+  logColError: 'Error',
+  logColUaIp: 'UA / IP',
 };
 
 const zh: typeof en = {
@@ -256,6 +290,40 @@ const zh: typeof en = {
   editDeleteFailed: '删除失败。',
 
   commonCancel: '取消',
+
+  // add page
+  addTitle: '🍽️ 添加餐厅',
+  addListTitle: '📖 所有餐厅',
+
+  // login
+  loginTitle: '👋 开饭啦！',
+  loginSubtitle: '输入你的 ID 继续。',
+  loginIdLabel: 'ID',
+  loginPlaceholder: '输入你的 ID',
+  loginButton: '开吃',
+
+  // star input
+  starRatingLabel: '星级评分',
+
+  // log viewer
+  logTitle: '📋 访问日志',
+  logAllTypes: '全部类型',
+  logPathPlaceholder: '路径包含…',
+  logStatusPlaceholder: '状态码',
+  logRows: (n: number) => `${n} 条（近 7 天）`,
+  logNoLogs: '暂无日志。🍃',
+  logPrev: '上一页',
+  logNext: '下一页',
+  logPage: (cur: number, total: number) => `第 ${cur} / ${total} 页`,
+  logColTime: '时间',
+  logColType: '类型',
+  logColUser: '用户',
+  logColMethod: '方法',
+  logColPath: '路径',
+  logColStatus: '状态码',
+  logColMs: '耗时',
+  logColError: '错误',
+  logColUaIp: 'UA / IP',
 };
 
 export const translations = { en, zh } as const;

@@ -1,6 +1,7 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import { queryLogs, countLogs, cleanupOldLogs, PAGE_SIZE } from '@/app/lib/log';
 import LogClient from '@/app/ui/log/log-client';
+import LogHeading from '@/app/ui/log/log-heading';
 import { Suspense } from 'react';
 
 interface PageProps {
@@ -22,7 +23,7 @@ export default async function LogPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="page-heading">Access Logs</h1>
+      <LogHeading />
       <Suspense>
         <LogClient logs={logs} params={{ ...params, page: String(page) }} totalPages={totalPages} />
       </Suspense>
