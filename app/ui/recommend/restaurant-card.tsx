@@ -7,20 +7,7 @@ import { useMapProvider } from '@/app/ui/map-provider-context';
 import { StarRating } from '@/app/ui/stars';
 import VisitBadge from '@/app/ui/visit-badge';
 import InteractiveCard from '@/app/ui/restaurant/interactive-card';
-
-function formatDistance(m: number): string {
-  if (m < 1000) return `${Math.round(m)} m`;
-  return `${(m / 1000).toFixed(1)} km`;
-}
-
-function formatDate(iso: string | null, locale: string): string {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+import { formatDistance, formatDate } from '@/app/lib/format';
 
 export default function RestaurantCard({ r, onChanged }: { r: RestaurantCard; onChanged?: () => void }) {
   const t = useT();

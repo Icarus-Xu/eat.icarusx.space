@@ -2,6 +2,7 @@
 import { auth } from '@/auth';
 import postgres from 'postgres';
 import { logApiRequest } from '@/app/lib/log';
+import { amapPlaceUrl, baiduPlaceUrl } from '@/app/lib/provider-links';
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL?.includes('sslmode=disable') ? false : 'require' });
 
@@ -102,12 +103,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         ? await sql`
             UPDATE restaurants SET
               name = ${name.trim()}, address = ${address?.trim() ?? ''}, lat = ${lat}, lng = ${lng},
-              amap_poi_id = ${poiId}, source_url = ${`https://ditu.amap.com/place/${poiId}`}
+              amap_poi_id = ${poiId}, source_url = ${amapPlaceUrl(poiId)}
             WHERE id = ${id} RETURNING id`
         : await sql`
             UPDATE restaurants SET
               name = ${name.trim()}, address = ${address?.trim() ?? ''}, lat = ${lat}, lng = ${lng},
-              baidu_poi_id = ${poiId}, baidu_source_url = ${`https://map.baidu.com/?uid=${poiId}`}
+              baidu_poi_id = ${poiId}, baidu_source_url = ${baiduPlaceUrl(poiId)}
             WHERE id = ${id} RETURNING id`) as { id: string }[];
 
       if (!updated.length) return Response.json({ error: 'Not found' }, { status: 404 });

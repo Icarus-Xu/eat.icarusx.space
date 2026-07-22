@@ -10,21 +10,9 @@ import { useT } from '@/app/ui/lang-context';
 import { StarRating } from '@/app/ui/stars';
 import VisitBadge from '@/app/ui/visit-badge';
 import InteractiveCard from '@/app/ui/restaurant/interactive-card';
+import { formatDistance, formatDate } from '@/app/lib/format';
 
 type RestaurantWithDistance = RestaurantRow & { distanceM: number | null };
-
-function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-function formatDistance(m: number): string {
-  if (m < 1000) return `${Math.round(m)} m`;
-  return `${(m / 1000).toFixed(1)} km`;
-}
 
 function CardContent({ r, t }: { r: RestaurantWithDistance; t: ReturnType<typeof useT> }) {
   return (

@@ -6,6 +6,7 @@ import { PaperAirplaneIcon, PlusIcon, PencilSquareIcon } from '@heroicons/react/
 import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
 import RestaurantModal, { type ModalMode } from '@/app/ui/restaurant/restaurant-modal';
+import { amapPlaceUrl, baiduPlaceUrl } from '@/app/lib/provider-links';
 
 interface Props {
   restaurantId: string;
@@ -42,11 +43,11 @@ export default function InteractiveCard({
   const effectiveProvider = provider ?? 'amap';
   const navHref =
     effectiveProvider === 'baidu' && baiduPoiId
-      ? `https://map.baidu.com/?uid=${baiduPoiId}`
+      ? baiduPlaceUrl(baiduPoiId)
       : amapPoiId
-        ? `https://ditu.amap.com/place/${amapPoiId}`
+        ? amapPlaceUrl(amapPoiId)
         : baiduPoiId
-          ? `https://map.baidu.com/?uid=${baiduPoiId}`
+          ? baiduPlaceUrl(baiduPoiId)
           : null;
 
   const openMenu = (x: number, y: number) => {

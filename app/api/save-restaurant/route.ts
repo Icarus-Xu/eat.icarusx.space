@@ -2,6 +2,7 @@
 import { auth } from '@/auth';
 import postgres from 'postgres';
 import { logApiRequest } from '@/app/lib/log';
+import { amapPlaceUrl, baiduPlaceUrl } from '@/app/lib/provider-links';
 
 const sql = postgres(process.env.DATABASE_URL!, { ssl: process.env.DATABASE_URL?.includes('sslmode=disable') ? false : 'require' });
 
@@ -39,8 +40,8 @@ export async function POST(request: Request) {
       return Response.json({ error: 'At least one POI ID is required.' }, { status: 400 });
     }
 
-    const sourceUrl = amapPoiId ? `https://ditu.amap.com/place/${amapPoiId}` : null;
-    const baiduSourceUrl = baiduPoiId ? `https://map.baidu.com/?uid=${baiduPoiId}` : null;
+    const sourceUrl = amapPoiId ? amapPlaceUrl(amapPoiId) : null;
+    const baiduSourceUrl = baiduPoiId ? baiduPlaceUrl(baiduPoiId) : null;
 
     const userRows = (await sql`
       SELECT id FROM users WHERE email = ${session.user.email} LIMIT 1

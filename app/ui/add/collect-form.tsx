@@ -8,22 +8,18 @@ import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
 import StarInput from './star-input';
 import CrossSearchModal, { type CrossPoi } from '@/app/ui/cross-search-modal';
+import PoiResultList from '@/app/ui/poi-result-list';
+import { todayInputValue } from '@/app/lib/format';
 import {
   ArrowPathIcon,
   BookmarkIcon,
   CheckCircleIcon,
-  ChevronRightIcon,
   ExclamationCircleIcon,
   MagnifyingGlassIcon,
-  MapPinIcon,
 } from '@heroicons/react/24/outline';
 
 type Mode = 'search' | 'link';
 type Step = 'input' | 'preview' | 'done';
-
-function todayString() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
   const { location } = useLocation();
@@ -65,7 +61,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
   // Preview form state
   const [visited, setVisited] = useState<boolean | null>(null);
-  const [visitDate, setVisitDate] = useState(todayString());
+  const [visitDate, setVisitDate] = useState(todayInputValue());
   const [rating, setRating] = useState<number | null>(null);
   const [notes, setNotes] = useState('');
   const [saveError, setSaveError] = useState('');
@@ -84,7 +80,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
     setUrl('');
     setParseError('');
     setVisited(null);
-    setVisitDate(todayString());
+    setVisitDate(todayInputValue());
     setRating(null);
     setNotes('');
     setSaveError('');
@@ -309,24 +305,11 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             )}
 
             {searchResults.length > 0 && !isCrossSearching && (
-              <ul className="mt-3 flex flex-col gap-2">
-                {searchResults.map((r) => (
-                  <li key={r.id}>
-                    <button
-                      type="button"
-                      onClick={() => selectPoi(r, effectiveProvider)}
-                      className="card group flex w-full items-center gap-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d"
-                    >
-                      <MapPinIcon className="h-5 w-5 shrink-0 text-appetite dark:text-appetite-d" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate font-medium text-ink dark:text-ink-d">{r.name}</span>
-                        <span className="block truncate text-sm text-muted dark:text-muted-d">{r.address}</span>
-                      </span>
-                      <ChevronRightIcon className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 dark:text-muted-d" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              <PoiResultList
+                results={searchResults}
+                onSelect={(r) => selectPoi(r, effectiveProvider)}
+                className="mt-3"
+              />
             )}
           </div>
         )}
@@ -406,7 +389,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                   <input
                     type="date"
                     value={visitDate}
-                    max={todayString()}
+                    max={todayInputValue()}
                     onChange={(e) => setVisitDate(e.target.value)}
                     className="form-input"
                   />

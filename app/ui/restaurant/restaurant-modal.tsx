@@ -11,7 +11,6 @@ import {
   TrashIcon,
   CheckIcon,
   MagnifyingGlassIcon,
-  ChevronRightIcon,
   ArrowPathIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
@@ -21,6 +20,9 @@ import { useMapProvider } from '@/app/ui/map-provider-context';
 import { useT } from '@/app/ui/lang-context';
 import { StarRating } from '@/app/ui/stars';
 import StarInput from '@/app/ui/add/star-input';
+import PoiResultList from '@/app/ui/poi-result-list';
+import { formatDistance, formatDate, todayInputValue } from '@/app/lib/format';
+import { amapPlaceUrl, baiduPlaceUrl } from '@/app/lib/provider-links';
 
 export type ModalMode = 'detail' | 'addVisit' | 'edit';
 
@@ -30,21 +32,6 @@ interface Props {
   initialMode?: ModalMode;
   onClose: () => void;
   onChanged?: () => void;
-}
-
-function formatDate(iso: string, locale: string): string {
-  return new Date(iso).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-function formatDistance(m: number): string {
-  if (m < 1000) return `${Math.round(m)} m`;
-  return `${(m / 1000).toFixed(1)} km`;
-}
-
-function todayInputValue(): string {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 export default function RestaurantModal({ restaurantId, distanceM, initialMode = 'detail', onClose, onChanged }: Props) {
@@ -88,8 +75,8 @@ export default function RestaurantModal({ restaurantId, distanceM, initialMode =
     !detail || !navProvider
       ? null
       : navProvider === 'amap'
-        ? `https://ditu.amap.com/place/${detail.amapPoiId}`
-        : `https://map.baidu.com/?uid=${detail.baiduPoiId}`;
+        ? amapPlaceUrl(detail.amapPoiId!)
+        : baiduPlaceUrl(detail.baiduPoiId!);
   const navUsesOther = navProvider !== null && navProvider !== effectiveProvider;
 
   const ratings = detail ? detail.visits.map((v) => v.rating).filter((r): r is number => r !== null) : [];
@@ -547,26 +534,7 @@ function EditForm({
 
       {error && <p className="error-inline">{error}</p>}
 
-      {results.length > 0 && (
-        <ul className="flex flex-col gap-2">
-          {results.map((r) => (
-            <li key={r.id}>
-              <button
-                type="button"
-                onClick={() => pick(r)}
-                className="card group flex w-full items-center gap-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d"
-              >
-                <MapPinIcon className="h-5 w-5 shrink-0 text-appetite dark:text-appetite-d" />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-medium text-ink dark:text-ink-d">{r.name}</span>
-                  <span className="block truncate text-sm text-muted dark:text-muted-d">{r.address}</span>
-                </span>
-                <ChevronRightIcon className="h-4 w-4 shrink-0 text-muted transition-transform group-hover:translate-x-0.5 dark:text-muted-d" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {results.length > 0 && <PoiResultList results={results} onSelect={pick} />}
 
       <div className="flex gap-2.5">
         <button
