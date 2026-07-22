@@ -470,7 +470,7 @@ function EditForm({
         <button
           onClick={() => setConfirmDelete(true)}
           aria-label={t.editDelete}
-          className="rounded-lg p-1.5 text-muted transition hover:bg-red-50 hover:text-red-500 dark:text-muted-d dark:hover:bg-red-950 dark:hover:text-red-400"
+          className="rounded-lg bg-red-50 p-2 text-red-500 transition hover:bg-red-100 dark:bg-red-950/50 dark:text-red-400 dark:hover:bg-red-900/60"
         >
           <TrashIcon className="h-5 w-5" />
         </button>
