@@ -7,6 +7,12 @@ A personal web app for two users to record and pick restaurants together.
 New source files must use: `Copyright (C) <current_year> Icarus. All rights reserved.`
 (Overrides the global Viture Inc. default for this personal project.)
 
+## Documentation Rules
+
+Never write literal IP addresses in this file, in source files, or in commit messages.
+Refer to hosts by role or hostname (e.g. "ECS public host", "Pi LAN address") and keep
+the actual values in environment variables or local config only.
+
 ## Tech Stack
 
 - Framework: Next.js 16 (App Router), React, TypeScript
@@ -22,7 +28,7 @@ New source files must use: `Copyright (C) <current_year> Icarus. All rights rese
 ```
 eat.icarusx.space
       |
-  ECS OpenResty (112.124.70.222)
+  ECS OpenResty (public host)
       |  frp tunnel (port 7000)
   Raspberry Pi 5 (LAN)
       |-- eat-app container (Next.js :3000)
