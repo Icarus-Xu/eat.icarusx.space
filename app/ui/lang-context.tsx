@@ -8,6 +8,7 @@ import type { Lang } from '@/app/lib/i18n';
 export type { Lang };
 
 const LANG_KEY = 'lang';
+const LANG_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 function detectLang(): Lang {
   if (typeof navigator === 'undefined') return 'en';
@@ -24,23 +25,30 @@ const LangContext = createContext<LangContextValue>({
   setLang: () => {},
 });
 
-export function LangProvider({ children, defaultLang }: { children: ReactNode; defaultLang?: Lang }) {
-  const [lang, setLangState] = useState<Lang>(() => {
-    if (typeof window === 'undefined') return defaultLang ?? 'en';
-    const saved = localStorage.getItem(LANG_KEY);
-    if (saved === 'en' || saved === 'zh') return saved;
-    return defaultLang ?? detectLang();
-  });
+function persistLang(lang: Lang) {
+  localStorage.setItem(LANG_KEY, lang);
+  document.cookie = `${LANG_KEY}=${lang}; path=/; max-age=${LANG_COOKIE_MAX_AGE}; SameSite=Lax`;
+  document.documentElement.lang = lang;
+}
 
-  // Persist the initial detected language once (no-op if already saved).
+export function LangProvider({ children, defaultLang }: { children: ReactNode; defaultLang?: Lang }) {
+  const [lang, setLangState] = useState<Lang>(defaultLang ?? 'en');
+
+  // Keep the first client render identical to SSR, then hydrate saved preferences.
   useEffect(() => {
-    localStorage.setItem(LANG_KEY, lang);
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'en' || saved === 'zh') {
+      persistLang(saved);
+      setLangState(saved);
+      return;
+    }
+    persistLang(lang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setLang = (l: Lang) => {
     setLangState(l);
-    localStorage.setItem(LANG_KEY, l);
+    persistLang(l);
   };
 
   return (

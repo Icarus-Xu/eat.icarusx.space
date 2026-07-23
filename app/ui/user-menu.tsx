@@ -54,6 +54,7 @@ export default function UserMenu({
               type="submit"
               onClick={() => {
                 KEYS_TO_CLEAR.forEach((k) => localStorage.removeItem(k));
+                document.cookie = 'lang=; path=/; max-age=0; SameSite=Lax';
                 setTheme('auto');
               }}
               className={itemClass}

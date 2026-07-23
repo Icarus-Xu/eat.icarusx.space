@@ -1,6 +1,6 @@
 import '@/app/ui/global.css';
 import type { Metadata, Viewport } from 'next';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import ServiceWorkerRegister from '@/app/ui/service-worker-register';
 import { ThemeProvider } from '@/app/ui/theme-context';
 import { LangProvider } from '@/app/ui/lang-context';
@@ -36,8 +36,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const headersList = await headers();
+  const cookieStore = await cookies();
+  const savedLang = cookieStore.get('lang')?.value;
   const acceptLanguage = headersList.get('accept-language') ?? '';
-  const defaultLang: Lang = acceptLanguage.startsWith('zh') ? 'zh' : 'en';
+  const defaultLang: Lang =
+    savedLang === 'en' || savedLang === 'zh' ? savedLang
+    : acceptLanguage.startsWith('zh') ? 'zh'
+    : 'en';
 
   return (
     <html lang={defaultLang === 'zh' ? 'zh' : 'en'}>

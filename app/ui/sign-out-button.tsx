@@ -15,6 +15,7 @@ export default function SignOutButton({ action }: { action: () => Promise<void> 
         className="icon-btn"
         onClick={() => {
           KEYS_TO_CLEAR.forEach((k) => localStorage.removeItem(k));
+          document.cookie = 'lang=; path=/; max-age=0; SameSite=Lax';
           setTheme('auto');
         }}
       >
