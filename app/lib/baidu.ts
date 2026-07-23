@@ -25,7 +25,7 @@ export async function searchPoiByName(
   });
   if (location) {
     params.set('location', `${location.lat},${location.lng}`);
-    params.set('coordtype', String(coordType));
+    params.set('coord_type', String(coordType));
   }
 
   const res = await fetch(`https://api.map.baidu.com/place/v2/suggestion?${params}`);

@@ -177,19 +177,24 @@ export async function geocodeAddress(address: string): Promise<{ lat: number; ln
   return { lat: parseFloat(latStr), lng: parseFloat(lngStr) };
 }
 
-export async function searchPoiByName(
+interface RawPoi extends AmapPoi {
+  typecode: string;
+}
+
+async function placeTextSearch(
   keywords: string,
+  types: string | null,
   location?: { lat: number; lng: number },
   radius = 5000,
-): Promise<AmapPoi[]> {
+): Promise<RawPoi[]> {
   const params = new URLSearchParams({
     keywords,
-    types: '050000',
     key: AMAP_KEY,
     output: 'json',
     offset: '10',
     page: '1',
   });
+  if (types) params.set('types', types);
   if (location) {
     params.set('location', `${location.lng},${location.lat}`);
     params.set('radius', String(radius));
@@ -207,8 +212,35 @@ export async function searchPoiByName(
       address: (poi.address as string) || '',
       lat: parseFloat(latStr),
       lng: parseFloat(lngStr),
+      typecode: (poi.typecode as string) || '',
     };
   });
+}
+
+export async function searchPoiByName(
+  keywords: string,
+  location?: { lat: number; lng: number },
+  radius = 5000,
+): Promise<AmapPoi[]> {
+  // Amap sometimes files a restaurant under a non-catering typecode (e.g. a
+  // shop-front eatery under 060000), so run both the catering-filtered and the
+  // unfiltered search and merge them, keeping catering results on top.
+  const [dining, unfiltered] = await Promise.all([
+    placeTextSearch(keywords, '050000', location, radius),
+    placeTextSearch(keywords, null, location, radius),
+  ]);
+
+  const seen = new Set<string>();
+  const merged: RawPoi[] = [];
+  for (const poi of [...dining, ...unfiltered]) {
+    if (seen.has(poi.id)) continue;
+    seen.add(poi.id);
+    merged.push(poi);
+  }
+  // Stable sort keeps the relevance order Amap returned within each group.
+  merged.sort((a, b) => Number(!a.typecode.startsWith('05')) - Number(!b.typecode.startsWith('05')));
+
+  return merged.slice(0, 10).map(({ id, name, address, lat, lng }) => ({ id, name, address, lat, lng }));
 }
 
 // Haversine distance in meters

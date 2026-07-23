@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { searchPoiByName as searchAmap } from '@/app/lib/amap';
 import { searchPoiByName as searchBaidu } from '@/app/lib/baidu';
 import { logApiRequest } from '@/app/lib/log';
+import { wgs84ToGcj02 } from '@/app/lib/coords';
 
 export async function GET(req: NextRequest) {
   return logApiRequest('/api/search-restaurant', req, async () => {
@@ -22,7 +23,8 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const location = lat && lng ? { lat: parseFloat(lat), lng: parseFloat(lng) } : undefined;
+  // Incoming lat/lng are WGS-84; Amap expects GCJ-02.
+  const location = lat && lng ? wgs84ToGcj02(parseFloat(lat), parseFloat(lng)) : undefined;
   const pois = await searchAmap(q, location);
   return NextResponse.json({ pois });
   }); // logApiRequest
