@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    font-size: 20px;
+  }
+
   body {
     @apply bg-paper text-ink dark:bg-paper-d dark:text-ink-d;
     transition: background-color 0.3s ease, color 0.3s ease;
