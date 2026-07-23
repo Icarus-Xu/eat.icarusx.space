@@ -21,6 +21,9 @@ import {
 type Mode = 'search' | 'link';
 type Step = 'input' | 'preview' | 'done';
 
+// A cross-provider match this close to the source POI is taken as the same place.
+const AUTO_MATCH_RADIUS_M = 300;
+
 export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
   const { location } = useLocation();
   const { provider } = useMapProvider();
@@ -113,7 +116,9 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
       const data = await res.json();
       const pois: CrossPoi[] = data.pois ?? [];
 
-      if (pois.length === 1) {
+      // Results are distance-sorted; a hit right on top of the source POI is
+      // the same place, so link it without asking.
+      if (pois.length === 1 || (pois.length > 1 && pois[0].distanceM < AUTO_MATCH_RADIUS_M)) {
         if (source === 'amap') setBaiduPoiId(pois[0].id);
         else setAmapPoiId(pois[0].id);
         setStep('preview');

@@ -8,6 +8,7 @@ export interface CrossPoi {
   id: string;
   name: string;
   address: string;
+  distanceM: number;
 }
 
 interface Props {
