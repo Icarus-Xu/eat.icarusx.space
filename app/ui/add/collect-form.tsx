@@ -250,13 +250,13 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
       <div className="flex flex-col gap-6">
         {/* Mode tabs */}
-        <div className="flex gap-1 rounded-lg border border-line bg-paper p-1 dark:border-line-d dark:bg-card-d">
+        <div className="flex gap-1 rounded-2xl border border-line bg-paper p-1 dark:border-line-d dark:bg-card-d">
           {(['search', 'link'] as const).map((m) => (
             <button
               key={m}
               type="button"
               onClick={() => switchMode(m)}
-              className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
                 mode === m
                   ? 'bg-card text-ink shadow-sm dark:bg-card-d dark:text-ink-d'
                   : 'text-muted hover:text-ink dark:text-muted-d dark:hover:text-ink-d'
@@ -278,17 +278,17 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder={t.formSearchPlaceholder}
-                className="form-input flex-1"
+                className="form-input flex-1 rounded-2xl"
               />
               <button
                 onClick={handleSearch}
                 disabled={isSearching || isCrossSearching || !searchQuery.trim()}
-                className="btn-primary flex items-center gap-1.5"
+                aria-label={t.formSearch}
+                className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
               >
                 {isSearching
-                  ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                  : <MagnifyingGlassIcon className="h-4 w-4" />}
-                {t.formSearch}
+                  ? <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                  : <MagnifyingGlassIcon className="h-5 w-5" />}
               </button>
             </div>
             {searchError && (
@@ -325,7 +325,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder={t.formLinkPlaceholder}
-                className="form-input flex-1"
+                className="form-input flex-1 rounded-2xl"
               />
               <button
                 onClick={handleParse}
@@ -417,7 +417,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             )}
 
             {isDuplicate && (
-              <p className="flex items-center gap-1.5 rounded-lg border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-600 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-400">
+              <p className="flex items-center gap-1.5 rounded-2xl border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-600 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-400">
                 <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
                 {t.formDuplicate}
               </p>
