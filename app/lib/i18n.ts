@@ -16,6 +16,7 @@ const en = {
   navSettings: 'Settings',
   navMap: 'Map',
   navGettingLocation: 'Getting location...',
+  signedIn: 'Signed in',
   signOut: 'Sign out',
 
   // location input
@@ -181,6 +182,7 @@ const zh: typeof en = {
   navSettings: '设置',
   navMap: '地图',
   navGettingLocation: '正在获取位置...',
+  signedIn: '已登录',
   signOut: '退出登录',
 
   locationPlaceholder: '输入您的位置...',

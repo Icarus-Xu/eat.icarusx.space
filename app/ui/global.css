@@ -64,6 +64,10 @@
     @apply rounded-md p-1 text-muted hover:bg-appetite-soft hover:text-appetite dark:text-muted-d dark:hover:bg-appetite-soft-d dark:hover:text-appetite-d;
   }
 
+  .main-scroll-shell {
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  }
+
   .btn-toggle {
     @apply flex-1 rounded-lg border py-2 text-sm font-medium transition-colors;
   }
@@ -103,6 +107,12 @@
   /* Inline pending/loading status row */
   .status-pending {
     @apply mt-3 flex items-center gap-2 text-sm text-muted dark:text-muted-d;
+  }
+}
+
+@media (display-mode: standalone) {
+  .main-scroll-shell {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
   }
 }
 

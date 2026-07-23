@@ -1,8 +1,6 @@
 // Copyright (C) 2026 Icarus. All rights reserved.
 import SideNav from '@/app/ui/dashboard/sidenav';
-import NavLinks from '@/app/ui/dashboard/nav-links';
-import AppBrand from '@/app/ui/app-brand';
-import UserMenu from '@/app/ui/user-menu';
+import MobileNavigation from '@/app/ui/mobile-navigation';
 import { LocationProvider } from '@/app/ui/location-context';
 import { MapProviderContextProvider } from '@/app/ui/map-provider-context';
 import MapProviderModal from '@/app/ui/map-provider-modal';
@@ -22,17 +20,13 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <ErrorInterceptor />
         <div className="flex h-dvh flex-col overflow-hidden lg:flex-row">
 
-          {/* Mobile: top header */}
-          <header className="flex flex-none items-center justify-between border-b border-line bg-paper px-6 py-5 dark:border-line-d dark:bg-paper-d lg:hidden">
-            <AppBrand />
-            <UserMenu
-              userName={userName}
-              signOutAction={async () => {
-                'use server';
-                await signOut({ redirectTo: '/login' });
-              }}
-            />
-          </header>
+          <MobileNavigation
+            userName={userName}
+            signOutAction={async () => {
+              'use server';
+              await signOut({ redirectTo: '/login' });
+            }}
+          />
 
           {/* Desktop: sidebar */}
           <div className="hidden w-64 flex-none lg:block">
@@ -40,14 +34,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           </div>
 
           {/* Content */}
-          <div className="min-h-0 grow overflow-y-auto px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:p-12 lg:pb-12">
+          <div className="main-scroll-shell min-h-0 grow overflow-y-auto px-5 pt-6 lg:p-12 lg:pb-12">
             {children}
           </div>
-
-          {/* Mobile: bottom tab bar */}
-          <nav className="fixed bottom-0 left-0 right-0 z-10 flex border-t border-line bg-paper pb-[env(safe-area-inset-bottom)] dark:border-line-d dark:bg-paper-d lg:hidden">
-            <NavLinks variant="bottom" />
-          </nav>
 
         </div>
       </MapProviderContextProvider>
