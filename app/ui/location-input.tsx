@@ -104,7 +104,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
           onClick={handleLocate}
           disabled={locating}
           title={t.locationUseCurrentTitle}
-          className="rounded-2xl border border-line bg-card p-2 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
+          className="rounded-2xl border border-line bg-card px-3 py-2 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
         >
           {locating
             ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
@@ -123,7 +123,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
             onClick={handleConfirmMap}
             disabled={!mapPending?.address}
             aria-label={t.locationConfirm}
-            className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+            className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
           >
             <CheckIcon className="h-5 w-5" />
           </button>
@@ -132,7 +132,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
             onClick={handleSearch}
             disabled={isPending || !address.trim()}
             aria-label={t.locationSearch}
-            className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+            className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
           >
             {isPending
               ? <ArrowPathIcon className="h-5 w-5 animate-spin" />

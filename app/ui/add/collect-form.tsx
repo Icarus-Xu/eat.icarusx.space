@@ -284,7 +284,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 onClick={handleSearch}
                 disabled={isSearching || isCrossSearching || !searchQuery.trim()}
                 aria-label={t.formSearch}
-                className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+                className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
               >
                 {isSearching
                   ? <ArrowPathIcon className="h-5 w-5 animate-spin" />
