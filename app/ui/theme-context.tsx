@@ -6,10 +6,17 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 export type ThemeSetting = 'auto' | 'light' | 'dark';
 
 const THEME_KEY = 'theme';
+const LIGHT_THEME_COLOR = '#FBF5EC';
+const DARK_THEME_COLOR = '#211A15';
 
 function applyTheme(dark: boolean) {
   if (typeof document === 'undefined') return;
   document.documentElement.classList.toggle('dark', dark);
+  document
+    .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+    .forEach((meta) => {
+      meta.content = dark ? DARK_THEME_COLOR : LIGHT_THEME_COLOR;
+    });
 }
 
 interface ThemeContextValue {

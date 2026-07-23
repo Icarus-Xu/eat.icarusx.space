@@ -20,7 +20,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <MapProviderModal />
         <PageLogger />
         <ErrorInterceptor />
-        <div className="flex h-dvh flex-col lg:flex-row lg:overflow-hidden">
+        <div className="flex h-dvh flex-col overflow-hidden lg:flex-row">
 
           {/* Mobile: top header */}
           <header className="flex flex-none items-center justify-between border-b border-line bg-paper px-6 py-5 dark:border-line-d dark:bg-paper-d lg:hidden">
@@ -40,7 +40,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           </div>
 
           {/* Content */}
-          <div className="grow overflow-y-auto px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:p-12 lg:pb-12">
+          <div className="min-h-0 grow overflow-y-auto px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] lg:p-12 lg:pb-12">
             {children}
           </div>
 
