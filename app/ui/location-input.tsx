@@ -104,7 +104,7 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
           onClick={handleLocate}
           disabled={locating}
           title={t.locationUseCurrentTitle}
-          className="flex items-center justify-center rounded-lg border border-line bg-card px-2.5 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
+          className="rounded-2xl border border-line bg-card p-2 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
         >
           {locating
             ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
@@ -116,31 +116,33 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
           onChange={(e) => handleUserInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') isConfirmMode ? handleConfirmMap() : handleSearch(); }}
           placeholder={t.locationPlaceholder}
-          className="form-input flex-1"
+          className="form-input min-w-0 flex-1 rounded-2xl"
         />
         {isConfirmMode ? (
           <button
             onClick={handleConfirmMap}
             disabled={!mapPending?.address}
-            className="btn-primary flex items-center gap-1.5 disabled:opacity-50"
+            aria-label={t.locationConfirm}
+            className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
           >
-            <CheckIcon className="h-4 w-4" />{t.locationConfirm}
+            <CheckIcon className="h-5 w-5" />
           </button>
         ) : (
           <button
             onClick={handleSearch}
             disabled={isPending || !address.trim()}
-            className="btn-primary flex items-center gap-1.5"
+            aria-label={t.locationSearch}
+            className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
           >
             {isPending
-              ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
-              : <><MagnifyingGlassIcon className="h-4 w-4" />{t.locationSearch}</>}
+              ? <ArrowPathIcon className="h-5 w-5 animate-spin" />
+              : <MagnifyingGlassIcon className="h-5 w-5" />}
           </button>
         )}
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
       {candidates && (
-        <div className="flex flex-col rounded-lg border border-line bg-card shadow-sm overflow-hidden dark:border-line-d dark:bg-card-d">
+        <div className="flex flex-col rounded-2xl border border-line bg-card shadow-sm overflow-hidden dark:border-line-d dark:bg-card-d">
           <p className="px-3 py-2 text-xs text-muted dark:text-muted-d border-b border-line dark:border-line-d">
             {t.locationSelectResult}
           </p>
