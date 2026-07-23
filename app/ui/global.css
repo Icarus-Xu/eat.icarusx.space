@@ -35,7 +35,7 @@
   }
 
   .nav-link {
-    @apply flex h-[48px] grow items-center justify-center gap-2 rounded-xl bg-card p-3 text-sm font-medium hover:bg-appetite-soft hover:text-appetite dark:bg-card-d dark:hover:bg-appetite-soft-d dark:hover:text-appetite-d md:flex-none md:justify-start md:p-2 md:px-3;
+    @apply flex h-[48px] grow items-center justify-center gap-2 rounded-xl p-3 text-sm font-medium hover:bg-appetite-soft hover:text-appetite dark:hover:bg-appetite-soft-d dark:hover:text-appetite-d md:flex-none md:justify-start md:p-2 md:px-3;
   }
 
   .page-heading {

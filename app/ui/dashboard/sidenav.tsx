@@ -21,7 +21,7 @@ export default async function SideNav() {
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
         <div className="hidden h-auto w-full grow md:block"></div>
-        <div className="flex h-[48px] w-full items-center justify-between rounded-xl bg-paper p-3 dark:bg-card-d md:p-2 md:px-3">
+        <div className="flex h-[48px] w-full items-center justify-between rounded-xl border border-line bg-paper p-3 dark:border-line-d dark:bg-card-d md:p-2 md:px-3">
           <span className="hidden items-center gap-2 truncate text-sm font-bold text-ink dark:text-ink-d md:flex">
             <span className="h-6 w-6 shrink-0 rounded-full border border-appetite bg-appetite-soft dark:border-appetite-d dark:bg-appetite-soft-d" />
             <span className="truncate">{userName}</span>
