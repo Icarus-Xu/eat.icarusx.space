@@ -20,7 +20,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         <MapProviderModal />
         <PageLogger />
         <ErrorInterceptor />
-        <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+        <div className="flex h-dvh flex-col md:flex-row md:overflow-hidden">
 
           {/* Mobile: top header */}
           <header className="flex flex-none items-center justify-between border-b border-line bg-paper px-6 py-5 dark:border-line-d dark:bg-paper-d md:hidden">
@@ -40,12 +40,12 @@ export default async function MainLayout({ children }: { children: React.ReactNo
           </div>
 
           {/* Content */}
-          <div className="grow overflow-y-auto px-5 pt-6 pb-24 md:p-12 md:pb-12">
+          <div className="grow overflow-y-auto px-5 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:p-12 md:pb-12">
             {children}
           </div>
 
           {/* Mobile: bottom tab bar */}
-          <nav className="fixed bottom-0 left-0 right-0 flex border-t border-line bg-paper dark:border-line-d dark:bg-paper-d md:hidden">
+          <nav className="fixed bottom-0 left-0 right-0 z-10 flex border-t border-line bg-paper pb-[env(safe-area-inset-bottom)] dark:border-line-d dark:bg-paper-d md:hidden">
             <NavLinks variant="bottom" />
           </nav>
 

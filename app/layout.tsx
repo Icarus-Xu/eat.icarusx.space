@@ -1,10 +1,16 @@
 import '@/app/ui/global.css';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import ServiceWorkerRegister from '@/app/ui/service-worker-register';
 import { ThemeProvider } from '@/app/ui/theme-context';
 import { LangProvider } from '@/app/ui/lang-context';
 import type { Lang } from '@/app/lib/i18n';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: {
