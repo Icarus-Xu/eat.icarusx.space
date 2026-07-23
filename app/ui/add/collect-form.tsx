@@ -9,13 +9,13 @@ import { useT } from '@/app/ui/lang-context';
 import StarInput from './star-input';
 import CrossSearchModal, { type CrossPoi } from '@/app/ui/cross-search-modal';
 import PoiResultList from '@/app/ui/poi-result-list';
+import SearchRow from '@/app/ui/search-row';
 import { todayInputValue } from '@/app/lib/format';
 import {
   ArrowPathIcon,
   BookmarkIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
-  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 
 type Mode = 'search' | 'link';
@@ -271,26 +271,15 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
         {mode === 'search' && step === 'input' && (
           <div>
             <label className="form-label">{t.formRestaurantName}</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder={t.formSearchPlaceholder}
-                className="form-input flex-1 rounded-2xl"
-              />
-              <button
-                onClick={handleSearch}
-                disabled={isSearching || isCrossSearching || !searchQuery.trim()}
-                aria-label={t.formSearch}
-                className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
-              >
-                {isSearching
-                  ? <ArrowPathIcon className="h-5 w-5 animate-spin" />
-                  : <MagnifyingGlassIcon className="h-5 w-5" />}
-              </button>
-            </div>
+            <SearchRow
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSubmit={handleSearch}
+              placeholder={t.formSearchPlaceholder}
+              submitLabel={t.formSearch}
+              pending={isSearching}
+              disabled={isSearching || isCrossSearching || !searchQuery.trim()}
+            />
             {searchError && (
               <p className="error-inline mt-1.5">
                 <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
@@ -325,7 +314,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder={t.formLinkPlaceholder}
-                className="form-input flex-1 rounded-2xl"
+                className="form-input min-w-0 flex-1"
               />
               <button
                 onClick={handleParse}
@@ -417,7 +406,7 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
             )}
 
             {isDuplicate && (
-              <p className="flex items-center gap-1.5 rounded-2xl border border-yellow-300 bg-yellow-50 px-3 py-2 text-sm text-yellow-600 dark:border-yellow-600 dark:bg-yellow-950 dark:text-yellow-400">
+              <p className="warn-callout">
                 <ExclamationCircleIcon className="h-4 w-4 shrink-0" />
                 {t.formDuplicate}
               </p>

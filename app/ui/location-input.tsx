@@ -2,10 +2,11 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import { ArrowPathIcon, MapPinIcon, MagnifyingGlassIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, MapPinIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useLocation } from '@/app/ui/location-context';
 import { useT } from '@/app/ui/lang-context';
 import { useMapProvider } from '@/app/ui/map-provider-context';
+import SearchRow from '@/app/ui/search-row';
 
 interface LocationCandidate {
   name: string;
@@ -99,47 +100,28 @@ export default function LocationInput({ onCoords, defaultCoords, defaultAddress,
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
-        <button
-          onClick={handleLocate}
-          disabled={locating}
-          title={t.locationUseCurrentTitle}
-          className="rounded-2xl border border-line bg-card px-3 py-2 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
-        >
-          {locating
-            ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
-            : <MapPinIcon className="h-4 w-4" />}
-        </button>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => handleUserInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') isConfirmMode ? handleConfirmMap() : handleSearch(); }}
-          placeholder={t.locationPlaceholder}
-          className="form-input min-w-0 flex-1 rounded-2xl"
-        />
-        {isConfirmMode ? (
+      <SearchRow
+        value={address}
+        onChange={handleUserInput}
+        onSubmit={isConfirmMode ? handleConfirmMap : handleSearch}
+        placeholder={t.locationPlaceholder}
+        submitLabel={isConfirmMode ? t.locationConfirm : t.locationSearch}
+        pending={!isConfirmMode && isPending}
+        disabled={isConfirmMode ? !mapPending?.address : (isPending || !address.trim())}
+        icon={isConfirmMode ? <CheckIcon className="h-5 w-5" /> : undefined}
+        prefix={
           <button
-            onClick={handleConfirmMap}
-            disabled={!mapPending?.address}
-            aria-label={t.locationConfirm}
-            className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+            onClick={handleLocate}
+            disabled={locating}
+            title={t.locationUseCurrentTitle}
+            className="rounded-2xl border border-line bg-card px-3 py-2 text-muted shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-muted-d dark:hover:border-appetite-d"
           >
-            <CheckIcon className="h-5 w-5" />
+            {locating
+              ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
+              : <MapPinIcon className="h-4 w-4" />}
           </button>
-        ) : (
-          <button
-            onClick={handleSearch}
-            disabled={isPending || !address.trim()}
-            aria-label={t.locationSearch}
-            className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
-          >
-            {isPending
-              ? <ArrowPathIcon className="h-5 w-5 animate-spin" />
-              : <MagnifyingGlassIcon className="h-5 w-5" />}
-          </button>
-        )}
-      </div>
+        }
+      />
       {error && <p className="text-sm text-red-500">{error}</p>}
       {candidates && (
         <div className="flex flex-col rounded-2xl border border-line bg-card shadow-sm overflow-hidden dark:border-line-d dark:bg-card-d">

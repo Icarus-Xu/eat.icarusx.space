@@ -10,8 +10,6 @@ import {
   DocumentDuplicateIcon,
   TrashIcon,
   CheckIcon,
-  MagnifyingGlassIcon,
-  ArrowPathIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import type { RestaurantDetail } from '@/app/api/restaurant/[id]/route';
@@ -21,6 +19,8 @@ import { useT } from '@/app/ui/lang-context';
 import { StarRating } from '@/app/ui/stars';
 import StarInput from '@/app/ui/add/star-input';
 import PoiResultList from '@/app/ui/poi-result-list';
+import FormActions from '@/app/ui/form-actions';
+import SearchRow from '@/app/ui/search-row';
 import { formatDistance, formatDate, todayInputValue } from '@/app/lib/format';
 import { amapPlaceUrl, baiduPlaceUrl } from '@/app/lib/provider-links';
 
@@ -174,7 +174,7 @@ export default function RestaurantModal({ restaurantId, distanceM, initialMode =
               </div>
 
               {!currentPoi && (
-                <div className="flex items-start gap-2 rounded-xl border border-yellow-300 bg-yellow-50 px-3 py-2.5 text-sm font-medium text-yellow-700 dark:border-yellow-700 dark:bg-yellow-950/40 dark:text-yellow-400">
+                <div className="warn-callout">
                   <ExclamationTriangleIcon className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>{t.detailNoCurrentPoi(providerLabel(effectiveProvider))}</span>
                 </div>
@@ -329,7 +329,7 @@ function AddVisitForm({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="form-input w-full rounded-2xl"
+          className="form-input w-full"
         />
       </div>
 
@@ -341,28 +341,13 @@ function AddVisitForm({
           onChange={(e) => setNotes(e.target.value)}
           placeholder={t.formNotesPlaceholder}
           rows={3}
-          className="form-input w-full resize-none rounded-2xl"
+          className="form-input w-full resize-none"
         />
       </div>
 
       {error && <p className="error-inline">{error}</p>}
 
-      <div className="flex gap-2.5">
-        <button
-          onClick={onCancel}
-          disabled={saving}
-          className="h-11 flex-1 rounded-xl border border-line text-sm font-medium text-sub transition hover:bg-paper disabled:opacity-50 dark:border-line-d dark:text-sub-d dark:hover:bg-paper-d"
-        >
-          {t.commonCancel}
-        </button>
-        <button
-          onClick={save}
-          disabled={saving}
-          className="h-11 flex-1 rounded-xl bg-appetite text-sm font-semibold text-white transition hover:brightness-105 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
-        >
-          {t.formSave}
-        </button>
-      </div>
+      <FormActions onCancel={onCancel} onConfirm={save} confirmLabel={t.formSave} disabled={saving} />
     </div>
   );
 }
@@ -525,45 +510,27 @@ function EditForm({
 
       <p className="text-sm text-sub dark:text-sub-d">{t.editRelinkHint(providerLabel)}</p>
 
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && search()}
-          placeholder={t.formSearchPlaceholder}
-          className="form-input min-w-0 flex-1 rounded-2xl"
-        />
-        <button
-          onClick={search}
-          disabled={searching || saving || !query.trim()}
-          aria-label={t.formSearch}
-          className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
-        >
-          {searching ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : <MagnifyingGlassIcon className="h-5 w-5" />}
-        </button>
-      </div>
+      <SearchRow
+        value={query}
+        onChange={setQuery}
+        onSubmit={search}
+        placeholder={t.formSearchPlaceholder}
+        submitLabel={t.formSearch}
+        pending={searching}
+        disabled={searching || saving || !query.trim()}
+      />
 
       {error && <p className="error-inline">{error}</p>}
 
       {results.length > 0 && <PoiResultList results={results} onSelect={pick} />}
 
-      <div className="flex gap-2.5">
-        <button
-          onClick={onClose}
-          disabled={saving}
-          className="h-11 flex-1 rounded-xl border border-line text-sm font-medium text-sub transition hover:bg-paper disabled:opacity-50 dark:border-line-d dark:text-sub-d dark:hover:bg-paper-d"
-        >
-          {t.commonCancel}
-        </button>
-        <button
-          onClick={save}
-          disabled={saving || !selected}
-          className="h-11 flex-1 rounded-xl bg-appetite text-sm font-semibold text-white transition hover:brightness-105 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
-        >
-          {t.formSave}
-        </button>
-      </div>
+      <FormActions
+        onCancel={onClose}
+        onConfirm={save}
+        confirmLabel={t.formSave}
+        disabled={saving}
+        confirmDisabled={!selected}
+      />
     </div>
   );
 }
