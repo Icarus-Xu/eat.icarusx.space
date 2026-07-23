@@ -4,13 +4,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { RestaurantCard } from '@/app/api/recommend/route';
 import RestaurantCardComponent from './restaurant-card';
+import DistanceSelector from './distance-selector';
 import { ArrowPathIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { useLocation } from '@/app/ui/location-context';
 import { useT } from '@/app/ui/lang-context';
 
 type Status = 'idle' | 'loading' | 'done' | 'error';
 
-const DISTANCE_OPTIONS = [1, 2, 3, 5, 10];
 const DEFAULT_RADIUS_KM = 3;
 
 export default function RecommendClient() {
@@ -57,56 +57,49 @@ export default function RecommendClient() {
     setLocating(false);
   };
 
-  const subtitle = location && status === 'done' ? t.recommendSubtitle(radiusKm, cards.length) : undefined;
+  const subtitle = location && cards.length > 0 ? t.recommendSubtitle(radiusKm, cards.length) : undefined;
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-ink dark:text-ink-d">{t.recommendTitle}</h1>
-        {subtitle && <p className="mt-1.5 text-xs text-muted dark:text-muted-d">{subtitle}</p>}
-      </div>
-
       {!location ? (
-        <div className="flex flex-col items-start gap-3">
-          <span className="text-sm text-muted dark:text-muted-d">{t.recommendSetLocation}</span>
-          <button
-            onClick={handleLocate}
-            disabled={locating}
-            className="flex items-center gap-2 rounded-xl border border-line bg-card px-3 py-2 text-sm text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
-          >
-            {locating
-              ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
-              : <MapPinIcon className="h-4 w-4" />}
-            {t.recommendLocateButton}
-          </button>
-        </div>
+        <>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-ink dark:text-ink-d">{t.recommendTitle}</h1>
+          </div>
+          <div className="flex flex-col items-start gap-3">
+            <span className="text-sm text-muted dark:text-muted-d">{t.recommendSetLocation}</span>
+            <button
+              onClick={handleLocate}
+              disabled={locating}
+              className="flex items-center gap-2 rounded-xl border border-line bg-card px-3 py-2 text-sm text-sub shadow-sm hover:border-appetite active:scale-95 transition-all disabled:opacity-50 dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d"
+            >
+              {locating
+                ? <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                : <MapPinIcon className="h-4 w-4" />}
+              {t.recommendLocateButton}
+            </button>
+          </div>
+        </>
       ) : (
         <>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              {DISTANCE_OPTIONS.map((km) => (
-                <button
-                  key={km}
-                  onClick={() => handleRadiusChange(km)}
-                  disabled={status === 'loading'}
-                  className={`rounded-full px-3 py-1 text-sm font-medium transition-colors disabled:opacity-50 ${
-                    radiusKm === km
-                      ? 'bg-appetite text-white dark:bg-appetite-d dark:text-paper-d'
-                      : 'border border-line bg-card text-sub hover:border-appetite dark:border-line-d dark:bg-card-d dark:text-sub-d dark:hover:border-appetite-d'
-                  }`}
-                >
-                  {km} km
-                </button>
-              ))}
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <h1 className="text-xl font-bold tracking-tight text-ink dark:text-ink-d">{t.recommendTitle}</h1>
+              {subtitle && <p className="mt-0.5 text-xs text-muted dark:text-muted-d">{subtitle}</p>}
             </div>
             <button
               onClick={handleRefresh}
               disabled={status === 'loading'}
-              className="flex items-center gap-1.5 rounded-xl bg-appetite px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+              aria-label={t.recommendRefresh}
+              className="rounded-2xl bg-appetite p-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
             >
-              <ArrowPathIcon className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
-              {t.recommendRefresh}
+              <ArrowPathIcon className={`h-5 w-5 ${status === 'loading' ? 'animate-spin' : ''}`} />
             </button>
+            <DistanceSelector
+              value={radiusKm}
+              onChange={handleRadiusChange}
+              disabled={status === 'loading'}
+            />
           </div>
 
           {status === 'idle' || status === 'loading' ? (
