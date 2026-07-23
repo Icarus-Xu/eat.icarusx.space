@@ -329,7 +329,7 @@ function AddVisitForm({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="form-input w-full"
+          className="form-input w-full rounded-2xl"
         />
       </div>
 
@@ -341,7 +341,7 @@ function AddVisitForm({
           onChange={(e) => setNotes(e.target.value)}
           placeholder={t.formNotesPlaceholder}
           rows={3}
-          className="form-input w-full resize-none"
+          className="form-input w-full resize-none rounded-2xl"
         />
       </div>
 
@@ -532,15 +532,15 @@ function EditForm({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && search()}
           placeholder={t.formSearchPlaceholder}
-          className="form-input flex-1"
+          className="form-input min-w-0 flex-1 rounded-2xl"
         />
         <button
           onClick={search}
           disabled={searching || saving || !query.trim()}
-          className="btn-primary flex items-center gap-1.5"
+          aria-label={t.formSearch}
+          className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
         >
-          {searching ? <ArrowPathIcon className="h-4 w-4 animate-spin" /> : <MagnifyingGlassIcon className="h-4 w-4" />}
-          {t.formSearch}
+          {searching ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : <MagnifyingGlassIcon className="h-5 w-5" />}
         </button>
       </div>
 
