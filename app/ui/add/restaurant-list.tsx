@@ -111,7 +111,7 @@ export default function RestaurantList({ refreshKey }: { refreshKey: number }) {
                 baiduPoiId={r.baiduPoiId}
                 distanceM={r.distanceM}
                 onChanged={loadRestaurants}
-                className={`card flex flex-col gap-1.5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d${hasCurrentPoi ? '' : ' opacity-60'}`}
+                className={`card card-hover flex flex-col gap-1.5${hasCurrentPoi ? '' : ' opacity-60'}`}
               >
                 <CardContent r={r} t={t} />
               </InteractiveCard>

@@ -14,12 +14,22 @@
     @apply rounded-xl bg-appetite px-4 py-2 text-sm font-medium text-white transition hover:brightness-105 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d;
   }
 
+  /* Icon-only primary action button (search, refresh, confirm) */
+  .btn-icon {
+    @apply rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d;
+  }
+
   .card {
     @apply rounded-2xl border border-line bg-card p-4 dark:border-line-d dark:bg-card-d;
   }
 
+  /* Lift-on-hover effect for clickable cards */
+  .card-hover {
+    @apply shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d;
+  }
+
   .form-input {
-    @apply rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink focus:border-appetite focus:outline-none dark:border-line-d dark:bg-card-d dark:text-ink-d dark:focus:border-appetite-d;
+    @apply rounded-2xl border border-line bg-card px-3 py-2 text-sm text-ink focus:border-appetite focus:outline-none dark:border-line-d dark:bg-card-d dark:text-ink-d dark:focus:border-appetite-d;
   }
 
   .form-label {
@@ -56,6 +66,11 @@
 
   .error-inline {
     @apply flex items-center gap-1 text-sm text-red-500;
+  }
+
+  /* Yellow warning callout */
+  .warn-callout {
+    @apply flex items-start gap-2 rounded-xl border border-yellow-300 bg-yellow-50 px-3 py-2.5 text-sm font-medium text-yellow-700 dark:border-yellow-700 dark:bg-yellow-950/40 dark:text-yellow-400;
   }
 
   /* Modal backdrop and content panel */

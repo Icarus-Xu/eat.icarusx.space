@@ -26,7 +26,7 @@ export default function PoiResultList<T extends PoiLike>({
           <button
             type="button"
             onClick={() => onSelect(r)}
-            className="card group flex w-full items-center gap-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:hover:border-appetite-d"
+            className="card card-hover group flex w-full items-center gap-3 text-left"
           >
             <MapPinIcon className="h-5 w-5 shrink-0 text-appetite dark:text-appetite-d" />
             <span className="min-w-0 flex-1">

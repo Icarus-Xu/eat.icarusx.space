@@ -91,7 +91,7 @@ export default function RecommendClient() {
               onClick={handleRefresh}
               disabled={status === 'loading'}
               aria-label={t.recommendRefresh}
-              className="rounded-2xl bg-appetite px-3 py-2 text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-50 dark:bg-appetite-d dark:text-paper-d"
+              className="btn-icon"
             >
               <ArrowPathIcon className={`h-5 w-5 ${status === 'loading' ? 'animate-spin' : ''}`} />
             </button>

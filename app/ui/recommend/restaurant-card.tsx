@@ -45,7 +45,7 @@ export default function RestaurantCard({ r, onChanged }: { r: RestaurantCard; on
   );
 
   const base =
-    'flex flex-col gap-2.5 rounded-2xl border border-line bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-appetite hover:shadow-md dark:border-line-d dark:bg-card-d dark:hover:border-appetite-d' +
+    'card card-hover flex flex-col gap-2.5 p-5' +
     (hasCurrentPoi ? '' : ' opacity-60');
 
   return (
