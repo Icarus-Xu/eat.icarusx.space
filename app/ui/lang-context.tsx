@@ -24,14 +24,13 @@ const LangContext = createContext<LangContextValue>({
   setLang: () => {},
 });
 
-function initialLang(): Lang {
-  if (typeof window === 'undefined') return 'en';
-  const saved = localStorage.getItem(LANG_KEY);
-  return saved === 'en' || saved === 'zh' ? saved : detectLang();
-}
-
-export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(initialLang);
+export function LangProvider({ children, defaultLang }: { children: ReactNode; defaultLang?: Lang }) {
+  const [lang, setLangState] = useState<Lang>(() => {
+    if (typeof window === 'undefined') return defaultLang ?? 'en';
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === 'en' || saved === 'zh') return saved;
+    return defaultLang ?? detectLang();
+  });
 
   // Persist the initial detected language once (no-op if already saved).
   useEffect(() => {
