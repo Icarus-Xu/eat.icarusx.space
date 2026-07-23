@@ -16,6 +16,8 @@ import {
   BookmarkIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
+  LinkIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 
 type Mode = 'search' | 'link';
@@ -255,21 +257,26 @@ export default function CollectForm({ onSaved }: { onSaved?: () => void }) {
 
       <div className="flex flex-col gap-6">
         {/* Mode tabs */}
-        <div className="flex gap-1 rounded-2xl border border-line bg-paper p-1 dark:border-line-d dark:bg-card-d">
-          {(['search', 'link'] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => switchMode(m)}
-              className={`flex-1 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors ${
-                mode === m
-                  ? 'bg-card text-ink shadow-sm dark:bg-card-d dark:text-ink-d'
-                  : 'text-muted hover:text-ink dark:text-muted-d dark:hover:text-ink-d'
-              }`}
-            >
-              {m === 'search' ? t.formSearchTab : t.formLinkTab}
-            </button>
-          ))}
+        <div className="flex gap-1 rounded-2xl border border-line bg-paper p-1 dark:border-line-d dark:bg-paper-d">
+          {(['search', 'link'] as const).map((m) => {
+            const Icon = m === 'search' ? MagnifyingGlassIcon : LinkIcon;
+            return (
+              <button
+                key={m}
+                type="button"
+                onClick={() => switchMode(m)}
+                aria-pressed={mode === m}
+                className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                  mode === m
+                    ? 'bg-appetite text-white shadow-sm dark:bg-appetite-d dark:text-paper-d'
+                    : 'text-sub hover:bg-appetite-soft hover:text-appetite dark:text-sub-d dark:hover:bg-appetite-soft-d dark:hover:text-appetite-d'
+                }`}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                {m === 'search' ? t.formSearchTab : t.formLinkTab}
+              </button>
+            );
+          })}
         </div>
 
         {/* Search mode */}
