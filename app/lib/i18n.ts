@@ -47,8 +47,8 @@ const en = {
   badgeNotYet: 'Not yet',
 
   // collect form
-  formSearchTab: 'Search by name',
-  formLinkTab: 'Paste link',
+  formSearchTab: 'Name',
+  formLinkTab: 'Link',
   formRestaurantName: 'Restaurant name',
   formSearchPlaceholder: "e.g. Haidilao, McDonald's...",
   formSearch: 'Search',
@@ -97,12 +97,11 @@ const en = {
   // settings
   settingsTitle: 'Settings',
   settingsMapProvider: 'Map Provider',
-  settingsMapProviderDesc:
-    'Affects restaurant search, navigation links, and reverse geocoding.',
+  settingsMapProviderDesc: 'Used for search, navigation, and location lookup.',
   settingsLanguage: 'Language',
-  settingsLanguageDesc: 'Switch the display language.',
+  settingsLanguageDesc: 'Choose the display language.',
   settingsTheme: 'Appearance',
-  settingsThemeDesc: 'Switch between light and dark mode. Auto follows the system setting.',
+  settingsThemeDesc: 'Choose light, dark, or follow your system setting.',
   themeAuto: 'Auto',
   themeLight: 'Light',
   themeDark: 'Dark',
@@ -208,8 +207,8 @@ const zh: typeof en = {
   badgeVisited: '已到访',
   badgeNotYet: '未到访',
 
-  formSearchTab: '按名称搜索',
-  formLinkTab: '粘贴链接',
+  formSearchTab: '名称',
+  formLinkTab: '链接',
   formRestaurantName: '餐厅名称',
   formSearchPlaceholder: '例如：海底捞、麦当劳...',
   formSearch: '搜索',
@@ -253,11 +252,11 @@ const zh: typeof en = {
 
   settingsTitle: '设置',
   settingsMapProvider: '地图提供商',
-  settingsMapProviderDesc: '影响餐厅搜索、导航链接和逆地理编码。',
+  settingsMapProviderDesc: '用于搜索、导航和位置查询。',
   settingsLanguage: '语言',
-  settingsLanguageDesc: '切换界面显示语言。',
+  settingsLanguageDesc: '选择界面显示语言。',
   settingsTheme: '外观',
-  settingsThemeDesc: '切换亮色和暗色模式。自动跟随系统设置。',
+  settingsThemeDesc: '选择亮色、暗色或跟随系统。',
   themeAuto: '自动',
   themeLight: '亮色',
   themeDark: '暗色',

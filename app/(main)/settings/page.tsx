@@ -63,19 +63,21 @@ export default function SettingsPage() {
     <div className="flex flex-col gap-8">
       <h1 className="page-heading">{t.settingsTitle}</h1>
 
-      <div className="card w-full max-w-lg divide-y divide-line p-0 dark:divide-line-d">
+      <div className="card w-full divide-y divide-line rounded-md p-0 dark:divide-line-d xl:max-w-2xl">
         {sections.map(({ icon: Icon, title, desc, control }) => (
-          <section key={title} className="flex items-center justify-between gap-4 p-5">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d">
+          <section key={title} className="flex items-center gap-3 p-5">
+            <div className="flex shrink-0 items-center self-stretch">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-appetite-soft text-appetite dark:bg-appetite-soft-d dark:text-appetite-d">
                 <Icon className="h-5 w-5" />
               </span>
+            </div>
+            <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-medium text-ink dark:text-ink-d">{title}</p>
-                <p className="mt-0.5 text-xs text-muted dark:text-muted-d">{desc}</p>
+                <p className="mt-1 max-w-[28rem] text-sm leading-relaxed text-muted dark:text-muted-d">{desc}</p>
               </div>
+              <div className="w-full lg:w-36 lg:shrink-0">{control}</div>
             </div>
-            <div className="w-36 shrink-0">{control}</div>
           </section>
         ))}
       </div>
